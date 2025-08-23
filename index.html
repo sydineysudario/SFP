@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão Financeira Pessoal</title>
+
+    <!-- CDN Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase v9 SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+        // INSTRUÇÕES DE CONFIGURAÇÃO DO FIREBASE:
+        // 1. Acesse https://console.firebase.google.com/
+        // 2. Crie um novo projeto
+        // 3. Ative Authentication > Sign-in method > Google
+        // 4. Crie um banco Firestore Database
+        // 5. Configure as regras de segurança no Firestore:
+        //    rules_version = '2';
+        //    service cloud.firestore {
+        //      match /databases/{database}/documents {
+        //        match /{document=**} {
+        //          allow read, write: if request.auth != null;
+        //        }
+        //      }
+        //    }
+        // 6. Substitua as credenciais abaixo pelas suas:
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCqCUYuwos_h5Fdt9a6bjibX7CzfhaJUqQ",
+            authDomain: "sistemafinanceiropessoal-ddbe3.firebaseapp.com",
+            projectId: "sistemafinanceiropessoal-ddbe3",
+            storageBucket: "sistemafinanceiropessoal-ddbe3.firebasestorage.app",
+            messagingSenderId: "360949795018",
+            appId: "1:360949795018:web:863523b189a26879e44c33",
+            measurementId: "G-1B3R3EK1TY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // Global variables
+        let currentUser = null;
+        let transacoes = [];
+        let patrimonio = [];
+
+        // Charts
+        let saldoChart, gastosChart, projecaoChart, patrimonioChart;
+
+        // Authentication functions
+        window.loginWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                currentUser = result.user;
+                showApp();
+                loadUserData();
+            } catch (error) {
+                console.error('Erro no login:', error);
+                alert('Erro ao fazer login. Tente novamente.');
+            }
+        };
+
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                currentUser = null;
+                showLogin();
+            } catch (error) {
+                console.error('Erro no logout:', error);
+            }
+        };
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                showApp();
+                loadUserData();
+            } else {
+                currentUser = null;
+                showLogin();
+            }
+        });
+
+        function showLogin() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('appScreen').classList.add('hidden');
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.remove('hidden');
+            document.getElementById('userName').textContent = currentUser.displayName;
+            document.getElementById('userPhoto').src = currentUser.photoURL;
+        }
+
+        // Firestore functions
+        async function addTransaction(data) {
+            try {
+                await addDoc(collection(db, 'transacoes'), {
+                    ...data,
+                    userId: currentUser.uid,
+                    createdAt: new Date()
+                });
+                loadTransactions();
+                updateDashboard();
+            } catch (error) {
+                console.error('Erro ao salvar transação:', error);
+                alert('Erro ao salvar transação');
+            }
+        }
+
+        async function addPatrimony(data) {
+            try {
+                await addDoc(collection(db, 'patrimonio'), {
+                    ...data,
+                    userId: currentUser.uid,
+                    createdAt: new Date()
+                });
+                loadPatrimony();
+                updateDashboard();
+            } catch (error) {
+                console.error('Erro ao salvar patrimônio:', error);
+                alert('Erro ao salvar patrimônio');
+            }
+        }
+
+        async function loadTransactions() {
+            if (!currentUser) return;
+            try {
+                const q = query(
+                    collection(db, 'transacoes'),
+                    where('userId', '==', currentUser.uid),
+                    orderBy('createdAt', 'desc')
+                );
+                const querySnapshot = await getDocs(q);
+                transacoes = [];
+                querySnapshot.forEach((doc) => {
+                    transacoes.push({ id: doc.id, ...doc.data() });
+                });
+                renderTransactions();
+                updateDashboard();
+            } catch (error) {
+                console.error('Erro ao carregar transações:', error);
+            }
+        }
+
+        async function loadPatrimony() {
+            if (!currentUser) return;
+            try {
+                const q = query(
+                    collection(db, 'patrimonio'),
+                    where('userId', '==', currentUser.uid)
+                );
+                const querySnapshot = await getDocs(q);
+                patrimonio = [];
+                querySnapshot.forEach((doc) => {
+                    patrimonio.push({ id: doc.id, ...doc.data() });
+                });
+                renderPatrimony();
+            } catch (error) {
+                console.error('Erro ao carregar patrimônio:', error);
+            }
+        }
+
+        async function loadUserData() {
+            await loadTransactions();
+            await loadPatrimony();
+            updateDashboard();
+            initCharts();
+        }
+
+        // UI Functions
+        function renderTransactions() {
+            const tbody = document.getElementById('transacoesTableBody');
+            tbody.innerHTML = '';
+
+            transacoes.slice(0, 10).forEach(transacao => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200';
+
+                const data = new Date(transacao.data).toLocaleDateString('pt-BR');
+                const valor = transacao.valor.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+                const tipo = transacao.tipo;
+                const corValor = tipo === 'receita' ? 'text-green-600' : 'text-red-600';
+                const icone = tipo === 'receita' ? 'fa-arrow-up' : 'fa-arrow-down';
+
+                row.innerHTML = `
+                    <td class="px-4 py-2">${data}</td>
+                    <td class="px-4 py-2">${transacao.descricao}</td>
+                    <td class="px-4 py-2">${transacao.categoria}</td>
+                    <td class="px-4 py-2 ${corValor} font-semibold">
+                        <i class="fas ${icone} mr-1"></i>${valor}
+                    </td>
+                    <td class="px-4 py-2">
+                        <button onclick="deleteTransaction('${transacao.id}')" 
+                                class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderPatrimony() {
+            const bensContainer = document.getElementById('bensList');
+            const dividasContainer = document.getElementById('dividasList');
+
+            bensContainer.innerHTML = '';
+            dividasContainer.innerHTML = '';
+
+            let totalBens = 0;
+            let totalDividas = 0;
+
+            patrimonio.forEach(item => {
+                const valor = item.valor.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+
+                const element = document.createElement('div');
+                element.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2';
+
+                if (item.tipo === 'bem') {
+                    totalBens += item.valor;
+                    element.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-home text-blue-500"></i>
+                            <div>
+                                <p class="font-medium">${item.descricao}</p>
+                                <p class="text-sm text-gray-600">${item.categoria}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-600">${valor}</p>
+                            <button onclick="deletePatrimony('${item.id}')" 
+                                    class="text-red-500 hover:text-red-700 text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    bensContainer.appendChild(element);
+                } else {
+                    totalDividas += item.valor;
+                    element.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-credit-card text-red-500"></i>
+                            <div>
+                                <p class="font-medium">${item.descricao}</p>
+                                <p class="text-sm text-gray-600">${item.categoria}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-red-600">${valor}</p>
+                            <button onclick="deletePatrimony('${item.id}')" 
+                                    class="text-red-500 hover:text-red-700 text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    dividasContainer.appendChild(element);
+                }
+            });
+
+            // Update patrimony summary
+            document.getElementById('totalBens').textContent = totalBens.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            document.getElementById('totalDividas').textContent = totalDividas.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            document.getElementById('patrimonioLiquido').textContent = (totalBens - totalDividas).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        function updateDashboard() {
+            const agora = new Date();
+            const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+
+            const transacoesMes = transacoes.filter(t => {
+                const dataTransacao = new Date(t.data);
+                return dataTransacao >= inicioMes;
+            });
+
+            const receitas = transacoesMes.filter(t => t.tipo === 'receita');
+            const despesas = transacoesMes.filter(t => t.tipo === 'despesa');
+
+            const totalReceitas = receitas.reduce((sum, t) => sum + t.valor, 0);
+            const totalDespesas = despesas.reduce((sum, t) => sum + t.valor, 0);
+            const saldoAtual = totalReceitas - totalDespesas;
+
+            document.getElementById('saldoAtual').textContent = saldoAtual.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            document.getElementById('receitasMes').textContent = totalReceitas.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            document.getElementById('despesasMes').textContent = totalDespesas.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+
+            updateCharts();
+        }
+
+        function initCharts() {
+            // Gráfico de Saldo Mensal
+            const ctxSaldo = document.getElementById('saldoChart');
+            if (ctxSaldo) {
+                saldoChart = new Chart(ctxSaldo, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        datasets: [{
+                            label: 'Receitas',
+                            data: [],
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Despesas',
+                            data: [],
+                            borderColor: 'rgb(239, 68, 68)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return 'R$ ' + value.toLocaleString('pt-BR');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico de Gastos por Categoria
+            const ctxGastos = document.getElementById('gastosChart');
+            if (ctxGastos) {
+                gastosChart = new Chart(ctxGastos, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [
+                                '#3B82F6', '#EF4444', '#10B981', '#F59E0B',
+                                '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico de Projeção
+            const ctxProjecao = document.getElementById('projecaoChart');
+            if (ctxProjecao) {
+                projecaoChart = new Chart(ctxProjecao, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        datasets: [{
+                            label: 'Projeção de Economia',
+                            data: [],
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return 'R$ ' + value.toLocaleString('pt-BR');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateCharts();
+        }
+
+        function updateCharts() {
+            // Atualizar dados dos gráficos com base nas transações
+            const categorias = {};
+            const meses = Array(12).fill(0);
+            const receitasMeses = Array(12).fill(0);
+            const despesasMeses = Array(12).fill(0);
+
+            transacoes.forEach(transacao => {
+                const data = new Date(transacao.data);
+                const mes = data.getMonth();
+
+                if (transacao.tipo === 'receita') {
+                    receitasMeses[mes] += transacao.valor;
+                } else {
+                    despesasMeses[mes] += transacao.valor;
+                    categorias[transacao.categoria] = (categorias[transacao.categoria] || 0) + transacao.valor;
+                }
+            });
+
+            // Atualizar gráfico de saldo
+            if (saldoChart) {
+                saldoChart.data.datasets[0].data = receitasMeses;
+                saldoChart.data.datasets[1].data = despesasMeses;
+                saldoChart.update();
+            }
+
+            // Atualizar gráfico de categorias
+            if (gastosChart) {
+                gastosChart.data.labels = Object.keys(categorias);
+                gastosChart.data.datasets[0].data = Object.values(categorias);
+                gastosChart.update();
+            }
+
+            // Calcular projeção anual
+            const mediaReceitas = receitasMeses.reduce((a, b) => a + b, 0) / 12;
+            const mediaDespesas = despesasMeses.reduce((a, b) => a + b, 0) / 12;
+            const projecaoMensal = Array(12).fill().map((_, i) => (mediaReceitas - mediaDespesas) * (i + 1));
+
+            if (projecaoChart) {
+                projecaoChart.data.datasets[0].data = projecaoMensal;
+                projecaoChart.update();
+            }
+        }
+
+        // Form handlers
+        window.handleReceitaForm = (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                tipo: 'receita',
+                descricao: form.descricao.value,
+                valor: parseFloat(form.valor.value),
+                categoria: form.categoria.value,
+                data: form.data.value
+            };
+            addTransaction(data);
+            form.reset();
+        };
+
+        window.handleDespesaForm = (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                tipo: 'despesa',
+                descricao: form.descricao.value,
+                valor: parseFloat(form.valor.value),
+                categoria: form.categoria.value,
+                data: form.data.value
+            };
+            addTransaction(data);
+            form.reset();
+        };
+
+        window.handlePatrimonioForm = (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                tipo: form.tipo.value,
+                descricao: form.descricao.value,
+                valor: parseFloat(form.valor.value),
+                categoria: form.categoria.value
+            };
+            addPatrimony(data);
+            form.reset();
+        };
+
+        // Delete functions
+        window.deleteTransaction = async (id) => {
+            if (confirm('Deseja excluir esta transação?')) {
+                try {
+                    await deleteDoc(doc(db, 'transacoes', id));
+                    loadTransactions();
+                } catch (error) {
+                    console.error('Erro ao excluir:', error);
+                }
+            }
+        };
+
+        window.deletePatrimony = async (id) => {
+            if (confirm('Deseja excluir este item?')) {
+                try {
+                    await deleteDoc(doc(db, 'patrimonio', id));
+                    loadPatrimony();
+                } catch (error) {
+                    console.error('Erro ao excluir:', error);
+                }
+            }
+        };
+
+        // Tab navigation
+        window.showTab = (tabName) => {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('bg-blue-500', 'text-white');
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.remove('bg-gray-200', 'text-gray-700');
+        };
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            showTab('dashboard');
+        });
+    </script>
+
+    <style>
+        .tab-content {
+            min-height: 400px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        @media print {
+            body {
+                font-size: 12px;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen login-bg flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <i class="fas fa-wallet text-6xl text-blue-500 mb-4"></i>
+                <h1 class="text-3xl font-bold text-gray-800">FinanceControl Pro</h1>
+                <p class="text-gray-600 mt-2">Sistema de Gestão Financeira Pessoal</p>
+            </div>
+
+            <div class="space-y-4">
+                <button onclick="loginWithGoogle()"
+                    class="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center space-x-2">
+                    <i class="fab fa-google"></i>
+                    <span>Entrar com Google</span>
+                </button>
+
+                <div class="text-xs text-gray-500 text-center">
+                    <p><strong>INSTRUÇÕES DE CONFIGURAÇÃO:</strong></p>
+                    <p>1. Crie um projeto no Firebase Console</p>
+                    <p>2. Ative Authentication (método Google)</p>
+                    <p>3. Crie um banco Firestore</p>
+                    <p>4. Configure as credenciais no código</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Screen -->
+    <div id="appScreen" class="hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-lg">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-wallet text-3xl text-blue-500"></i>
+                        <h1 class="text-2xl font-bold text-gray-800">FinanceControl Pro</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <img id="userPhoto" src="" alt="User" class="w-8 h-8 rounded-full">
+                        <span id="userName" class="text-sm font-medium"></span>
+                        <button onclick="logout()"
+                            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-gray-50 border-b">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-wrap space-x-1 py-2">
+                    <button onclick="showTab('dashboard')"
+                        class="tab-btn px-4 py-2 rounded text-sm font-medium bg-blue-500 text-white">
+                        <i class="fas fa-tachometer-alt mr-1"></i>Dashboard
+                    </button>
+                    <button onclick="showTab('receitas')"
+                        class="tab-btn px-4 py-2 rounded text-sm font-medium bg-gray-200 text-gray-700">
+                        <i class="fas fa-plus-circle mr-1"></i>Receitas
+                    </button>
+                    <button onclick="showTab('despesas')"
+                        class="tab-btn px-4 py-2 rounded text-sm font-medium bg-gray-200 text-gray-700">
+                        <i class="fas fa-minus-circle mr-1"></i>Despesas
+                    </button>
+                    <button onclick="showTab('patrimonio')"
+                        class="tab-btn px-4 py-2 rounded text-sm font-medium bg-gray-200 text-gray-700">
+                        <i class="fas fa-home mr-1"></i>Patrimônio
+                    </button>
+                    <button onclick="showTab('projecao')"
+                        class="tab-btn px-4 py-2 rounded text-sm font-medium bg-gray-200 text-gray-700">
+                        <i class="fas fa-chart-line mr-1"></i>Projeção
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-6">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Financeiro</h2>
+
+                <!-- Métricas Principais -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="metric-card rounded-lg p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">Saldo Atual</p>
+                                <p class="text-2xl font-bold" id="saldoAtual">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-wallet text-3xl opacity-70"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-500 rounded-lg p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">Receitas do Mês</p>
+                                <p class="text-2xl font-bold" id="receitasMes">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-arrow-up text-3xl opacity-70"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-500 rounded-lg p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">Despesas do Mês</p>
+                                <p class="text-2xl font-bold" id="despesasMes">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-arrow-down text-3xl opacity-70"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4">Evolução Mensal</h3>
+                        <div class="chart-container">
+                            <canvas id="saldoChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4">Gastos por Categoria</h3>
+                        <div class="chart-container">
+                            <canvas id="gastosChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Últimas Transações -->
+                <div class="bg-white rounded-lg p-6 shadow">
+                    <h3 class="text-xl font-semibold mb-4">Últimas Transações</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b">
+                                    <th class="text-left py-2 px-4">Data</th>
+                                    <th class="text-left py-2 px-4">Descrição</th>
+                                    <th class="text-left py-2 px-4">Categoria</th>
+                                    <th class="text-left py-2 px-4">Valor</th>
+                                    <th class="text-left py-2 px-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transacoesTableBody">
+                                <!-- Transações serão carregadas aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receitas Tab -->
+            <div id="receitas" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Controle de Receitas</h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Formulário -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4">Nova Receita</h3>
+                        <form onsubmit="handleReceitaForm(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Descrição</label>
+                                <input name="descricao" type="text" required class="w-full p-2 border rounded-lg"
+                                    placeholder="Ex: Salário Principal">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Valor</label>
+                                <input name="valor" type="number" step="0.01" required
+                                    class="w-full p-2 border rounded-lg" placeholder="0,00">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Categoria</label>
+                                <select name="categoria" required class="w-full p-2 border rounded-lg">
+                                    <option value="">Selecione...</option>
+                                    <option value="Salário">Salário</option>
+                                    <option value="Freelancer">Freelancer</option>
+                                    <option value="Investimentos">Investimentos</option>
+                                    <option value="Vendas">Vendas</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Data</label>
+                                <input name="data" type="date" required class="w-full p-2 border rounded-lg">
+                            </div>
+                            <button type="submit"
+                                class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">
+                                <i class="fas fa-plus mr-2"></i>Adicionar Receita
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Resumo -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4">Resumo de Receitas</h3>
+                        <div class="space-y-4">
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <p class="text-sm text-green-600 mb-1">Total do Mês</p>
+                                <p class="text-2xl font-bold text-green-700" id="totalReceitasMes">R$ 0,00</p>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <p class="text-sm text-blue-600 mb-1">Média Mensal</p>
+                                <p class="text-2xl font-bold text-blue-700" id="mediaReceitas">R$ 0,00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Despesas Tab -->
+            <div id="despesas" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Controle de Despesas</h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Formulário -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4">Nova Despesa</h3>
+                        <form onsubmit="handleDespesaForm(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Descrição</label>
+                                <input name="descricao" type="text" required class="w-full p-2 border rounded-lg"
+                                    placeholder="Ex: Aluguel">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Valor</label>
+                                <input name="valor" type="number" step="0.01" required
+                                    class="w-full p-2 border rounded-lg" placeholder="0,00">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Categoria</label>
+                                <select name="categoria" required class="w-full p-2 border rounded-lg">
+                                    <option value="">Selecione...</option>
+                                    <option value="Habitação">Habitação</option>
+                                    <option value="Alimentação">Alimentação</option>
+                                    <option value="Transporte">Transporte</option>
+                                    <option value="Lazer">Lazer</option>
+                                    <option value="Saúde">Saúde</option>
+                                    <option value="Educação">Educação</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Data</label>
+                                <input name="data" type="date" required class="w-full p-2 border rounded-lg">
+                            </div>
+                            <button type="submit" class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">
+                                <i class="fas fa-plus mr-2"></i>Adicionar Despesa
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Resumo -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4">Resumo de Despesas</h3>
+                        <div class="space-y-4">
+                            <div class="bg-red-50 p-4 rounded-lg">
+                                <p class="text-sm text-red-600 mb-1">Total do Mês</p>
+                                <p class="text-2xl font-bold text-red-700" id="totalDespesasMes">R$ 0,00</p>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg">
+                                <p class="text-sm text-yellow-600 mb-1">Média Mensal</p>
+                                <p class="text-2xl font-bold text-yellow-700" id="mediaDespesas">R$ 0,00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patrimônio Tab -->
+            <div id="patrimonio" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Controle de Patrimônio</h2>
+
+                <!-- Resumo do Patrimônio -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-green-500 rounded-lg p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">Total de Bens</p>
+                                <p class="text-2xl font-bold" id="totalBens">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-arrow-trend-up text-3xl opacity-70"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-500 rounded-lg p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">Total de Dívidas</p>
+                                <p class="text-2xl font-bold" id="totalDividas">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-arrow-trend-down text-3xl opacity-70"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-500 rounded-lg p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">Patrimônio Líquido</p>
+                                <p class="text-2xl font-bold" id="patrimonioLiquido">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-balance-scale text-3xl opacity-70"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Formulário -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4">Novo Item</h3>
+                        <form onsubmit="handlePatrimonioForm(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Tipo</label>
+                                <select name="tipo" required class="w-full p-2 border rounded-lg">
+                                    <option value="">Selecione...</option>
+                                    <option value="bem">Bem</option>
+                                    <option value="divida">Dívida</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Descrição</label>
+                                <input name="descricao" type="text" required class="w-full p-2 border rounded-lg"
+                                    placeholder="Ex: Casa, Moto, Financiamento...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Valor</label>
+                                <input name="valor" type="number" step="0.01" required
+                                    class="w-full p-2 border rounded-lg" placeholder="0,00">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Categoria</label>
+                                <select name="categoria" required class="w-full p-2 border rounded-lg">
+                                    <option value="">Selecione...</option>
+                                    <option value="Imóvel">Imóvel</option>
+                                    <option value="Veículo">Veículo</option>
+                                    <option value="Investimentos">Investimentos</option>
+                                    <option value="Poupança">Poupança</option>
+                                    <option value="Financiamento">Financiamento</option>
+                                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                    <option value="Empréstimo">Empréstimo</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                            <button type="submit"
+                                class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+                                <i class="fas fa-plus mr-2"></i>Adicionar Item
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Bens -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-green-700">
+                            <i class="fas fa-arrow-up mr-2"></i>Meus Bens
+                        </h3>
+                        <div id="bensList" class="space-y-2">
+                            <!-- Bens serão carregados aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Dívidas -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-red-700">
+                            <i class="fas fa-arrow-down mr-2"></i>Minhas Dívidas
+                        </h3>
+                        <div id="dividasList" class="space-y-2">
+                            <!-- Dívidas serão carregadas aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projeção Tab -->
+            <div id="projecao" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Anual</h2>
+
+                <div class="bg-white rounded-lg p-6 shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Projeção de Economia Mensal</h3>
+                    <div class="chart-container">
+                        <canvas id="projecaoChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                        <div class="flex items-center mb-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                            <h3 class="text-lg font-semibold text-yellow-700">Cenário Conservador</h3>
+                        </div>
+                        <p class="text-2xl font-bold text-yellow-600 mb-2" id="cenarioConservador">R$ 0,00</p>
+                        <p class="text-sm text-gray-600">Economia até dezembro</p>
+                        <ul class="text-xs text-gray-500 mt-3 space-y-1">
+                            <li>• Receita atual</li>
+                            <li>• Gastos +10%</li>
+                            <li>• Emergências</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                        <div class="flex items-center mb-3">
+                            <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                            <h3 class="text-lg font-semibold text-blue-700">Cenário Realista</h3>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600 mb-2" id="cenarioRealista">R$ 0,00</p>
+                        <p class="text-sm text-gray-600">Economia até dezembro</p>
+                        <ul class="text-xs text-gray-500 mt-3 space-y-1">
+                            <li>• Receita atual</li>
+                            <li>• Gastos controlados</li>
+                            <li>• Reserva emergência</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                        <div class="flex items-center mb-3">
+                            <i class="fas fa-rocket text-green-500 mr-2"></i>
+                            <h3 class="text-lg font-semibold text-green-700">Cenário Otimista</h3>
+                        </div>
+                        <p class="text-2xl font-bold text-green-600 mb-2" id="cenarioOtimista">R$ 0,00</p>
+                        <p class="text-sm text-gray-600">Economia até dezembro</p>
+                        <ul class="text-xs text-gray-500 mt-3 space-y-1">
+                            <li>• Receita +15%</li>
+                            <li>• Gastos -10%</li>
+                            <li>• Investimentos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update projeção calculations when dashboard updates
+        function updateProjecaoCalculations() {
+            const agora = new Date();
+            const mesesRestantes = 12 - agora.getMonth();
+
+            const receitaMedia = transacoes
+                .filter(t => t.tipo === 'receita')
+                .reduce((sum, t) => sum + t.valor, 0) / 12 || 0;
+
+            const despesaMedia = transacoes
+                .filter(t => t.tipo === 'despesa')
+                .reduce((sum, t) => sum + t.valor, 0) / 12 || 0;
+
+            const economiaMensal = receitaMedia - despesaMedia;
+
+            // Cenários
+            const conservador = economiaMensal * 0.7 * mesesRestantes;
+            const realista = economiaMensal * mesesRestantes;
+            const otimista = economiaMensal * 1.3 * mesesRestantes;
+
+            document.getElementById('cenarioConservador').textContent = conservador.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            document.getElementById('cenarioRealista').textContent = realista.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            document.getElementById('cenarioOtimista').textContent = otimista.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        // Override updateDashboard to include projeção calculations
+        const originalUpdateDashboard = window.updateDashboard;
+        window.updateDashboard = function () {
+            originalUpdateDashboard();
+            updateProjecaoCalculations();
+        };
+    </script>
+</body>
+
+</html>
