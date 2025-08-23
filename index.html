@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão Financeira Pessoal - Versão Aprimorada</title>
-    
+    <title>Sistema de Gestão Financeira Pessoal - Versão Corrigida</title>
+
     <!-- CDN Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
@@ -25,37 +26,120 @@
 
     <style>
         /* Estilos customizados */
-        .tab-content { min-height: 500px; }
-        .chart-container { height: 300px; position: relative; }
-        .loading { opacity: 0.6; pointer-events: none; }
-        .modal { backdrop-filter: blur(4px); }
-        
+        .tab-content {
+            min-height: 500px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .modal {
+            backdrop-filter: blur(4px);
+        }
+
         /* Otimização para PDF */
         @media print {
-            body { font-size: 12px; }
-            .no-print { display: none !important; }
-            .tab-content { break-inside: avoid; }
-            .chart-container { height: 250px; }
+            body {
+                font-size: 12px;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .tab-content {
+                break-inside: avoid;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
         }
-        
+
         /* Gradientes customizados */
-        .gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .gradient-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .gradient-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-        .gradient-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .gradient-info { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-        
-        /* Animações */
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        
-        .pulse-success { animation: pulseSuccess 2s infinite; }
+
+        .gradient-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .gradient-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .gradient-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .gradient-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        /* Animações */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse-success {
+            animation: pulseSuccess 2s infinite;
+        }
+
         @keyframes pulseSuccess {
-            0%, 100% { background-color: #10b981; }
-            50% { background-color: #059669; }
+
+            0%,
+            100% {
+                background-color: #10b981;
+            }
+
+            50% {
+                background-color: #059669;
+            }
+        }
+
+        /* Correções de validação visual */
+        .input-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .input-success {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+        }
+
+        /* Toast corrigido */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .toast-container.show {
+            transform: translateX(0);
         }
     </style>
 </head>
@@ -102,7 +186,8 @@
                     <div class="flex items-center space-x-4">
                         <img id="userPhoto" src="" alt="User" class="w-8 h-8 rounded-full">
                         <span id="userName" class="text-sm font-medium hidden md:block"></span>
-                        <button onclick="logout()" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm transition-colors">
+                        <button onclick="logout()"
+                            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm transition-colors">
                             <i class="fas fa-sign-out-alt mr-1"></i>Sair
                         </button>
                     </div>
@@ -114,19 +199,29 @@
         <nav class="bg-white border-b sticky top-16 z-30">
             <div class="container mx-auto px-4">
                 <div class="flex flex-wrap space-x-1 py-2 overflow-x-auto">
-                    <button onclick="showTab('dashboard')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap gradient-info text-white" data-tab="dashboard">
+                    <button onclick="showTab('dashboard')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap gradient-info text-white"
+                        data-tab="dashboard">
                         <i class="fas fa-tachometer-alt mr-1"></i>Dashboard
                     </button>
-                    <button onclick="showTab('receitas')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-tab="receitas">
+                    <button onclick="showTab('receitas')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="receitas">
                         <i class="fas fa-plus-circle mr-1"></i>Receitas
                     </button>
-                    <button onclick="showTab('despesas')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-tab="despesas">
+                    <button onclick="showTab('despesas')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="despesas">
                         <i class="fas fa-minus-circle mr-1"></i>Despesas
                     </button>
-                    <button onclick="showTab('patrimonio')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-tab="patrimonio">
+                    <button onclick="showTab('patrimonio')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="patrimonio">
                         <i class="fas fa-home mr-1"></i>Patrimônio
                     </button>
-                    <button onclick="showTab('projecao')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-tab="projecao">
+                    <button onclick="showTab('projecao')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="projecao">
                         <i class="fas fa-chart-line mr-1"></i>Projeção
                     </button>
                 </div>
@@ -250,27 +345,31 @@
                             </h3>
                             <form onsubmit="handleReceitaForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-descricao">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="receita-descricao">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
-                                    <input name="descricao" id="receita-descricao" type="text" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           placeholder="Ex: Salário Principal">
+                                    <input name="descricao" id="receita-descricao" type="text" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        placeholder="Ex: Salário Principal" maxlength="100">
+                                    <div class="text-xs text-red-500 mt-1 hidden" id="receita-descricao-error"></div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-valor">
                                         <i class="fas fa-dollar-sign mr-1"></i>Valor
                                     </label>
-                                    <input name="valor" id="receita-valor" type="text" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           placeholder="1.000,00" oninput="formatCurrency(this)">
+                                    <input name="valor" id="receita-valor" type="text" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        placeholder="1.000,00" oninput="formatCurrency(this)" data-max="999999999">
+                                    <div class="text-xs text-red-500 mt-1 hidden" id="receita-valor-error"></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-categoria">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="receita-categoria">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
-                                    <select name="categoria" id="receita-categoria" required 
-                                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <select name="categoria" id="receita-categoria" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                                         <option value="">Selecione uma categoria...</option>
                                         <option value="Salário">💼 Salário</option>
                                         <option value="Freelancer">💻 Freelancer</option>
@@ -285,11 +384,12 @@
                                     <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-data">
                                         <i class="fas fa-calendar mr-1"></i>Data
                                     </label>
-                                    <input name="data" id="receita-data" type="date" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <input name="data" id="receita-data" type="date" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <div class="text-xs text-red-500 mt-1 hidden" id="receita-data-error"></div>
                                 </div>
                                 <button type="submit" id="receitaSubmitBtn"
-                                        class="w-full gradient-success text-white py-3 rounded-lg hover:opacity-90 transition-all font-semibold">
+                                    class="w-full gradient-success text-white py-3 rounded-lg hover:opacity-90 transition-all font-semibold">
                                     <i class="fas fa-plus mr-2"></i>Adicionar Receita
                                 </button>
                             </form>
@@ -345,27 +445,31 @@
                             </h3>
                             <form onsubmit="handleDespesaForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-descricao">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="despesa-descricao">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
-                                    <input name="descricao" id="despesa-descricao" type="text" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                                           placeholder="Ex: Aluguel">
+                                    <input name="descricao" id="despesa-descricao" type="text" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                        placeholder="Ex: Aluguel" maxlength="100">
+                                    <div class="text-xs text-red-500 mt-1 hidden" id="despesa-descricao-error"></div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-valor">
                                         <i class="fas fa-dollar-sign mr-1"></i>Valor
                                     </label>
-                                    <input name="valor" id="despesa-valor" type="text" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                                           placeholder="500,00" oninput="formatCurrency(this)">
+                                    <input name="valor" id="despesa-valor" type="text" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                        placeholder="500,00" oninput="formatCurrency(this)" data-max="999999999">
+                                    <div class="text-xs text-red-500 mt-1 hidden" id="despesa-valor-error"></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-categoria">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="despesa-categoria">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
-                                    <select name="categoria" id="despesa-categoria" required 
-                                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                                    <select name="categoria" id="despesa-categoria" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
                                         <option value="">Selecione uma categoria...</option>
                                         <option value="Habitação">🏠 Habitação</option>
                                         <option value="Alimentação">🍽️ Alimentação</option>
@@ -383,11 +487,12 @@
                                     <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-data">
                                         <i class="fas fa-calendar mr-1"></i>Data
                                     </label>
-                                    <input name="data" id="despesa-data" type="date" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                                    <input name="data" id="despesa-data" type="date" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                                    <div class="text-xs text-red-500 mt-1 hidden" id="despesa-data-error"></div>
                                 </div>
                                 <button type="submit" id="despesaSubmitBtn"
-                                        class="w-full gradient-danger text-white py-3 rounded-lg hover:opacity-90 transition-all font-semibold">
+                                    class="w-full gradient-danger text-white py-3 rounded-lg hover:opacity-90 transition-all font-semibold">
                                     <i class="fas fa-plus mr-2"></i>Adicionar Despesa
                                 </button>
                             </form>
@@ -482,7 +587,8 @@
                                     <label class="block text-sm font-semibold mb-2 text-gray-700">
                                         <i class="fas fa-list mr-1"></i>Tipo
                                     </label>
-                                    <select name="tipo" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <select name="tipo" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">Selecione o tipo...</option>
                                         <option value="bem">💰 Bem (Ativo)</option>
                                         <option value="divida">💳 Dívida (Passivo)</option>
@@ -492,23 +598,24 @@
                                     <label class="block text-sm font-semibold mb-2 text-gray-700">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
-                                    <input name="descricao" type="text" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                           placeholder="Ex: Casa, Carro, Financiamento...">
+                                    <input name="descricao" type="text" required maxlength="100"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Ex: Casa, Carro, Financiamento...">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold mb-2 text-gray-700">
                                         <i class="fas fa-dollar-sign mr-1"></i>Valor
                                     </label>
-                                    <input name="valor" type="text" required 
-                                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                           placeholder="50.000,00" oninput="formatCurrency(this)">
+                                    <input name="valor" type="text" required data-max="9999999999"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="50.000,00" oninput="formatCurrency(this)">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold mb-2 text-gray-700">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
-                                    <select name="categoria" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <select name="categoria" required
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">Selecione uma categoria...</option>
                                         <option value="Imóvel">🏠 Imóvel</option>
                                         <option value="Veículo">🚗 Veículo</option>
@@ -521,7 +628,7 @@
                                     </select>
                                 </div>
                                 <button type="submit" id="patrimonioSubmitBtn"
-                                        class="w-full gradient-info text-white py-3 rounded-lg hover:opacity-90 transition-all font-semibold">
+                                    class="w-full gradient-info text-white py-3 rounded-lg hover:opacity-90 transition-all font-semibold">
                                     <i class="fas fa-plus mr-2"></i>Adicionar Item
                                 </button>
                             </form>
@@ -669,7 +776,8 @@
     </div>
 
     <!-- Modal de Confirmação -->
-    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden flex items-center justify-center z-50 p-4">
+    <div id="confirmModal"
+        class="fixed inset-0 bg-black bg-opacity-50 modal hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl p-6 w-full max-w-md fade-in">
             <div class="flex items-center mb-4">
                 <i id="confirmIcon" class="fas fa-question-circle text-3xl text-blue-500 mr-3"></i>
@@ -677,10 +785,12 @@
             </div>
             <p id="confirmMessage" class="text-gray-600 mb-6">Deseja realmente executar esta ação?</p>
             <div class="flex space-x-3">
-                <button onclick="closeConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <button onclick="closeConfirmModal()"
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     Cancelar
                 </button>
-                <button id="confirmButton" class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                <button id="confirmButton"
+                    class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
                     Confirmar
                 </button>
             </div>
@@ -688,7 +798,8 @@
     </div>
 
     <!-- Modal de Edição -->
-    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden flex items-center justify-center z-50 p-4">
+    <div id="editModal"
+        class="fixed inset-0 bg-black bg-opacity-50 modal hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl p-6 w-full max-w-md fade-in">
             <div class="flex items-center justify-between mb-4">
                 <h3 id="editTitle" class="text-lg font-semibold">Editar Item</h3>
@@ -699,27 +810,34 @@
             <form id="editForm" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold mb-2 text-gray-700">Descrição</label>
-                    <input id="editDescricao" type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <input id="editDescricao" type="text" required maxlength="100"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 text-gray-700">Valor</label>
-                    <input id="editValor" type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" oninput="formatCurrency(this)">
+                    <input id="editValor" type="text" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        oninput="formatCurrency(this)">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 text-gray-700">Categoria</label>
-                    <select id="editCategoria" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <select id="editCategoria" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <!-- Opções serão preenchidas dinamicamente -->
                     </select>
                 </div>
                 <div id="editDataContainer">
                     <label class="block text-sm font-semibold mb-2 text-gray-700">Data</label>
-                    <input id="editData" type="date" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <input id="editData" type="date" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 <div class="flex space-x-3">
-                    <button type="button" onclick="closeEditModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <button type="button" onclick="closeEditModal()"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                         Cancelar
                     </button>
-                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                    <button type="submit"
+                        class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
                         Salvar
                     </button>
                 </div>
@@ -727,8 +845,8 @@
         </div>
     </div>
 
-    <!-- Toast de Notificação -->
-    <div id="toast" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300">
+    <!-- Toast de Notificação Corrigido -->
+    <div id="toast" class="toast-container">
         <div class="bg-white border-l-4 border-green-500 rounded-lg shadow-lg p-4 flex items-center space-x-3">
             <i id="toastIcon" class="fas fa-check-circle text-green-500"></i>
             <div>
@@ -738,19 +856,19 @@
         </div>
     </div>
 
-    <!-- JavaScript Principal - Módulo ES6 -->
+    <!-- JavaScript Principal - Módulo ES6 Corrigido -->
     <script type="module">
         // ==================== IMPORTS E CONFIGURAÇÃO ====================
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { 
-            getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, 
-            query, orderBy, onSnapshot, serverTimestamp 
+        import {
+            getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc,
+            query, orderBy, onSnapshot, serverTimestamp
         } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
         // Configuração do Firebase a partir do script JSON
         const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
-        
+
         // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -763,25 +881,63 @@
         let patrimonio = [];
         let unsubscribeTransacoes = null;
         let unsubscribePatrimonio = null;
-        
+
         // Charts
         let evolucaoChart, categoriaChart, projecaoChart;
 
-        // ==================== HELPERS ====================
-        
+        // ==================== HELPERS APRIMORADOS ====================
+
         /**
-         * Converte string em formato brasileiro para número
+         * Sanitiza string removendo caracteres especiais
+         * @param {string} str - String a ser sanitizada
+         * @returns {string} - String sanitizada
+         */
+        function sanitizeString(str) {
+            if (!str) return '';
+            return str.toString().trim()
+                .replace(/<[^>]*>/g, '') // Remove tags HTML
+                .replace(/[^\w\s\-\.áéíóúàèìòùâêîôûãõç]/gi, ''); // Remove caracteres especiais
+        }
+
+        /**
+         * Valida se uma data está dentro do intervalo aceitável
+         * @param {string} dateStr - Data em formato YYYY-MM-DD
+         * @returns {boolean} - True se válida
+         */
+        function isValidDate(dateStr) {
+            if (!dateStr) return false;
+
+            const date = new Date(dateStr);
+            const now = new Date();
+            const minDate = new Date('1900-01-01');
+            const maxDate = new Date();
+            maxDate.setFullYear(maxDate.getFullYear() + 10); // 10 anos no futuro
+
+            return date >= minDate && date <= maxDate && !isNaN(date);
+        }
+
+        /**
+         * Converte string em formato brasileiro para número com validação robusta
          * @param {string} value - Valor em formato "1.234,56"
          * @returns {number} - Número convertido ou NaN se inválido
          */
         function parseBRL(value) {
             if (!value) return 0;
-            // Remove pontos de milhares e troca vírgula por ponto
+
+            // Remove espaços e caracteres não numéricos exceto ponto, vírgula e sinal negativo
             const cleanValue = value.toString()
+                .replace(/[^\d.,-]/g, '')
+                .replace(/\.(?=.*\.)/g, '') // Remove pontos extras (exceto o último)
                 .replace(/\./g, '')
                 .replace(',', '.');
+
             const num = Number(cleanValue);
-            return isFinite(num) ? num : NaN;
+
+            // Validações adicionais
+            if (!isFinite(num) || isNaN(num)) return NaN;
+            if (num < 0 || num > 999999999999) return NaN; // Limite máximo
+
+            return num;
         }
 
         /**
@@ -790,40 +946,100 @@
          * @returns {string} - Valor formatado como "R$ 1.234,56"
          */
         function formatBRL(value) {
-            return value.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            });
+            if (!value && value !== 0) return 'R$ 0,00';
+
+            try {
+                return value.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+            } catch (error) {
+                console.error('Erro na formatação:', error);
+                return 'R$ 0,00';
+            }
         }
 
         /**
-         * Formata entrada de moeda em tempo real
+         * Formata entrada de moeda em tempo real com validação aprimorada
          * @param {HTMLElement} input - Campo de entrada
          */
         function formatCurrency(input) {
             let value = input.value.replace(/\D/g, '');
+
+            // Remove classe de erro se existir
+            input.classList.remove('input-error');
+
             if (value.length === 0) {
                 input.value = '';
                 return;
             }
-            
+
+            // Verifica limite máximo definido no data attribute
+            const maxValue = parseInt(input.dataset.max) || 999999999;
+            const numValue = parseInt(value);
+
+            if (numValue > maxValue) {
+                input.classList.add('input-error');
+                showFieldError(input, `Valor máximo permitido: ${formatBRL(maxValue / 100)}`);
+                return;
+            }
+
             // Adiciona zeros à esquerda se necessário
             while (value.length < 3) {
                 value = '0' + value;
             }
-            
+
             // Insere vírgula antes dos dois últimos dígitos
             const formatted = value.slice(0, -2) + ',' + value.slice(-2);
-            
+
             // Adiciona pontos de milhares
             const parts = formatted.split(',');
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            
+
             input.value = parts.join(',');
+
+            // Adiciona classe de sucesso se valor válido
+            const parsedValue = parseBRL(input.value);
+            if (!isNaN(parsedValue) && parsedValue > 0) {
+                input.classList.add('input-success');
+                hideFieldError(input);
+            }
         }
 
         /**
-         * Exibe toast de notificação
+         * Exibe erro específico de campo
+         * @param {HTMLElement} field - Campo com erro
+         * @param {string} message - Mensagem de erro
+         */
+        function showFieldError(field, message) {
+            const errorId = field.id + '-error';
+            const errorEl = document.getElementById(errorId);
+
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+
+            field.classList.add('input-error');
+        }
+
+        /**
+         * Esconde erro de campo
+         * @param {HTMLElement} field - Campo
+         */
+        function hideFieldError(field) {
+            const errorId = field.id + '-error';
+            const errorEl = document.getElementById(errorId);
+
+            if (errorEl) {
+                errorEl.classList.add('hidden');
+            }
+
+            field.classList.remove('input-error');
+        }
+
+        /**
+         * Exibe toast de notificação com correções
          * @param {string} title - Título da notificação
          * @param {string} message - Mensagem da notificação
          * @param {string} type - Tipo: 'success', 'error', 'warning', 'info'
@@ -833,55 +1049,172 @@
             const icon = document.getElementById('toastIcon');
             const titleEl = document.getElementById('toastTitle');
             const messageEl = document.getElementById('toastMessage');
-            
-            const icons = {
-                success: 'fas fa-check-circle text-green-500',
-                error: 'fas fa-exclamation-circle text-red-500',
-                warning: 'fas fa-exclamation-triangle text-yellow-500',
-                info: 'fas fa-info-circle text-blue-500'
+
+            const configs = {
+                success: {
+                    icon: 'fas fa-check-circle text-green-500',
+                    border: 'border-green-500'
+                },
+                error: {
+                    icon: 'fas fa-exclamation-circle text-red-500',
+                    border: 'border-red-500'
+                },
+                warning: {
+                    icon: 'fas fa-exclamation-triangle text-yellow-500',
+                    border: 'border-yellow-500'
+                },
+                info: {
+                    icon: 'fas fa-info-circle text-blue-500',
+                    border: 'border-blue-500'
+                }
             };
-            
-            icon.className = icons[type] || icons.success;
+
+            const config = configs[type] || configs.success;
+
+            icon.className = config.icon;
+            toast.firstElementChild.className = `bg-white border-l-4 ${config.border} rounded-lg shadow-lg p-4 flex items-center space-x-3`;
             titleEl.textContent = title;
             messageEl.textContent = message;
-            
+
             // Mostrar toast
-            toast.style.transform = 'translateX(0)';
-            
-            // Esconder após 3 segundos
+            toast.classList.add('show');
+
+            // Esconder após 4 segundos
             setTimeout(() => {
-                toast.style.transform = 'translateX(full)';
-            }, 3000);
+                toast.classList.remove('show');
+            }, 4000);
         }
 
         /**
-         * Define data atual nos campos de data
+         * Define data atual nos campos de data com validação
          */
         function setToday() {
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('receita-data').value = today;
-            document.getElementById('despesa-data').value = today;
+
+            const receitaData = document.getElementById('receita-data');
+            const despesaData = document.getElementById('despesa-data');
+
+            if (receitaData) receitaData.value = today;
+            if (despesaData) despesaData.value = today;
+        }
+
+        /**
+         * Valida formulário completo
+         * @param {HTMLFormElement} form - Formulário a ser validado
+         * @param {string} type - Tipo: 'receita', 'despesa', 'patrimonio'
+         * @returns {Object|null} - Dados validados ou null se inválido
+         */
+        function validateForm(form, type) {
+            let isValid = true;
+            const errors = {};
+
+            // Validar descrição
+            const descricao = sanitizeString(form.descricao.value);
+            if (!descricao || descricao.length < 3) {
+                errors.descricao = 'Descrição deve ter pelo menos 3 caracteres';
+                isValid = false;
+            } else if (descricao.length > 100) {
+                errors.descricao = 'Descrição muito longa (máx. 100 caracteres)';
+                isValid = false;
+            }
+
+            // Validar valor
+            const valor = parseBRL(form.valor.value);
+            if (isNaN(valor) || valor <= 0) {
+                errors.valor = 'Valor deve ser maior que zero';
+                isValid = false;
+            } else if (valor > 999999999) {
+                errors.valor = 'Valor muito alto (máx. R$ 999.999.999,00)';
+                isValid = false;
+            }
+
+            // Validar categoria
+            const categoriaValida = ['Salário', 'Freelancer', 'Investimentos', 'Vendas', 'Aluguel', 'Bonus', 'Outros',
+                'Habitação', 'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Roupas',
+                'Tecnologia', 'Contas', 'Imóvel', 'Veículo', 'Poupança', 'Financiamento',
+                'Cartão de Crédito', 'Empréstimo'];
+
+            if (!categoriaValida.includes(form.categoria.value)) {
+                errors.categoria = 'Categoria inválida';
+                isValid = false;
+            }
+
+            // Validar data (apenas para transações)
+            if (type !== 'patrimonio') {
+                if (!isValidDate(form.data.value)) {
+                    errors.data = 'Data inválida';
+                    isValid = false;
+                }
+            }
+
+            // Validar tipo (apenas para patrimônio)
+            if (type === 'patrimonio') {
+                if (!['bem', 'divida'].includes(form.tipo.value)) {
+                    errors.tipo = 'Tipo inválido';
+                    isValid = false;
+                }
+            }
+
+            // Mostrar erros
+            Object.keys(errors).forEach(field => {
+                const input = form[field];
+                if (input) {
+                    showFieldError(input, errors[field]);
+                }
+            });
+
+            if (!isValid) {
+                showToast('Erro de Validação', 'Por favor, corrija os erros no formulário', 'error');
+                return null;
+            }
+
+            // Retornar dados validados
+            const data = {
+                descricao: descricao,
+                valor: valor,
+                categoria: form.categoria.value
+            };
+
+            if (type !== 'patrimonio') {
+                data.tipo = type;
+                data.data = form.data.value;
+            } else {
+                data.tipo = form.tipo.value;
+            }
+
+            return data;
         }
 
         // ==================== AUTENTICAÇÃO ====================
 
         /**
-         * Faz login com Google
+         * Faz login com Google com tratamento de erro aprimorado
          */
         async function loginWithGoogle() {
             const loginBtn = document.getElementById('loginBtn');
-            
+
             try {
                 loginBtn.classList.add('loading');
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Conectando...';
-                
+
                 const result = await signInWithPopup(auth, provider);
                 currentUser = result.user;
-                
+
                 showToast('Sucesso', 'Login realizado com sucesso!', 'success');
             } catch (error) {
                 console.error('Erro no login:', error);
-                showToast('Erro', 'Falha ao fazer login. Tente novamente.', 'error');
+
+                let errorMessage = 'Falha ao fazer login. Tente novamente.';
+
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Login cancelado pelo usuário';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Pop-up bloqueado. Permita pop-ups para este site';
+                } else if (error.code === 'auth/cancelled-popup-request') {
+                    errorMessage = 'Solicitação cancelada';
+                }
+
+                showToast('Erro', errorMessage, 'error');
             } finally {
                 loginBtn.classList.remove('loading');
                 loginBtn.innerHTML = '<i class="fab fa-google mr-2"></i>Entrar com Google';
@@ -930,30 +1263,36 @@
         function showApp() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('appScreen').classList.remove('hidden');
-            
+
             // Atualiza informações do usuário
             document.getElementById('userName').textContent = currentUser.displayName;
-            document.getElementById('userPhoto').src = currentUser.photoURL || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM2MzY2RjEiLz4KPHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjw/dGV4dD4KPC9zdmc+';
-            
+            document.getElementById('userPhoto').src = currentUser.photoURL ||
+                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM2MzY2RjEiLz4KPHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjw/dGV4dD4KPC9zdmc+';
+
             // Define data atual nos formulários
             setToday();
-            
+
             // Carrega tab salva ou dashboard
             const savedTab = localStorage.getItem('currentTab') || 'dashboard';
             showTab(savedTab);
         }
 
-        // ==================== FIRESTORE OPERATIONS ====================
+        // ==================== FIRESTORE OPERATIONS COM TRATAMENTO DE ERRO ====================
 
         /**
          * Inicializa dados do usuário com listeners em tempo real
          */
         function initializeUserData() {
             if (!currentUser) return;
-            
-            setupTransacoesListener();
-            setupPatrimonioListener();
-            initCharts();
+
+            try {
+                setupTransacoesListener();
+                setupPatrimonioListener();
+                initCharts();
+            } catch (error) {
+                console.error('Erro na inicialização:', error);
+                showToast('Erro', 'Erro ao carregar dados do usuário', 'error');
+            }
         }
 
         /**
@@ -961,25 +1300,34 @@
          */
         function setupTransacoesListener() {
             if (unsubscribeTransacoes) unsubscribeTransacoes();
-            
-            const q = query(
-                collection(db, 'users', currentUser.uid, 'transacoes'),
-                orderBy('createdAt', 'desc')
-            );
-            
-            unsubscribeTransacoes = onSnapshot(q, (snapshot) => {
-                transacoes = [];
-                snapshot.forEach((doc) => {
-                    transacoes.push({ id: doc.id, ...doc.data() });
+
+            try {
+                const q = query(
+                    collection(db, 'users', currentUser.uid, 'transacoes'),
+                    orderBy('createdAt', 'desc')
+                );
+
+                unsubscribeTransacoes = onSnapshot(q, (snapshot) => {
+                    transacoes = [];
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        // Validar dados antes de adicionar
+                        if (data.valor && data.descricao && data.categoria) {
+                            transacoes.push({ id: doc.id, ...data });
+                        }
+                    });
+
+                    renderTransacoes();
+                    updateDashboard();
+                    updateCharts();
+                }, (error) => {
+                    console.error('Erro ao carregar transações:', error);
+                    showToast('Erro', 'Erro ao carregar transações. Verifique sua conexão.', 'error');
                 });
-                
-                renderTransacoes();
-                updateDashboard();
-                updateCharts();
-            }, (error) => {
-                console.error('Erro ao carregar transações:', error);
-                showToast('Erro', 'Erro ao carregar transações', 'error');
-            });
+            } catch (error) {
+                console.error('Erro no listener de transações:', error);
+                showToast('Erro', 'Erro na configuração do sincronismo', 'error');
+            }
         }
 
         /**
@@ -987,45 +1335,76 @@
          */
         function setupPatrimonioListener() {
             if (unsubscribePatrimonio) unsubscribePatrimonio();
-            
-            const q = query(collection(db, 'users', currentUser.uid, 'patrimonio'));
-            
-            unsubscribePatrimonio = onSnapshot(q, (snapshot) => {
-                patrimonio = [];
-                snapshot.forEach((doc) => {
-                    patrimonio.push({ id: doc.id, ...doc.data() });
+
+            try {
+                const q = query(collection(db, 'users', currentUser.uid, 'patrimonio'));
+
+                unsubscribePatrimonio = onSnapshot(q, (snapshot) => {
+                    patrimonio = [];
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        // Validar dados antes de adicionar
+                        if (data.valor && data.descricao && data.categoria && data.tipo) {
+                            patrimonio.push({ id: doc.id, ...data });
+                        }
+                    });
+
+                    renderPatrimonio();
+                }, (error) => {
+                    console.error('Erro ao carregar patrimônio:', error);
+                    showToast('Erro', 'Erro ao carregar patrimônio. Verifique sua conexão.', 'error');
                 });
-                
-                renderPatrimonio();
-            }, (error) => {
-                console.error('Erro ao carregar patrimônio:', error);
-                showToast('Erro', 'Erro ao carregar patrimônio', 'error');
-            });
+            } catch (error) {
+                console.error('Erro no listener de patrimônio:', error);
+                showToast('Erro', 'Erro na configuração do sincronismo', 'error');
+            }
         }
 
         /**
          * Remove listeners ativos
          */
         function cleanupListeners() {
-            if (unsubscribeTransacoes) unsubscribeTransacoes();
-            if (unsubscribePatrimonio) unsubscribePatrimonio();
+            try {
+                if (unsubscribeTransacoes) {
+                    unsubscribeTransacoes();
+                    unsubscribeTransacoes = null;
+                }
+                if (unsubscribePatrimonio) {
+                    unsubscribePatrimonio();
+                    unsubscribePatrimonio = null;
+                }
+            } catch (error) {
+                console.error('Erro ao limpar listeners:', error);
+            }
         }
 
         /**
-         * Adiciona nova transação
+         * Adiciona nova transação com validação e tratamento de erro
          * @param {Object} data - Dados da transação
          */
         async function addTransaction(data) {
             try {
+                if (!currentUser) {
+                    throw new Error('Usuário não autenticado');
+                }
+
                 await addDoc(collection(db, 'users', currentUser.uid, 'transacoes'), {
                     ...data,
                     createdAt: serverTimestamp()
                 });
-                
+
                 showToast('Sucesso', `${data.tipo === 'receita' ? 'Receita' : 'Despesa'} adicionada com sucesso!`, 'success');
             } catch (error) {
                 console.error('Erro ao salvar transação:', error);
-                showToast('Erro', 'Erro ao salvar transação', 'error');
+
+                let errorMessage = 'Erro ao salvar transação';
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'Permissão negada. Verifique suas credenciais.';
+                } else if (error.code === 'unavailable') {
+                    errorMessage = 'Serviço indisponível. Tente novamente.';
+                }
+
+                showToast('Erro', errorMessage, 'error');
                 throw error;
             }
         }
@@ -1036,30 +1415,44 @@
          */
         async function addPatrimony(data) {
             try {
+                if (!currentUser) {
+                    throw new Error('Usuário não autenticado');
+                }
+
                 await addDoc(collection(db, 'users', currentUser.uid, 'patrimonio'), {
                     ...data,
                     createdAt: serverTimestamp()
                 });
-                
+
                 showToast('Sucesso', `${data.tipo === 'bem' ? 'Bem' : 'Dívida'} adicionado(a) com sucesso!`, 'success');
             } catch (error) {
                 console.error('Erro ao salvar patrimônio:', error);
-                showToast('Erro', 'Erro ao salvar patrimônio', 'error');
+
+                let errorMessage = 'Erro ao salvar patrimônio';
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'Permissão negada. Verifique suas credenciais.';
+                }
+
+                showToast('Erro', errorMessage, 'error');
                 throw error;
             }
         }
 
         /**
          * Atualiza item existente
-         * @param {string} collection - Coleção do item
+         * @param {string} collectionName - Coleção do item
          * @param {string} id - ID do item
          * @param {Object} data - Novos dados
          */
         async function updateItem(collectionName, id, data) {
             try {
+                if (!currentUser || !id) {
+                    throw new Error('Dados inválidos para atualização');
+                }
+
                 const docRef = doc(db, 'users', currentUser.uid, collectionName, id);
                 await updateDoc(docRef, data);
-                
+
                 showToast('Sucesso', 'Item atualizado com sucesso!', 'success');
             } catch (error) {
                 console.error('Erro ao atualizar:', error);
@@ -1070,11 +1463,15 @@
 
         /**
          * Deleta item
-         * @param {string} collection - Coleção do item
+         * @param {string} collectionName - Coleção do item
          * @param {string} id - ID do item
          */
         async function deleteItem(collectionName, id) {
             try {
+                if (!currentUser || !id) {
+                    throw new Error('Dados inválidos para exclusão');
+                }
+
                 await deleteDoc(doc(db, 'users', currentUser.uid, collectionName, id));
                 showToast('Sucesso', 'Item removido com sucesso!', 'success');
             } catch (error) {
@@ -1094,74 +1491,81 @@
             const totalEl = document.getElementById('totalTransacoes');
             const receitasList = document.getElementById('receitasList');
             const despesasList = document.getElementById('despesasList');
-            
+
+            if (!tbody || !totalEl || !receitasList || !despesasList) return;
+
             tbody.innerHTML = '';
             receitasList.innerHTML = '';
             despesasList.innerHTML = '';
-            
+
             totalEl.textContent = `${transacoes.length} transações`;
-            
-            // Renderiza últimas 10 transações na tabela
-            transacoes.slice(0, 10).forEach(transacao => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50 transition-colors';
 
-                const data = new Date(transacao.data).toLocaleDateString('pt-BR');
-                const valor = formatBRL(transacao.valor);
-                const tipo = transacao.tipo;
-                const corValor = tipo === 'receita' ? 'text-green-600' : 'text-red-600';
-                const icone = tipo === 'receita' ? 'fa-arrow-up' : 'fa-arrow-down';
-                const emoji = tipo === 'receita' ? '💰' : '💸';
+            try {
+                // Renderiza últimas 10 transações na tabela
+                transacoes.slice(0, 10).forEach(transacao => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50 transition-colors';
 
-                row.innerHTML = `
-                    <td class="px-4 py-3">${data}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center">
-                            <span class="mr-2">${emoji}</span>
-                            <span class="font-medium">${transacao.descricao}</span>
-                        </div>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">${transacao.categoria}</span>
-                    </td>
-                    <td class="px-4 py-3 ${corValor} font-semibold text-right">
-                        <i class="fas ${icone} mr-1"></i>${valor}
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        <button onclick="editTransaction('${transacao.id}')" 
-                                class="text-blue-500 hover:text-blue-700 mr-2" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteTransactionConfirm('${transacao.id}')" 
-                                class="text-red-500 hover:text-red-700" title="Excluir">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            // Renderiza listas específicas por tipo
-            const receitas = transacoes.filter(t => t.tipo === 'receita').slice(0, 5);
-            const despesas = transacoes.filter(t => t.tipo === 'despesa').slice(0, 5);
-            
-            receitas.forEach(receita => {
-                const item = createTransactionListItem(receita, 'green');
-                receitasList.appendChild(item);
-            });
-            
-            despesas.forEach(despesa => {
-                const item = createTransactionListItem(despesa, 'red');
-                despesasList.appendChild(item);
-            });
-            
-            // Mensagem se não há transações
-            if (receitas.length === 0) {
-                receitasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma receita registrada</p>';
-            }
-            
-            if (despesas.length === 0) {
-                despesasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma despesa registrada</p>';
+                    const data = new Date(transacao.data).toLocaleDateString('pt-BR');
+                    const valor = formatBRL(transacao.valor);
+                    const tipo = transacao.tipo;
+                    const corValor = tipo === 'receita' ? 'text-green-600' : 'text-red-600';
+                    const icone = tipo === 'receita' ? 'fa-arrow-up' : 'fa-arrow-down';
+                    const emoji = tipo === 'receita' ? '💰' : '💸';
+
+                    row.innerHTML = `
+                        <td class="px-4 py-3">${data}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <span class="mr-2">${emoji}</span>
+                                <span class="font-medium">${sanitizeString(transacao.descricao)}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">${sanitizeString(transacao.categoria)}</span>
+                        </td>
+                        <td class="px-4 py-3 ${corValor} font-semibold text-right">
+                            <i class="fas ${icone} mr-1"></i>${valor}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <button onclick="editTransaction('${transacao.id}')" 
+                                    class="text-blue-500 hover:text-blue-700 mr-2" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteTransactionConfirm('${transacao.id}')" 
+                                    class="text-red-500 hover:text-red-700" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Renderiza listas específicas por tipo
+                const receitas = transacoes.filter(t => t.tipo === 'receita').slice(0, 5);
+                const despesas = transacoes.filter(t => t.tipo === 'despesa').slice(0, 5);
+
+                receitas.forEach(receita => {
+                    const item = createTransactionListItem(receita, 'green');
+                    receitasList.appendChild(item);
+                });
+
+                despesas.forEach(despesa => {
+                    const item = createTransactionListItem(despesa, 'red');
+                    despesasList.appendChild(item);
+                });
+
+                // Mensagem se não há transações
+                if (receitas.length === 0) {
+                    receitasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma receita registrada</p>';
+                }
+
+                if (despesas.length === 0) {
+                    despesasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma despesa registrada</p>';
+                }
+            } catch (error) {
+                console.error('Erro ao renderizar transações:', error);
+                showToast('Erro', 'Erro ao exibir transações', 'error');
             }
         }
 
@@ -1173,34 +1577,39 @@
         function createTransactionListItem(transacao, color) {
             const item = document.createElement('div');
             item.className = `flex items-center justify-between p-3 bg-${color}-50 border border-${color}-100 rounded-lg hover:bg-${color}-100 transition-colors`;
-            
-            const data = new Date(transacao.data).toLocaleDateString('pt-BR');
-            const valor = formatBRL(transacao.valor);
-            const emoji = transacao.tipo === 'receita' ? '💰' : '💸';
-            
-            item.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <span class="text-lg">${emoji}</span>
-                    <div>
-                        <p class="font-medium text-gray-800">${transacao.descricao}</p>
-                        <p class="text-xs text-gray-600">${transacao.categoria} • ${data}</p>
+
+            try {
+                const data = new Date(transacao.data).toLocaleDateString('pt-BR');
+                const valor = formatBRL(transacao.valor);
+                const emoji = transacao.tipo === 'receita' ? '💰' : '💸';
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">${emoji}</span>
+                        <div>
+                            <p class="font-medium text-gray-800">${sanitizeString(transacao.descricao)}</p>
+                            <p class="text-xs text-gray-600">${sanitizeString(transacao.categoria)} • ${data}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-right">
-                    <p class="font-bold text-${color}-700">${valor}</p>
-                    <div class="space-x-1">
-                        <button onclick="editTransaction('${transacao.id}')" 
-                                class="text-blue-500 hover:text-blue-700 text-xs" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteTransactionConfirm('${transacao.id}')" 
-                                class="text-red-500 hover:text-red-700 text-xs" title="Excluir">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="text-right">
+                        <p class="font-bold text-${color}-700">${valor}</p>
+                        <div class="space-x-1">
+                            <button onclick="editTransaction('${transacao.id}')" 
+                                    class="text-blue-500 hover:text-blue-700 text-xs" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteTransactionConfirm('${transacao.id}')" 
+                                    class="text-red-500 hover:text-red-700 text-xs" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
-            
+                `;
+            } catch (error) {
+                console.error('Erro ao criar item de transação:', error);
+                item.innerHTML = '<p class="text-red-500">Erro ao carregar item</p>';
+            }
+
             return item;
         }
 
@@ -1210,51 +1619,58 @@
         function renderPatrimonio() {
             const bensContainer = document.getElementById('bensList');
             const dividasContainer = document.getElementById('dividasList');
-            
+
+            if (!bensContainer || !dividasContainer) return;
+
             bensContainer.innerHTML = '';
             dividasContainer.innerHTML = '';
-            
+
             let totalBens = 0;
             let totalDividas = 0;
             let quantidadeBens = 0;
             let quantidadeDividas = 0;
-            
-            patrimonio.forEach(item => {
-                const valor = formatBRL(item.valor);
-                
-                if (item.tipo === 'bem') {
-                    totalBens += item.valor;
-                    quantidadeBens++;
-                    const element = createPatrimonioItem(item, valor, 'green', '💎');
-                    bensContainer.appendChild(element);
-                } else {
-                    totalDividas += item.valor;
-                    quantidadeDividas++;
-                    const element = createPatrimonioItem(item, valor, 'red', '💳');
-                    dividasContainer.appendChild(element);
+
+            try {
+                patrimonio.forEach(item => {
+                    const valor = formatBRL(item.valor);
+
+                    if (item.tipo === 'bem') {
+                        totalBens += item.valor;
+                        quantidadeBens++;
+                        const element = createPatrimonioItem(item, valor, 'green', '💎');
+                        bensContainer.appendChild(element);
+                    } else {
+                        totalDividas += item.valor;
+                        quantidadeDividas++;
+                        const element = createPatrimonioItem(item, valor, 'red', '💳');
+                        dividasContainer.appendChild(element);
+                    }
+                });
+
+                // Mensagens se não há itens
+                if (quantidadeBens === 0) {
+                    bensContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhum bem cadastrado</p>';
                 }
-            });
-            
-            // Mensagens se não há itens
-            if (quantidadeBens === 0) {
-                bensContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhum bem cadastrado</p>';
+
+                if (quantidadeDividas === 0) {
+                    dividasContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma dívida cadastrada</p>';
+                }
+
+                // Atualiza resumo do patrimônio
+                document.getElementById('totalBens').textContent = formatBRL(totalBens);
+                document.getElementById('totalDividas').textContent = formatBRL(totalDividas);
+                document.getElementById('patrimonioLiquido').textContent = formatBRL(totalBens - totalDividas);
+                document.getElementById('quantidadeBens').textContent = `${quantidadeBens} itens`;
+                document.getElementById('quantidadeDividas').textContent = `${quantidadeDividas} itens`;
+
+                const patrimonioLiquido = totalBens - totalDividas;
+                const statusEl = document.getElementById('statusPatrimonio');
+                statusEl.textContent = patrimonioLiquido >= 0 ? 'Positivo' : 'Negativo';
+                statusEl.className = patrimonioLiquido >= 0 ? 'text-xs opacity-75 mt-1' : 'text-xs opacity-75 mt-1 text-red-200';
+            } catch (error) {
+                console.error('Erro ao renderizar patrimônio:', error);
+                showToast('Erro', 'Erro ao exibir patrimônio', 'error');
             }
-            
-            if (quantidadeDividas === 0) {
-                dividasContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma dívida cadastrada</p>';
-            }
-            
-            // Atualiza resumo do patrimônio
-            document.getElementById('totalBens').textContent = formatBRL(totalBens);
-            document.getElementById('totalDividas').textContent = formatBRL(totalDividas);
-            document.getElementById('patrimonioLiquido').textContent = formatBRL(totalBens - totalDividas);
-            document.getElementById('quantidadeBens').textContent = `${quantidadeBens} itens`;
-            document.getElementById('quantidadeDividas').textContent = `${quantidadeDividas} itens`;
-            
-            const patrimonioLiquido = totalBens - totalDividas;
-            const statusEl = document.getElementById('statusPatrimonio');
-            statusEl.textContent = patrimonioLiquido >= 0 ? 'Positivo' : 'Negativo';
-            statusEl.className = patrimonioLiquido >= 0 ? 'text-xs opacity-75 mt-1' : 'text-xs opacity-75 mt-1 text-red-200';
         }
 
         /**
@@ -1267,30 +1683,35 @@
         function createPatrimonioItem(item, valor, color, emoji) {
             const element = document.createElement('div');
             element.className = `flex items-center justify-between p-3 bg-${color}-50 border border-${color}-100 rounded-lg hover:bg-${color}-100 transition-colors`;
-            
-            element.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <span class="text-lg">${emoji}</span>
-                    <div>
-                        <p class="font-medium text-gray-800">${item.descricao}</p>
-                        <p class="text-xs text-gray-600">${item.categoria}</p>
+
+            try {
+                element.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">${emoji}</span>
+                        <div>
+                            <p class="font-medium text-gray-800">${sanitizeString(item.descricao)}</p>
+                            <p class="text-xs text-gray-600">${sanitizeString(item.categoria)}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-right">
-                    <p class="font-bold text-${color}-700">${valor}</p>
-                    <div class="space-x-1">
-                        <button onclick="editPatrimonio('${item.id}')" 
-                                class="text-blue-500 hover:text-blue-700 text-xs" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deletePatrimonioConfirm('${item.id}')" 
-                                class="text-red-500 hover:text-red-700 text-xs" title="Excluir">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="text-right">
+                        <p class="font-bold text-${color}-700">${valor}</p>
+                        <div class="space-x-1">
+                            <button onclick="editPatrimonio('${item.id}')" 
+                                    class="text-blue-500 hover:text-blue-700 text-xs" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deletePatrimonioConfirm('${item.id}')" 
+                                    class="text-red-500 hover:text-red-700 text-xs" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
-            
+                `;
+            } catch (error) {
+                console.error('Erro ao criar item de patrimônio:', error);
+                element.innerHTML = '<p class="text-red-500">Erro ao carregar item</p>';
+            }
+
             return element;
         }
 
@@ -1300,92 +1721,102 @@
          * Atualiza dashboard principal
          */
         function updateDashboard() {
-            const agora = new Date();
-            const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
-            const fimMes = new Date(agora.getFullYear(), agora.getMonth() + 1, 0);
-            
-            // Filtra transações do mês atual
-            const transacoesMes = transacoes.filter(t => {
-                const dataTransacao = new Date(t.data);
-                return dataTransacao >= inicioMes && dataTransacao <= fimMes;
-            });
-            
-            const receitas = transacoesMes.filter(t => t.tipo === 'receita');
-            const despesas = transacoesMes.filter(t => t.tipo === 'despesa');
-            
-            const totalReceitas = receitas.reduce((sum, t) => sum + t.valor, 0);
-            const totalDespesas = despesas.reduce((sum, t) => sum + t.valor, 0);
-            const saldoAtual = totalReceitas - totalDespesas;
-            const economiaMensal = saldoAtual;
-            
-            // Calcula médias anuais
-            const receitasAnuais = transacoes.filter(t => t.tipo === 'receita');
-            const despesasAnuais = transacoes.filter(t => t.tipo === 'despesa');
-            
-            const mediaReceitas = receitasAnuais.length > 0 ? 
-                receitasAnuais.reduce((sum, t) => sum + t.valor, 0) / 12 : 0;
-            const mediaDespesas = despesasAnuais.length > 0 ? 
-                despesasAnuais.reduce((sum, t) => sum + t.valor, 0) / 12 : 0;
-            
-            // Atualiza elementos do dashboard
-            document.getElementById('saldoAtual').textContent = formatBRL(saldoAtual);
-            document.getElementById('receitasMes').textContent = formatBRL(totalReceitas);
-            document.getElementById('despesasMes').textContent = formatBRL(totalDespesas);
-            document.getElementById('economiaMensal').textContent = formatBRL(economiaMensal);
-            
-            // Atualiza médias
-            document.getElementById('mediaReceitas').textContent = `Média: ${formatBRL(mediaReceitas)}`;
-            document.getElementById('mediaDespesas').textContent = `Média: ${formatBRL(mediaDespesas)}`;
-            
-            // Atualiza resumos específicos
-            document.getElementById('totalReceitasMes').textContent = formatBRL(totalReceitas);
-            document.getElementById('totalDespesasMes').textContent = formatBRL(totalDespesas);
-            document.getElementById('mediaReceitasMensal').textContent = formatBRL(mediaReceitas);
-            document.getElementById('mediaDespesasMensal').textContent = formatBRL(mediaDespesas);
-            
-            // Calcula percentuais
-            const percentualEconomia = totalReceitas > 0 ? (economiaMensal / totalReceitas * 100) : 0;
-            document.getElementById('percentualEconomia').textContent = `${percentualEconomia.toFixed(1)}% da receita`;
-            
-            // Chama cálculos de projeção
-            updateProjecaoCalculations();
+            try {
+                const agora = new Date();
+                const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+                const fimMes = new Date(agora.getFullYear(), agora.getMonth() + 1, 0);
+
+                // Filtra transações do mês atual
+                const transacoesMes = transacoes.filter(t => {
+                    if (!t.data) return false;
+                    const dataTransacao = new Date(t.data);
+                    return dataTransacao >= inicioMes && dataTransacao <= fimMes;
+                });
+
+                const receitas = transacoesMes.filter(t => t.tipo === 'receita');
+                const despesas = transacoesMes.filter(t => t.tipo === 'despesa');
+
+                const totalReceitas = receitas.reduce((sum, t) => sum + (t.valor || 0), 0);
+                const totalDespesas = despesas.reduce((sum, t) => sum + (t.valor || 0), 0);
+                const saldoAtual = totalReceitas - totalDespesas;
+                const economiaMensal = saldoAtual;
+
+                // Calcula médias anuais
+                const receitasAnuais = transacoes.filter(t => t.tipo === 'receita');
+                const despesasAnuais = transacoes.filter(t => t.tipo === 'despesa');
+
+                const mediaReceitas = receitasAnuais.length > 0 ?
+                    receitasAnuais.reduce((sum, t) => sum + (t.valor || 0), 0) / 12 : 0;
+                const mediaDespesas = despesasAnuais.length > 0 ?
+                    despesasAnuais.reduce((sum, t) => sum + (t.valor || 0), 0) / 12 : 0;
+
+                // Atualiza elementos do dashboard
+                document.getElementById('saldoAtual').textContent = formatBRL(saldoAtual);
+                document.getElementById('receitasMes').textContent = formatBRL(totalReceitas);
+                document.getElementById('despesasMes').textContent = formatBRL(totalDespesas);
+                document.getElementById('economiaMensal').textContent = formatBRL(economiaMensal);
+
+                // Atualiza médias
+                document.getElementById('mediaReceitas').textContent = `Média: ${formatBRL(mediaReceitas)}`;
+                document.getElementById('mediaDespesas').textContent = `Média: ${formatBRL(mediaDespesas)}`;
+
+                // Atualiza resumos específicos
+                document.getElementById('totalReceitasMes').textContent = formatBRL(totalReceitas);
+                document.getElementById('totalDespesasMes').textContent = formatBRL(totalDespesas);
+                document.getElementById('mediaReceitasMensal').textContent = formatBRL(mediaReceitas);
+                document.getElementById('mediaDespesasMensal').textContent = formatBRL(mediaDespesas);
+
+                // Calcula percentuais
+                const percentualEconomia = totalReceitas > 0 ? (economiaMensal / totalReceitas * 100) : 0;
+                document.getElementById('percentualEconomia').textContent = `${percentualEconomia.toFixed(1)}% da receita`;
+
+                // Chama cálculos de projeção
+                updateProjecaoCalculations();
+            } catch (error) {
+                console.error('Erro ao atualizar dashboard:', error);
+                showToast('Erro', 'Erro ao atualizar dashboard', 'error');
+            }
         }
 
         /**
          * Atualiza cálculos de projeção anual
          */
         function updateProjecaoCalculations() {
-            const agora = new Date();
-            const mesesRestantes = 12 - agora.getMonth();
-            
-            // Calcula economia mensal média baseada no histórico
-            const receitaTotal = transacoes
-                .filter(t => t.tipo === 'receita' && new Date(t.data).getFullYear() === agora.getFullYear())
-                .reduce((sum, t) => sum + t.valor, 0);
-            
-            const despesaTotal = transacoes
-                .filter(t => t.tipo === 'despesa' && new Date(t.data).getFullYear() === agora.getFullYear())
-                .reduce((sum, t) => sum + t.valor, 0);
-            
-            const mesesDecorridos = agora.getMonth() + 1;
-            const economiaMensalMedia = mesesDecorridos > 0 ? 
-                (receitaTotal - despesaTotal) / mesesDecorridos : 0;
-            
-            // Calcula cenários
-            const conservador = economiaMensalMedia * 0.7 * mesesRestantes;
-            const realista = economiaMensalMedia * mesesRestantes;
-            const otimista = economiaMensalMedia * 1.3 * mesesRestantes;
-            
-            // Atualiza elementos
-            document.getElementById('cenarioConservador').textContent = formatBRL(conservador);
-            document.getElementById('cenarioRealista').textContent = formatBRL(realista);
-            document.getElementById('cenarioOtimista').textContent = formatBRL(otimista);
-            
-            // Gera análise inteligente
-            generateAnaliseInteligente(economiaMensalMedia, receitaTotal, despesaTotal);
-            
-            // Gera metas sugeridas
-            generateMetasSugeridas(economiaMensalMedia);
+            try {
+                const agora = new Date();
+                const mesesRestantes = 12 - agora.getMonth();
+
+                // Calcula economia mensal média baseada no histórico
+                const receitaTotal = transacoes
+                    .filter(t => t.tipo === 'receita' && new Date(t.data).getFullYear() === agora.getFullYear())
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const despesaTotal = transacoes
+                    .filter(t => t.tipo === 'despesa' && new Date(t.data).getFullYear() === agora.getFullYear())
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const mesesDecorridos = agora.getMonth() + 1;
+                const economiaMensalMedia = mesesDecorridos > 0 ?
+                    (receitaTotal - despesaTotal) / mesesDecorridos : 0;
+
+                // Calcula cenários
+                const conservador = economiaMensalMedia * 0.7 * mesesRestantes;
+                const realista = economiaMensalMedia * mesesRestantes;
+                const otimista = economiaMensalMedia * 1.3 * mesesRestantes;
+
+                // Atualiza elementos
+                document.getElementById('cenarioConservador').textContent = formatBRL(conservador);
+                document.getElementById('cenarioRealista').textContent = formatBRL(realista);
+                document.getElementById('cenarioOtimista').textContent = formatBRL(otimista);
+
+                // Gera análise inteligente
+                generateAnaliseInteligente(economiaMensalMedia, receitaTotal, despesaTotal);
+
+                // Gera metas sugeridas
+                generateMetasSugeridas(economiaMensalMedia);
+            } catch (error) {
+                console.error('Erro nos cálculos de projeção:', error);
+            }
         }
 
         /**
@@ -1396,48 +1827,57 @@
          */
         function generateAnaliseInteligente(economiaMensal, receitas, despesas) {
             const container = document.getElementById('analiseInteligente');
-            const analyses = [];
-            
-            // Análise de economia
-            if (economiaMensal > 0) {
-                const percentual = receitas > 0 ? (economiaMensal / (receitas / 12) * 100) : 0;
-                analyses.push(`
-                    <div class="flex items-start space-x-2">
-                        <i class="fas fa-thumbs-up text-green-500 mt-1"></i>
-                        <p>Você tem uma economia mensal positiva de <strong>${formatBRL(economiaMensal)}</strong> (${percentual.toFixed(1)}% da receita).</p>
-                    </div>
-                `);
-            } else {
-                analyses.push(`
-                    <div class="flex items-start space-x-2">
-                        <i class="fas fa-exclamation-triangle text-yellow-500 mt-1"></i>
-                        <p>Suas despesas estão superando as receitas em <strong>${formatBRL(Math.abs(economiaMensal))}</strong> por mês.</p>
-                    </div>
-                `);
+            if (!container) return;
+
+            try {
+                const analyses = [];
+
+                // Análise de economia
+                if (economiaMensal > 0) {
+                    const percentual = receitas > 0 ? (economiaMensal / (receitas / 12) * 100) : 0;
+                    analyses.push(`
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-thumbs-up text-green-500 mt-1"></i>
+                            <p>Você tem uma economia mensal positiva de <strong>${formatBRL(economiaMensal)}</strong> (${percentual.toFixed(1)}% da receita).</p>
+                        </div>
+                    `);
+                } else {
+                    analyses.push(`
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 mt-1"></i>
+                            <p>Suas despesas estão superando as receitas em <strong>${formatBRL(Math.abs(economiaMensal))}</strong> por mês.</p>
+                        </div>
+                    `);
+                }
+
+                // Análise de categorias
+                const despesasPorCategoria = {};
+                transacoes
+                    .filter(t => t.tipo === 'despesa')
+                    .forEach(t => {
+                        if (t.categoria && t.valor) {
+                            despesasPorCategoria[t.categoria] = (despesasPorCategoria[t.categoria] || 0) + t.valor;
+                        }
+                    });
+
+                const categoriasMaiorGasto = Object.entries(despesasPorCategoria)
+                    .sort(([, a], [, b]) => b - a)
+                    .slice(0, 2);
+
+                if (categoriasMaiorGasto.length > 0) {
+                    analyses.push(`
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-chart-pie text-blue-500 mt-1"></i>
+                            <p>Suas maiores despesas estão em <strong>${categoriasMaiorGasto[0][0]}</strong> (${formatBRL(categoriasMaiorGasto[0][1])}).</p>
+                        </div>
+                    `);
+                }
+
+                container.innerHTML = analyses.join('');
+            } catch (error) {
+                console.error('Erro na análise inteligente:', error);
+                container.innerHTML = '<p class="text-red-500">Erro ao gerar análise</p>';
             }
-            
-            // Análise de categorias
-            const despesasPorCategoria = {};
-            transacoes
-                .filter(t => t.tipo === 'despesa')
-                .forEach(t => {
-                    despesasPorCategoria[t.categoria] = (despesasPorCategoria[t.categoria] || 0) + t.valor;
-                });
-            
-            const categoriasMaiorGasto = Object.entries(despesasPorCategoria)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 2);
-            
-            if (categoriasMaiorGasto.length > 0) {
-                analyses.push(`
-                    <div class="flex items-start space-x-2">
-                        <i class="fas fa-chart-pie text-blue-500 mt-1"></i>
-                        <p>Suas maiores despesas estão em <strong>${categoriasMaiorGasto[0][0]}</strong> (${formatBRL(categoriasMaiorGasto[0][1])}).</p>
-                    </div>
-                `);
-            }
-            
-            container.innerHTML = analyses.join('');
         }
 
         /**
@@ -1446,41 +1886,48 @@
          */
         function generateMetasSugeridas(economiaMensal) {
             const container = document.getElementById('metasSugeridas');
-            const metas = [];
-            
-            if (economiaMensal > 0) {
-                const metaEmergencia = economiaMensal * 6;
+            if (!container) return;
+
+            try {
+                const metas = [];
+
+                if (economiaMensal > 0) {
+                    const metaEmergencia = economiaMensal * 6;
+                    metas.push(`
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-piggy-bank text-green-500 mt-1"></i>
+                            <p>Reserve <strong>${formatBRL(metaEmergencia)}</strong> como fundo de emergência (6 meses de economia).</p>
+                        </div>
+                    `);
+
+                    const metaInvestimento = economiaMensal * 0.3;
+                    metas.push(`
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-chart-line text-blue-500 mt-1"></i>
+                            <p>Considere investir <strong>${formatBRL(metaInvestimento)}</strong> mensalmente (30% da economia).</p>
+                        </div>
+                    `);
+                } else {
+                    metas.push(`
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-cut text-red-500 mt-1"></i>
+                            <p>Reduza gastos em <strong>${formatBRL(Math.abs(economiaMensal))}</strong> para equilibrar o orçamento.</p>
+                        </div>
+                    `);
+                }
+
                 metas.push(`
                     <div class="flex items-start space-x-2">
-                        <i class="fas fa-piggy-bank text-green-500 mt-1"></i>
-                        <p>Reserve <strong>${formatBRL(metaEmergencia)}</strong> como fundo de emergência (6 meses de economia).</p>
+                        <i class="fas fa-target text-purple-500 mt-1"></i>
+                        <p>Estabeleça um orçamento mensal e acompanhe semanalmente.</p>
                     </div>
                 `);
-                
-                const metaInvestimento = economiaMensal * 0.3;
-                metas.push(`
-                    <div class="flex items-start space-x-2">
-                        <i class="fas fa-chart-line text-blue-500 mt-1"></i>
-                        <p>Considere investir <strong>${formatBRL(metaInvestimento)}</strong> mensalmente (30% da economia).</p>
-                    </div>
-                `);
-            } else {
-                metas.push(`
-                    <div class="flex items-start space-x-2">
-                        <i class="fas fa-cut text-red-500 mt-1"></i>
-                        <p>Reduza gastos em <strong>${formatBRL(Math.abs(economiaMensal))}</strong> para equilibrar o orçamento.</p>
-                    </div>
-                `);
+
+                container.innerHTML = metas.join('');
+            } catch (error) {
+                console.error('Erro nas metas sugeridas:', error);
+                container.innerHTML = '<p class="text-red-500">Erro ao gerar metas</p>';
             }
-            
-            metas.push(`
-                <div class="flex items-start space-x-2">
-                    <i class="fas fa-target text-purple-500 mt-1"></i>
-                    <p>Estabeleça um orçamento mensal e acompanhe semanalmente.</p>
-                </div>
-            `);
-            
-            container.innerHTML = metas.join('');
         }
 
         // ==================== GRÁFICOS ====================
@@ -1489,9 +1936,13 @@
          * Inicializa todos os gráficos
          */
         function initCharts() {
-            initEvolucaoChart();
-            initCategoriaChart();
-            initProjecaoChart();
+            try {
+                initEvolucaoChart();
+                initCategoriaChart();
+                initProjecaoChart();
+            } catch (error) {
+                console.error('Erro ao inicializar gráficos:', error);
+            }
         }
 
         /**
@@ -1500,59 +1951,63 @@
         function initEvolucaoChart() {
             const ctx = document.getElementById('evolucaoChart');
             if (!ctx) return;
-            
-            evolucaoChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+
+            try {
+                evolucaoChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
                             'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                    datasets: [{
-                        label: 'Receitas',
-                        data: Array(12).fill(0),
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Despesas',
-                        data: Array(12).fill(0),
-                        borderColor: '#ef4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
+                        datasets: [{
+                            label: 'Receitas',
+                            data: Array(12).fill(0),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Despesas',
+                            data: Array(12).fill(0),
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
                     },
-                    plugins: {
-                        legend: {
-                            position: 'top',
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatBRL(context.parsed.y);
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return context.dataset.label + ': ' + formatBRL(context.parsed.y);
+                                    }
                                 }
                             }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatBRL(value);
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return formatBRL(value);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Erro no gráfico de evolução:', error);
+            }
         }
 
         /**
@@ -1561,47 +2016,51 @@
         function initCategoriaChart() {
             const ctx = document.getElementById('categoriaChart');
             if (!ctx) return;
-            
-            categoriaChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: [],
-                        backgroundColor: [
-                            '#3b82f6', '#ef4444', '#10b981', '#f59e0b',
-                            '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
-                            '#f97316', '#6366f1', '#14b8a6', '#f43f5e'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = formatBRL(context.parsed);
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                    return `${label}: ${value} (${percentage}%)`;
+
+            try {
+                categoriaChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [
+                                '#3b82f6', '#ef4444', '#10b981', '#f59e0b',
+                                '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
+                                '#f97316', '#6366f1', '#14b8a6', '#f43f5e'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = formatBRL(context.parsed);
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Erro no gráfico de categorias:', error);
+            }
         }
 
         /**
@@ -1610,57 +2069,65 @@
         function initProjecaoChart() {
             const ctx = document.getElementById('projecaoChart');
             if (!ctx) return;
-            
-            projecaoChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+
+            try {
+                projecaoChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
                             'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                    datasets: [{
-                        label: 'Economia Acumulada',
-                        data: Array(12).fill(0),
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: '#3b82f6',
-                        borderWidth: 2,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Economia: ' + formatBRL(context.parsed.y);
+                        datasets: [{
+                            label: 'Economia Acumulada',
+                            data: Array(12).fill(0),
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return 'Economia: ' + formatBRL(context.parsed.y);
+                                    }
                                 }
                             }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatBRL(value);
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return formatBRL(value);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Erro no gráfico de projeção:', error);
+            }
         }
 
         /**
          * Atualiza dados dos gráficos
          */
         function updateCharts() {
-            updateEvolucaoChart();
-            updateCategoriaChart();
-            updateProjecaoChart();
+            try {
+                updateEvolucaoChart();
+                updateCategoriaChart();
+                updateProjecaoChart();
+            } catch (error) {
+                console.error('Erro ao atualizar gráficos:', error);
+            }
         }
 
         /**
@@ -1668,24 +2135,32 @@
          */
         function updateEvolucaoChart() {
             if (!evolucaoChart) return;
-            
-            const receitasMeses = Array(12).fill(0);
-            const despesasMeses = Array(12).fill(0);
-            
-            transacoes.forEach(transacao => {
-                const data = new Date(transacao.data);
-                const mes = data.getMonth();
-                
-                if (transacao.tipo === 'receita') {
-                    receitasMeses[mes] += transacao.valor;
-                } else {
-                    despesasMeses[mes] += transacao.valor;
-                }
-            });
-            
-            evolucaoChart.data.datasets[0].data = receitasMeses;
-            evolucaoChart.data.datasets[1].data = despesasMeses;
-            evolucaoChart.update('none');
+
+            try {
+                const receitasMeses = Array(12).fill(0);
+                const despesasMeses = Array(12).fill(0);
+
+                transacoes.forEach(transacao => {
+                    if (transacao.data && transacao.valor) {
+                        const data = new Date(transacao.data);
+                        const mes = data.getMonth();
+
+                        if (mes >= 0 && mes < 12) {
+                            if (transacao.tipo === 'receita') {
+                                receitasMeses[mes] += transacao.valor;
+                            } else {
+                                despesasMeses[mes] += transacao.valor;
+                            }
+                        }
+                    }
+                });
+
+                evolucaoChart.data.datasets[0].data = receitasMeses;
+                evolucaoChart.data.datasets[1].data = despesasMeses;
+                evolucaoChart.update('none');
+            } catch (error) {
+                console.error('Erro ao atualizar gráfico de evolução:', error);
+            }
         }
 
         /**
@@ -1693,18 +2168,22 @@
          */
         function updateCategoriaChart() {
             if (!categoriaChart) return;
-            
-            const categorias = {};
-            
-            transacoes
-                .filter(t => t.tipo === 'despesa')
-                .forEach(transacao => {
-                    categorias[transacao.categoria] = (categorias[transacao.categoria] || 0) + transacao.valor;
-                });
-            
-            categoriaChart.data.labels = Object.keys(categorias);
-            categoriaChart.data.datasets[0].data = Object.values(categorias);
-            categoriaChart.update('none');
+
+            try {
+                const categorias = {};
+
+                transacoes
+                    .filter(t => t.tipo === 'despesa' && t.categoria && t.valor)
+                    .forEach(transacao => {
+                        categorias[transacao.categoria] = (categorias[transacao.categoria] || 0) + transacao.valor;
+                    });
+
+                categoriaChart.data.labels = Object.keys(categorias);
+                categoriaChart.data.datasets[0].data = Object.values(categorias);
+                categoriaChart.update('none');
+            } catch (error) {
+                console.error('Erro ao atualizar gráfico de categorias:', error);
+            }
         }
 
         /**
@@ -1712,63 +2191,62 @@
          */
         function updateProjecaoChart() {
             if (!projecaoChart) return;
-            
-            const agora = new Date();
-            const receitaTotal = transacoes
-                .filter(t => t.tipo === 'receita' && new Date(t.data).getFullYear() === agora.getFullYear())
-                .reduce((sum, t) => sum + t.valor, 0);
-            
-            const despesaTotal = transacoes
-                .filter(t => t.tipo === 'despesa' && new Date(t.data).getFullYear() === agora.getFullYear())
-                .reduce((sum, t) => sum + t.valor, 0);
-            
-            const mesesDecorridos = agora.getMonth() + 1;
-            const economiaMensalMedia = mesesDecorridos > 0 ? 
-                (receitaTotal - despesaTotal) / mesesDecorridos : 0;
-            
-            const projecaoMensal = Array(12).fill().map((_, i) => 
-                economiaMensalMedia * (i + 1)
-            );
-            
-            projecaoChart.data.datasets[0].data = projecaoMensal;
-            projecaoChart.update('none');
+
+            try {
+                const agora = new Date();
+                const receitaTotal = transacoes
+                    .filter(t => t.tipo === 'receita' && t.data && new Date(t.data).getFullYear() === agora.getFullYear())
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const despesaTotal = transacoes
+                    .filter(t => t.tipo === 'despesa' && t.data && new Date(t.data).getFullYear() === agora.getFullYear())
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const mesesDecorridos = agora.getMonth() + 1;
+                const economiaMensalMedia = mesesDecorridos > 0 ?
+                    (receitaTotal - despesaTotal) / mesesDecorridos : 0;
+
+                const projecaoMensal = Array(12).fill().map((_, i) =>
+                    economiaMensalMedia * (i + 1)
+                );
+
+                projecaoChart.data.datasets[0].data = projecaoMensal;
+                projecaoChart.update('none');
+            } catch (error) {
+                console.error('Erro ao atualizar gráfico de projeção:', error);
+            }
         }
 
-        // ==================== FORM HANDLERS ====================
+        // ==================== FORM HANDLERS CORRIGIDOS ====================
 
         /**
-         * Handler do formulário de receitas
+         * Handler do formulário de receitas com validação aprimorada
          * @param {Event} event - Evento do formulário
          */
         async function handleReceitaForm(event) {
             event.preventDefault();
-            
+
             const form = event.target;
             const submitBtn = document.getElementById('receitaSubmitBtn');
-            
+
             try {
                 submitBtn.classList.add('loading');
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
-                
-                const valor = parseBRL(form.valor.value);
-                
-                if (isNaN(valor) || valor <= 0) {
-                    showToast('Erro', 'Por favor, insira um valor válido', 'error');
-                    return;
-                }
-                
-                const data = {
-                    tipo: 'receita',
-                    descricao: form.descricao.value.trim(),
-                    valor: valor,
-                    categoria: form.categoria.value,
-                    data: form.data.value
-                };
-                
+
+                // Validar formulário
+                const data = validateForm(form, 'receita');
+                if (!data) return;
+
                 await addTransaction(data);
+
+                // Reset form and clear errors
                 form.reset();
+                form.querySelectorAll('.input-error').forEach(input => {
+                    input.classList.remove('input-error', 'input-success');
+                    hideFieldError(input);
+                });
                 setToday();
-                
+
             } catch (error) {
                 console.error('Erro ao salvar receita:', error);
             } finally {
@@ -1778,38 +2256,33 @@
         }
 
         /**
-         * Handler do formulário de despesas
+         * Handler do formulário de despesas com validação aprimorada
          * @param {Event} event - Evento do formulário
          */
         async function handleDespesaForm(event) {
             event.preventDefault();
-            
+
             const form = event.target;
             const submitBtn = document.getElementById('despesaSubmitBtn');
-            
+
             try {
                 submitBtn.classList.add('loading');
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
-                
-                const valor = parseBRL(form.valor.value);
-                
-                if (isNaN(valor) || valor <= 0) {
-                    showToast('Erro', 'Por favor, insira um valor válido', 'error');
-                    return;
-                }
-                
-                const data = {
-                    tipo: 'despesa',
-                    descricao: form.descricao.value.trim(),
-                    valor: valor,
-                    categoria: form.categoria.value,
-                    data: form.data.value
-                };
-                
+
+                // Validar formulário
+                const data = validateForm(form, 'despesa');
+                if (!data) return;
+
                 await addTransaction(data);
+
+                // Reset form and clear errors
                 form.reset();
+                form.querySelectorAll('.input-error').forEach(input => {
+                    input.classList.remove('input-error', 'input-success');
+                    hideFieldError(input);
+                });
                 setToday();
-                
+
             } catch (error) {
                 console.error('Erro ao salvar despesa:', error);
             } finally {
@@ -1819,36 +2292,31 @@
         }
 
         /**
-         * Handler do formulário de patrimônio
+         * Handler do formulário de patrimônio com validação aprimorada
          * @param {Event} event - Evento do formulário
          */
         async function handlePatrimonioForm(event) {
             event.preventDefault();
-            
+
             const form = event.target;
             const submitBtn = document.getElementById('patrimonioSubmitBtn');
-            
+
             try {
                 submitBtn.classList.add('loading');
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
-                
-                const valor = parseBRL(form.valor.value);
-                
-                if (isNaN(valor) || valor <= 0) {
-                    showToast('Erro', 'Por favor, insira um valor válido', 'error');
-                    return;
-                }
-                
-                const data = {
-                    tipo: form.tipo.value,
-                    descricao: form.descricao.value.trim(),
-                    valor: valor,
-                    categoria: form.categoria.value
-                };
-                
+
+                // Validar formulário
+                const data = validateForm(form, 'patrimonio');
+                if (!data) return;
+
                 await addPatrimony(data);
+
+                // Reset form and clear errors
                 form.reset();
-                
+                form.querySelectorAll('.input-error').forEach(input => {
+                    input.classList.remove('input-error', 'input-success');
+                });
+
             } catch (error) {
                 console.error('Erro ao salvar patrimônio:', error);
             } finally {
@@ -1875,29 +2343,29 @@
             const titleEl = document.getElementById('confirmTitle');
             const messageEl = document.getElementById('confirmMessage');
             const confirmBtn = document.getElementById('confirmButton');
-            
+
             const icons = {
                 danger: 'fas fa-exclamation-triangle text-red-500',
                 warning: 'fas fa-exclamation-triangle text-yellow-500',
                 info: 'fas fa-info-circle text-blue-500'
             };
-            
+
             const btnColors = {
                 danger: 'bg-red-500 hover:bg-red-600',
                 warning: 'bg-yellow-500 hover:bg-yellow-600',
                 info: 'bg-blue-500 hover:bg-blue-600'
             };
-            
+
             icon.className = icons[type] || icons.danger;
             titleEl.textContent = title;
             messageEl.textContent = message;
             confirmBtn.className = `flex-1 px-4 py-2 text-white rounded-lg transition-colors ${btnColors[type]}`;
-            
+
             confirmBtn.onclick = () => {
                 closeConfirmModal();
                 callback();
             };
-            
+
             modal.classList.remove('hidden');
         }
 
@@ -1905,57 +2373,68 @@
          * Fecha modal de confirmação
          */
         function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
+            const modal = document.getElementById('confirmModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
         }
 
         /**
-         * Abre modal de edição para transação
+         * Abre modal de edição para transação com validação
          * @param {string} id - ID da transação
          */
         function editTransaction(id) {
             const transacao = transacoes.find(t => t.id === id);
-            if (!transacao) return;
-            
-            currentEditId = id;
-            currentEditCollection = 'transacoes';
-            
-            const modal = document.getElementById('editModal');
-            const form = document.getElementById('editForm');
-            const title = document.getElementById('editTitle');
-            
-            title.textContent = `Editar ${transacao.tipo === 'receita' ? 'Receita' : 'Despesa'}`;
-            
-            // Preenche campos
-            document.getElementById('editDescricao').value = transacao.descricao;
-            document.getElementById('editValor').value = transacao.valor.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).replace('.', ',');
-            document.getElementById('editData').value = transacao.data;
-            
-            // Preenche categorias
-            const categoriaSelect = document.getElementById('editCategoria');
-            categoriaSelect.innerHTML = '';
-            
-            const categorias = transacao.tipo === 'receita' ? 
-                ['Salário', 'Freelancer', 'Investimentos', 'Vendas', 'Aluguel', 'Bonus', 'Outros'] :
-                ['Habitação', 'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Roupas', 'Tecnologia', 'Contas', 'Outros'];
-            
-            categorias.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat;
-                option.textContent = cat;
-                option.selected = cat === transacao.categoria;
-                categoriaSelect.appendChild(option);
-            });
-            
-            // Mostra campo de data
-            document.getElementById('editDataContainer').style.display = 'block';
-            
-            // Handler do formulário
-            form.onsubmit = handleEditSubmit;
-            
-            modal.classList.remove('hidden');
+            if (!transacao) {
+                showToast('Erro', 'Transação não encontrada', 'error');
+                return;
+            }
+
+            try {
+                currentEditId = id;
+                currentEditCollection = 'transacoes';
+
+                const modal = document.getElementById('editModal');
+                const form = document.getElementById('editForm');
+                const title = document.getElementById('editTitle');
+
+                title.textContent = `Editar ${transacao.tipo === 'receita' ? 'Receita' : 'Despesa'}`;
+
+                // Preenche campos com sanitização
+                document.getElementById('editDescricao').value = sanitizeString(transacao.descricao);
+                document.getElementById('editValor').value = transacao.valor.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).replace('.', ',');
+                document.getElementById('editData').value = transacao.data;
+
+                // Preenche categorias
+                const categoriaSelect = document.getElementById('editCategoria');
+                categoriaSelect.innerHTML = '';
+
+                const categorias = transacao.tipo === 'receita' ?
+                    ['Salário', 'Freelancer', 'Investimentos', 'Vendas', 'Aluguel', 'Bonus', 'Outros'] :
+                    ['Habitação', 'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Roupas', 'Tecnologia', 'Contas', 'Outros'];
+
+                categorias.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    option.selected = cat === transacao.categoria;
+                    categoriaSelect.appendChild(option);
+                });
+
+                // Mostra campo de data
+                document.getElementById('editDataContainer').style.display = 'block';
+
+                // Handler do formulário
+                form.onsubmit = handleEditSubmit;
+
+                modal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erro ao abrir edição:', error);
+                showToast('Erro', 'Erro ao abrir formulário de edição', 'error');
+            }
         }
 
         /**
@@ -1964,78 +2443,99 @@
          */
         function editPatrimonio(id) {
             const item = patrimonio.find(p => p.id === id);
-            if (!item) return;
-            
-            currentEditId = id;
-            currentEditCollection = 'patrimonio';
-            
-            const modal = document.getElementById('editModal');
-            const form = document.getElementById('editForm');
-            const title = document.getElementById('editTitle');
-            
-            title.textContent = `Editar ${item.tipo === 'bem' ? 'Bem' : 'Dívida'}`;
-            
-            // Preenche campos
-            document.getElementById('editDescricao').value = item.descricao;
-            document.getElementById('editValor').value = item.valor.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).replace('.', ',');
-            
-            // Preenche categorias
-            const categoriaSelect = document.getElementById('editCategoria');
-            categoriaSelect.innerHTML = '';
-            
-            const categorias = ['Imóvel', 'Veículo', 'Investimentos', 'Poupança', 'Financiamento', 'Cartão de Crédito', 'Empréstimo', 'Outros'];
-            
-            categorias.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat;
-                option.textContent = cat;
-                option.selected = cat === item.categoria;
-                categoriaSelect.appendChild(option);
-            });
-            
-            // Esconde campo de data
-            document.getElementById('editDataContainer').style.display = 'none';
-            
-            // Handler do formulário
-            form.onsubmit = handleEditSubmit;
-            
-            modal.classList.remove('hidden');
+            if (!item) {
+                showToast('Erro', 'Item de patrimônio não encontrado', 'error');
+                return;
+            }
+
+            try {
+                currentEditId = id;
+                currentEditCollection = 'patrimonio';
+
+                const modal = document.getElementById('editModal');
+                const form = document.getElementById('editForm');
+                const title = document.getElementById('editTitle');
+
+                title.textContent = `Editar ${item.tipo === 'bem' ? 'Bem' : 'Dívida'}`;
+
+                // Preenche campos com sanitização
+                document.getElementById('editDescricao').value = sanitizeString(item.descricao);
+                document.getElementById('editValor').value = item.valor.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).replace('.', ',');
+
+                // Preenche categorias
+                const categoriaSelect = document.getElementById('editCategoria');
+                categoriaSelect.innerHTML = '';
+
+                const categorias = ['Imóvel', 'Veículo', 'Investimentos', 'Poupança', 'Financiamento', 'Cartão de Crédito', 'Empréstimo', 'Outros'];
+
+                categorias.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    option.selected = cat === item.categoria;
+                    categoriaSelect.appendChild(option);
+                });
+
+                // Esconde campo de data
+                document.getElementById('editDataContainer').style.display = 'none';
+
+                // Handler do formulário
+                form.onsubmit = handleEditSubmit;
+
+                modal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erro ao abrir edição de patrimônio:', error);
+                showToast('Erro', 'Erro ao abrir formulário de edição', 'error');
+            }
         }
 
         /**
-         * Handler do formulário de edição
+         * Handler do formulário de edição com validação aprimorada
          * @param {Event} event - Evento do formulário
          */
         async function handleEditSubmit(event) {
             event.preventDefault();
-            
+
             const form = event.target;
-            
+
             try {
+                // Validação manual para edição
+                const descricao = sanitizeString(form.querySelector('#editDescricao').value);
                 const valor = parseBRL(form.querySelector('#editValor').value);
-                
-                if (isNaN(valor) || valor <= 0) {
-                    showToast('Erro', 'Por favor, insira um valor válido', 'error');
+                const categoria = form.querySelector('#editCategoria').value;
+
+                if (!descricao || descricao.length < 3) {
+                    showToast('Erro', 'Descrição deve ter pelo menos 3 caracteres', 'error');
                     return;
                 }
-                
+
+                if (isNaN(valor) || valor <= 0) {
+                    showToast('Erro', 'Valor deve ser maior que zero', 'error');
+                    return;
+                }
+
                 const data = {
-                    descricao: form.querySelector('#editDescricao').value.trim(),
+                    descricao: descricao,
                     valor: valor,
-                    categoria: form.querySelector('#editCategoria').value
+                    categoria: categoria
                 };
-                
+
                 // Adiciona data se for transação
                 if (currentEditCollection === 'transacoes') {
-                    data.data = form.querySelector('#editData').value;
+                    const dataValue = form.querySelector('#editData').value;
+                    if (!isValidDate(dataValue)) {
+                        showToast('Erro', 'Data inválida', 'error');
+                        return;
+                    }
+                    data.data = dataValue;
                 }
-                
+
                 await updateItem(currentEditCollection, currentEditId, data);
                 closeEditModal();
-                
+
             } catch (error) {
                 console.error('Erro ao atualizar:', error);
             }
@@ -2045,7 +2545,10 @@
          * Fecha modal de edição
          */
         function closeEditModal() {
-            document.getElementById('editModal').classList.add('hidden');
+            const modal = document.getElementById('editModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
             currentEditId = null;
             currentEditCollection = null;
         }
@@ -2058,11 +2561,14 @@
          */
         function deleteTransactionConfirm(id) {
             const transacao = transacoes.find(t => t.id === id);
-            if (!transacao) return;
-            
+            if (!transacao) {
+                showToast('Erro', 'Transação não encontrada', 'error');
+                return;
+            }
+
             openConfirmModal(
                 'Confirmar Exclusão',
-                `Deseja realmente excluir a ${transacao.tipo} "${transacao.descricao}" no valor de ${formatBRL(transacao.valor)}?`,
+                `Deseja realmente excluir a ${transacao.tipo} "${sanitizeString(transacao.descricao)}" no valor de ${formatBRL(transacao.valor)}?`,
                 () => deleteItem('transacoes', id),
                 'danger'
             );
@@ -2074,11 +2580,14 @@
          */
         function deletePatrimonioConfirm(id) {
             const item = patrimonio.find(p => p.id === id);
-            if (!item) return;
-            
+            if (!item) {
+                showToast('Erro', 'Item não encontrado', 'error');
+                return;
+            }
+
             openConfirmModal(
                 'Confirmar Exclusão',
-                `Deseja realmente excluir o ${item.tipo} "${item.descricao}" no valor de ${formatBRL(item.valor)}?`,
+                `Deseja realmente excluir o ${item.tipo} "${sanitizeString(item.descricao)}" no valor de ${formatBRL(item.valor)}?`,
                 () => deleteItem('patrimonio', id),
                 'danger'
             );
@@ -2091,35 +2600,39 @@
          * @param {string} tabName - Nome da tab
          */
         function showTab(tabName) {
-            // Esconde todas as tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            
-            // Remove classe ativa de todos os botões
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap hover:bg-gray-200 transition-colors';
-            });
-            
-            // Mostra tab selecionada
-            const selectedTab = document.getElementById(tabName);
-            if (selectedTab) {
-                selectedTab.classList.remove('hidden');
-                selectedTab.classList.add('fade-in');
+            try {
+                // Esconde todas as tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.add('hidden');
+                });
+
+                // Remove classe ativa de todos os botões
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap hover:bg-gray-200 transition-colors';
+                });
+
+                // Mostra tab selecionada
+                const selectedTab = document.getElementById(tabName);
+                if (selectedTab) {
+                    selectedTab.classList.remove('hidden');
+                    selectedTab.classList.add('fade-in');
+                }
+
+                // Ativa botão da tab
+                const selectedBtn = document.querySelector(`[data-tab="${tabName}"]`);
+                if (selectedBtn) {
+                    selectedBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium gradient-info text-white whitespace-nowrap';
+                }
+
+                // Salva tab atual
+                localStorage.setItem('currentTab', tabName);
+            } catch (error) {
+                console.error('Erro ao navegar entre tabs:', error);
             }
-            
-            // Ativa botão da tab
-            const selectedBtn = document.querySelector(`[data-tab="${tabName}"]`);
-            if (selectedBtn) {
-                selectedBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium gradient-info text-white whitespace-nowrap';
-            }
-            
-            // Salva tab atual
-            localStorage.setItem('currentTab', tabName);
         }
 
         // ==================== EXPORT TO WINDOW ====================
-        
+
         // Exporta funções necessárias para o escopo global
         window.loginWithGoogle = loginWithGoogle;
         window.logout = logout;
@@ -2136,10 +2649,13 @@
         window.closeEditModal = closeEditModal;
 
         // ==================== INICIALIZAÇÃO ====================
-        
+
         // Inicializa quando a página carrega
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Sistema Financeiro Carregado com Sucesso!');
+            console.log('Sistema Financeiro Corrigido Carregado com Sucesso!');
+
+            // Define datas nos campos
+            setToday();
         });
 
     </script>
@@ -2147,7 +2663,7 @@
     <!-- README das Instruções de Configuração -->
     <div style="display: none;" id="readme">
         <h1>Sistema de Gestão Financeira Pessoal - README</h1>
-        
+
         <h2>🚀 Configuração do Firebase</h2>
         <ol>
             <li>Acesse <a href="https://console.firebase.google.com">Firebase Console</a></li>
@@ -2158,7 +2674,7 @@
             <li>Substitua o conteúdo do script JSON com suas credenciais</li>
             <li>Em Authentication > Settings > Authorized domains, adicione seus domínios</li>
         </ol>
-        
+
         <h2>📊 Estrutura do Firestore</h2>
         <pre>
 users/{uid}/
@@ -2180,7 +2696,7 @@ users/{uid}/
     │   └── createdAt: timestamp
     └── ...
         </pre>
-        
+
         <h2>🌐 Deploy</h2>
         <h3>GitHub Pages:</h3>
         <ol>
@@ -2188,14 +2704,14 @@ users/{uid}/
             <li>Ative GitHub Pages</li>
             <li>Adicione o domínio do GitHub Pages aos domínios autorizados do Firebase</li>
         </ol>
-        
+
         <h3>Vercel:</h3>
         <ol>
             <li>Conecte seu repositório ao Vercel</li>
             <li>Deploy automático</li>
             <li>Adicione o domínio do Vercel aos domínios autorizados</li>
         </ol>
-        
+
         <h3>Firebase Hosting:</h3>
         <ol>
             <li>npm install -g firebase-tools</li>
@@ -2203,7 +2719,7 @@ users/{uid}/
             <li>firebase init hosting</li>
             <li>firebase deploy</li>
         </ol>
-        
+
         <h2>✨ Recursos</h2>
         <ul>
             <li>✅ Autenticação Google automática</li>
@@ -2217,7 +2733,7 @@ users/{uid}/
             <li>✅ Análise automática de padrões</li>
             <li>✅ Sugestões de metas</li>
         </ul>
-        
+
         <h2>🔧 Personalização</h2>
         <ul>
             <li>Modifique as categorias nos selects dos formulários</li>
@@ -2227,4 +2743,5 @@ users/{uid}/
         </ul>
     </div>
 </body>
+
 </html>
