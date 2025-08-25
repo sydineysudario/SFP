@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão Financeira Pessoal - Versão Corrigida</title>
+    <title>Sistema de Gestão Financeira Pessoal - Versão Aprimorada</title>
 
     <!-- CDN Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -47,7 +47,7 @@
         /* Otimização para PDF */
         @media print {
             body {
-                font-size: 12px;
+                font-size: 11px;
             }
 
             .no-print {
@@ -60,6 +60,15 @@
 
             .chart-container {
                 height: 250px;
+            }
+
+            header, nav {
+                display: none !important;
+            }
+
+            .container {
+                max-width: none !important;
+                padding: 0 !important;
             }
         }
 
@@ -84,6 +93,10 @@
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
 
+        .gradient-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
         /* Animações */
         .fade-in {
             animation: fadeIn 0.3s ease-in-out;
@@ -106,12 +119,9 @@
         }
 
         @keyframes pulseSuccess {
-
-            0%,
-            100% {
+            0%, 100% {
                 background-color: #10b981;
             }
-
             50% {
                 background-color: #059669;
             }
@@ -140,6 +150,50 @@
 
         .toast-container.show {
             transform: translateX(0);
+        }
+
+        /* Tabela responsiva melhorada */
+        .table-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .sticky-header th {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        /* Filtros aprimorados */
+        .filter-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Insights cards */
+        .insight-card {
+            transition: all 0.3s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estatísticas avançadas */
+        .stat-trend-up {
+            color: #10b981;
+        }
+
+        .stat-trend-down {
+            color: #ef4444;
+        }
+
+        .stat-neutral {
+            color: #6b7280;
         }
     </style>
 </head>
@@ -171,7 +225,7 @@
     <!-- Tela Principal do App -->
     <div id="appScreen" class="hidden">
         <!-- Header -->
-        <header class="bg-white shadow-lg sticky top-0 z-40">
+        <header class="bg-white shadow-lg sticky top-0 z-40 no-print">
             <div class="container mx-auto px-4 py-4">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-3">
@@ -196,7 +250,7 @@
         </header>
 
         <!-- Navegação por Tabs -->
-        <nav class="bg-white border-b sticky top-16 z-30">
+        <nav class="bg-white border-b sticky top-16 z-30 no-print">
             <div class="container mx-auto px-4">
                 <div class="flex flex-wrap space-x-1 py-2 overflow-x-auto">
                     <button onclick="showTab('dashboard')"
@@ -219,6 +273,16 @@
                         data-tab="patrimonio">
                         <i class="fas fa-home mr-1"></i>Patrimônio
                     </button>
+                    <button onclick="showTab('relatorios')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="relatorios">
+                        <i class="fas fa-chart-bar mr-1"></i>Relatórios
+                    </button>
+                    <button onclick="showTab('insights')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="insights">
+                        <i class="fas fa-brain mr-1"></i>Insights
+                    </button>
                     <button onclick="showTab('projecao')"
                         class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
                         data-tab="projecao">
@@ -231,16 +295,42 @@
         <div class="container mx-auto px-4 py-6">
             <!-- Dashboard Tab -->
             <div id="dashboard" class="tab-content">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Financeiro</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">Dashboard Financeiro</h2>
+                    
+                    <!-- Filtros de Período -->
+                    <div class="flex space-x-2 no-print">
+                        <select id="dashboardMonth" onchange="updateDashboardPeriod()" 
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                            <option value="">Todos os meses</option>
+                            <option value="0">Janeiro</option>
+                            <option value="1">Fevereiro</option>
+                            <option value="2">Março</option>
+                            <option value="3">Abril</option>
+                            <option value="4">Maio</option>
+                            <option value="5">Junho</option>
+                            <option value="6">Julho</option>
+                            <option value="7">Agosto</option>
+                            <option value="8">Setembro</option>
+                            <option value="9">Outubro</option>
+                            <option value="10">Novembro</option>
+                            <option value="11">Dezembro</option>
+                        </select>
+                        <select id="dashboardYear" onchange="updateDashboardPeriod()" 
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                            <option value="">Todos os anos</option>
+                        </select>
+                    </div>
+                </div>
 
                 <!-- Métricas Principais -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div class="gradient-primary rounded-xl p-6 text-white fade-in">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm opacity-90">Saldo Atual</p>
+                                <p class="text-sm opacity-90">Saldo do Período</p>
                                 <p class="text-2xl font-bold" id="saldoAtual">R$ 0,00</p>
-                                <p class="text-xs opacity-75 mt-1" id="percentualSaldo">0% vs mês anterior</p>
+                                <p class="text-xs opacity-75 mt-1" id="percentualSaldo">0% vs período anterior</p>
                             </div>
                             <i class="fas fa-wallet text-3xl opacity-70"></i>
                         </div>
@@ -249,7 +339,7 @@
                     <div class="gradient-success rounded-xl p-6 text-white fade-in">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm opacity-90">Receitas do Mês</p>
+                                <p class="text-sm opacity-90">Receitas do Período</p>
                                 <p class="text-2xl font-bold" id="receitasMes">R$ 0,00</p>
                                 <p class="text-xs opacity-75 mt-1" id="mediaReceitas">Média: R$ 0,00</p>
                             </div>
@@ -260,7 +350,7 @@
                     <div class="gradient-danger rounded-xl p-6 text-white fade-in">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm opacity-90">Despesas do Mês</p>
+                                <p class="text-sm opacity-90">Despesas do Período</p>
                                 <p class="text-2xl font-bold" id="despesasMes">R$ 0,00</p>
                                 <p class="text-xs opacity-75 mt-1" id="mediaDespesas">Média: R$ 0,00</p>
                             </div>
@@ -271,11 +361,71 @@
                     <div class="gradient-info rounded-xl p-6 text-white fade-in">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm opacity-90">Economia Mensal</p>
+                                <p class="text-sm opacity-90">Economia do Período</p>
                                 <p class="text-2xl font-bold" id="economiaMensal">R$ 0,00</p>
                                 <p class="text-xs opacity-75 mt-1" id="percentualEconomia">0% da receita</p>
                             </div>
                             <i class="fas fa-piggy-bank text-3xl opacity-70"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas Avançadas -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-trending-up mr-2 text-green-500"></i>
+                            Tendência Mensal
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Receitas</span>
+                                <span id="tendenciaReceitas" class="text-sm font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Despesas</span>
+                                <span id="tendenciaDespesas" class="text-sm font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Economia</span>
+                                <span id="tendenciaEconomia" class="text-sm font-medium">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
+                            Maior Categoria
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="text-center">
+                                <div id="maiorCategoriaIcon" class="text-3xl mb-2">📊</div>
+                                <p id="maiorCategoriaNome" class="font-medium text-gray-800">--</p>
+                                <p id="maiorCategoriaValor" class="text-sm text-gray-600">R$ 0,00</p>
+                                <p id="maiorCategoriaPercent" class="text-xs text-gray-500">0% do total</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-calendar-day mr-2 text-blue-500"></i>
+                            Média Diária
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Receitas</span>
+                                <span id="mediaDiariaReceitas" class="text-sm font-medium">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Despesas</span>
+                                <span id="mediaDiariaDespesas" class="text-sm font-medium">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Saldo</span>
+                                <span id="mediaDiariaSaldo" class="text-sm font-medium">R$ 0,00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -285,7 +435,7 @@
                     <div class="bg-white rounded-xl p-6 shadow-lg">
                         <h3 class="text-xl font-semibold mb-4 flex items-center">
                             <i class="fas fa-chart-line mr-2 text-blue-500"></i>
-                            Evolução Mensal
+                            Evolução do Período
                         </h3>
                         <div class="chart-container">
                             <canvas id="evolucaoChart"></canvas>
@@ -308,19 +458,25 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-semibold flex items-center">
                             <i class="fas fa-history mr-2 text-gray-500"></i>
-                            Últimas Transações
+                            Transações Recentes
                         </h3>
-                        <span class="text-sm text-gray-500" id="totalTransacoes">0 transações</span>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm text-gray-500" id="totalTransacoes">0 transações</span>
+                            <button onclick="showTab('relatorios')" 
+                                    class="text-blue-500 hover:text-blue-700 text-sm font-medium no-print">
+                                Ver todas →
+                            </button>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="table-wrapper">
                         <table class="w-full text-sm">
-                            <thead>
+                            <thead class="sticky-header">
                                 <tr class="border-b border-gray-200">
                                     <th class="text-left py-3 px-4 font-semibold">Data</th>
                                     <th class="text-left py-3 px-4 font-semibold">Descrição</th>
                                     <th class="text-left py-3 px-4 font-semibold">Categoria</th>
                                     <th class="text-right py-3 px-4 font-semibold">Valor</th>
-                                    <th class="text-center py-3 px-4 font-semibold">Ações</th>
+                                    <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="transacoesTableBody">
@@ -345,8 +501,7 @@
                             </h3>
                             <form onsubmit="handleReceitaForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
-                                        for="receita-descricao">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-descricao">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
                                     <input name="descricao" id="receita-descricao" type="text" required
@@ -364,8 +519,7 @@
                                     <div class="text-xs text-red-500 mt-1 hidden" id="receita-valor-error"></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
-                                        for="receita-categoria">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-categoria">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
                                     <select name="categoria" id="receita-categoria" required
@@ -445,8 +599,7 @@
                             </h3>
                             <form onsubmit="handleDespesaForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
-                                        for="despesa-descricao">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-descricao">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
                                     <input name="descricao" id="despesa-descricao" type="text" required
@@ -464,8 +617,7 @@
                                     <div class="text-xs text-red-500 mt-1 hidden" id="despesa-valor-error"></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
-                                        for="despesa-categoria">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-categoria">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
                                     <select name="categoria" id="despesa-categoria" required
@@ -662,9 +814,259 @@
                 </div>
             </div>
 
-            <!-- Projeção Tab -->
+            <!-- Nova Tab: Relatórios -->
+            <div id="relatorios" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Relatórios Detalhados</h2>
+
+                <!-- Filtros Avançados -->
+                <div class="filter-container mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Período Inicial</label>
+                            <input type="date" id="filtroDataInicio" 
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Período Final</label>
+                            <input type="date" id="filtroDataFim" 
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Tipo</label>
+                            <select id="filtroTipo" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todos</option>
+                                <option value="receita">Receitas</option>
+                                <option value="despesa">Despesas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Categoria</label>
+                            <select id="filtroCategoria" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 mt-4">
+                        <button onclick="aplicarFiltros()" 
+                                class="gradient-info text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all">
+                            <i class="fas fa-filter mr-2"></i>Aplicar Filtros
+                        </button>
+                        <button onclick="limparFiltros()" 
+                                class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-all">
+                            <i class="fas fa-times mr-2"></i>Limpar
+                        </button>
+                        <button onclick="exportarCSV()" 
+                                class="gradient-success text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all">
+                            <i class="fas fa-download mr-2"></i>Exportar CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resumo do Filtro -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Total de Registros</p>
+                                <p class="text-2xl font-bold text-gray-800" id="filtroTotalRegistros">0</p>
+                            </div>
+                            <i class="fas fa-list text-2xl text-gray-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Total Receitas</p>
+                                <p class="text-2xl font-bold text-green-600" id="filtroTotalReceitas">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-arrow-up text-2xl text-green-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Total Despesas</p>
+                                <p class="text-2xl font-bold text-red-600" id="filtroTotalDespesas">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-arrow-down text-2xl text-red-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Saldo Período</p>
+                                <p class="text-2xl font-bold" id="filtroSaldoPeriodo">R$ 0,00</p>
+                            </div>
+                            <i class="fas fa-calculator text-2xl text-blue-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela Completa de Transações -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold">Todas as Transações</h3>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm text-gray-500" id="relatorioContador">0 transações encontradas</span>
+                            <div class="flex space-x-2">
+                                <button onclick="ordenarTabela('data')" class="text-gray-500 hover:text-gray-700" title="Ordenar por Data">
+                                    <i class="fas fa-sort"></i>
+                                </button>
+                                <button onclick="ordenarTabela('valor')" class="text-gray-500 hover:text-gray-700" title="Ordenar por Valor">
+                                    <i class="fas fa-sort-amount-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-wrapper" style="max-height: 600px;">
+                        <table class="w-full text-sm">
+                            <thead class="sticky-header">
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold">Data</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Tipo</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Descrição</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Categoria</th>
+                                    <th class="text-right py-3 px-4 font-semibold">Valor</th>
+                                    <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="relatorioTableBody">
+                                <!-- Transações filtradas serão carregadas aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nova Tab: Insights -->
+            <div id="insights" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Insights Avançados</h2>
+
+                <!-- Análises Comparativas -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                            Análise Mensal Comparativa
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="comparativoChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-bar mr-2 text-purple-500"></i>
+                            Top 5 Categorias de Despesa
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="topCategoriasChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards de Insights -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-calendar-week mr-2 text-green-500"></i>
+                            Melhor Dia da Semana
+                        </h3>
+                        <div class="text-center">
+                            <div id="melhorDiaIcon" class="text-4xl mb-2">📅</div>
+                            <p id="melhorDiaNome" class="text-xl font-bold text-gray-800">--</p>
+                            <p id="melhorDiaMotivo" class="text-sm text-gray-600">--</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-trophy mr-2 text-yellow-500"></i>
+                            Mês Mais Econômico
+                        </h3>
+                        <div class="text-center">
+                            <div id="melhorMesIcon" class="text-4xl mb-2">🏆</div>
+                            <p id="melhorMesNome" class="text-xl font-bold text-gray-800">--</p>
+                            <p id="melhorMesValor" class="text-sm text-gray-600">--</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>
+                            Categoria de Alerta
+                        </h3>
+                        <div class="text-center">
+                            <div id="categoriaAlertaIcon" class="text-4xl mb-2">⚠️</div>
+                            <p id="categoriaAlertaNome" class="text-xl font-bold text-gray-800">--</p>
+                            <p id="categoriaAlertaMotivo" class="text-sm text-gray-600">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Padrões de Gastos -->
+                <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-search mr-2 text-indigo-500"></i>
+                        Padrões Identificados
+                    </h3>
+                    <div id="padroesGastos" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Padrões serão gerados automaticamente -->
+                    </div>
+                </div>
+
+                <!-- Previsões e Alertas -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-crystal-ball mr-2 text-purple-500"></i>
+                            Previsões Inteligentes
+                        </h3>
+                        <div id="previsoesInteligentes" class="space-y-3">
+                            <!-- Previsões serão geradas automaticamente -->
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-bell mr-2 text-orange-500"></i>
+                            Alertas Personalizados
+                        </h3>
+                        <div id="alertasPersonalizados" class="space-y-3">
+                            <!-- Alertas serão gerados automaticamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projeção Tab (Aprimorada) -->
             <div id="projecao" class="tab-content hidden">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Financeira Anual</h2>
+
+                <!-- Controles de Simulação -->
+                <div class="filter-container mb-8">
+                    <h3 class="text-lg font-semibold mb-4">Simulador de Cenários</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Aumento de Receita (%)</label>
+                            <input type="number" id="aumentoReceita" value="0" min="-50" max="100" step="5"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                   onchange="updateProjecaoPersonalizada()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Redução de Despesas (%)</label>
+                            <input type="number" id="reducaoDespesas" value="0" min="-50" max="50" step="5"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                   onchange="updateProjecaoPersonalizada()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Meta de Economia Mensal</label>
+                            <input type="text" id="metaEconomia" placeholder="1.000,00"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                   oninput="formatCurrency(this)" onchange="updateProjecaoPersonalizada()">
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Gráfico de Projeção -->
                 <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
@@ -677,15 +1079,15 @@
                     </div>
                 </div>
 
-                <!-- Cenários de Projeção -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Cenários de Projeção Aprimorados -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
                     <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mr-3"></i>
-                            <h3 class="text-lg font-bold text-yellow-700">Cenário Conservador</h3>
+                            <h3 class="text-lg font-bold text-yellow-700">Conservador</h3>
                         </div>
                         <p class="text-3xl font-bold text-yellow-600 mb-3" id="cenarioConservador">R$ 0,00</p>
-                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro (70% da média atual)</p>
+                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
                         <div class="space-y-2 text-xs text-gray-500">
                             <div class="flex items-center">
                                 <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
@@ -695,32 +1097,24 @@
                                 <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
                                 <span>Gastos emergenciais +10%</span>
                             </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
-                                <span>Receita estável</span>
-                            </div>
                         </div>
                     </div>
 
                     <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-chart-line text-blue-500 text-2xl mr-3"></i>
-                            <h3 class="text-lg font-bold text-blue-700">Cenário Realista</h3>
+                            <h3 class="text-lg font-bold text-blue-700">Realista</h3>
                         </div>
                         <p class="text-3xl font-bold text-blue-600 mb-3" id="cenarioRealista">R$ 0,00</p>
-                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro (média atual)</p>
+                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
                         <div class="space-y-2 text-xs text-gray-500">
                             <div class="flex items-center">
                                 <i class="fas fa-check-circle text-blue-500 mr-2"></i>
-                                <span>Padrão atual de gastos</span>
+                                <span>Padrão atual mantido</span>
                             </div>
                             <div class="flex items-center">
                                 <i class="fas fa-check-circle text-blue-500 mr-2"></i>
-                                <span>Receita mantida</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>
-                                <span>Sem grandes mudanças</span>
+                                <span>Receita estável</span>
                             </div>
                         </div>
                     </div>
@@ -728,28 +1122,43 @@
                     <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-rocket text-green-500 text-2xl mr-3"></i>
-                            <h3 class="text-lg font-bold text-green-700">Cenário Otimista</h3>
+                            <h3 class="text-lg font-bold text-green-700">Otimista</h3>
                         </div>
                         <p class="text-3xl font-bold text-green-600 mb-3" id="cenarioOtimista">R$ 0,00</p>
-                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro (130% da média atual)</p>
+                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
                         <div class="space-y-2 text-xs text-gray-500">
                             <div class="flex items-center">
                                 <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span>Aumento de receita +15%</span>
+                                <span>Aumento receita +15%</span>
                             </div>
                             <div class="flex items-center">
                                 <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span>Redução de gastos -10%</span>
+                                <span>Redução gastos -10%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-cogs text-purple-500 text-2xl mr-3"></i>
+                            <h3 class="text-lg font-bold text-purple-700">Personalizado</h3>
+                        </div>
+                        <p class="text-3xl font-bold text-purple-600 mb-3" id="cenarioPersonalizado">R$ 0,00</p>
+                        <p class="text-sm text-gray-600 mb-4">Sua simulação</p>
+                        <div class="space-y-2 text-xs text-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-2"></i>
+                                <span id="personalizadoReceita">Receita: --</span>
                             </div>
                             <div class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span>Rendimento investimentos</span>
+                                <i class="fas fa-check-circle text-purple-500 mr-2"></i>
+                                <span id="personalizadoDespesa">Despesa: --</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Análise e Recomendações -->
+                <!-- Análise e Recomendações Aprimoradas -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white rounded-xl p-6 shadow-lg">
                         <h3 class="text-lg font-semibold mb-4 flex items-center">
@@ -845,7 +1254,7 @@
         </div>
     </div>
 
-    <!-- Toast de Notificação Corrigido -->
+    <!-- Toast de Notificação -->
     <div id="toast" class="toast-container">
         <div class="bg-white border-l-4 border-green-500 rounded-lg shadow-lg p-4 flex items-center space-x-3">
             <i id="toastIcon" class="fas fa-check-circle text-green-500"></i>
@@ -856,20 +1265,18 @@
         </div>
     </div>
 
-    <!-- JavaScript Principal - Módulo ES6 Corrigido -->
+    <!-- JavaScript Principal - Módulo ES6 Aprimorado -->
     <script type="module">
         // ==================== IMPORTS E CONFIGURAÇÃO ====================
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
         import {
             getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc,
-            query, orderBy, onSnapshot, serverTimestamp
+            query, orderBy, onSnapshot, serverTimestamp, where
         } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-        // Configuração do Firebase a partir do script JSON
+        // Configuração do Firebase
         const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
-
-        // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -879,75 +1286,51 @@
         let currentUser = null;
         let transacoes = [];
         let patrimonio = [];
+        let transacoesFiltradas = [];
         let unsubscribeTransacoes = null;
         let unsubscribePatrimonio = null;
 
         // Charts
-        let evolucaoChart, categoriaChart, projecaoChart;
+        let evolucaoChart, categoriaChart, projecaoChart, comparativoChart, topCategoriasChart;
+
+        // Filtros de período
+        let filtroMesAtual = null;
+        let filtroAnoAtual = null;
 
         // ==================== HELPERS APRIMORADOS ====================
 
-        /**
-         * Sanitiza string removendo caracteres especiais
-         * @param {string} str - String a ser sanitizada
-         * @returns {string} - String sanitizada
-         */
         function sanitizeString(str) {
             if (!str) return '';
             return str.toString().trim()
-                .replace(/<[^>]*>/g, '') // Remove tags HTML
-                .replace(/[^\w\s\-\.áéíóúàèìòùâêîôûãõç]/gi, ''); // Remove caracteres especiais
+                .replace(/<[^>]*>/g, '')
+                .replace(/[^\w\s\-\.áéíóúàèìòùâêîôûãõç]/gi, '');
         }
 
-        /**
-         * Valida se uma data está dentro do intervalo aceitável
-         * @param {string} dateStr - Data em formato YYYY-MM-DD
-         * @returns {boolean} - True se válida
-         */
         function isValidDate(dateStr) {
             if (!dateStr) return false;
-
             const date = new Date(dateStr);
             const now = new Date();
             const minDate = new Date('1900-01-01');
             const maxDate = new Date();
-            maxDate.setFullYear(maxDate.getFullYear() + 10); // 10 anos no futuro
-
+            maxDate.setFullYear(maxDate.getFullYear() + 10);
             return date >= minDate && date <= maxDate && !isNaN(date);
         }
 
-        /**
-         * Converte string em formato brasileiro para número com validação robusta
-         * @param {string} value - Valor em formato "1.234,56"
-         * @returns {number} - Número convertido ou NaN se inválido
-         */
         function parseBRL(value) {
             if (!value) return 0;
-
-            // Remove espaços e caracteres não numéricos exceto ponto, vírgula e sinal negativo
             const cleanValue = value.toString()
                 .replace(/[^\d.,-]/g, '')
-                .replace(/\.(?=.*\.)/g, '') // Remove pontos extras (exceto o último)
+                .replace(/\.(?=.*\.)/g, '')
                 .replace(/\./g, '')
                 .replace(',', '.');
-
             const num = Number(cleanValue);
-
-            // Validações adicionais
             if (!isFinite(num) || isNaN(num)) return NaN;
-            if (num < 0 || num > 999999999999) return NaN; // Limite máximo
-
+            if (num < 0 || num > 999999999999) return NaN;
             return num;
         }
 
-        /**
-         * Formata número para exibição em Real brasileiro
-         * @param {number} value - Valor numérico
-         * @returns {string} - Valor formatado como "R$ 1.234,56"
-         */
         function formatBRL(value) {
             if (!value && value !== 0) return 'R$ 0,00';
-
             try {
                 return value.toLocaleString('pt-BR', {
                     style: 'currency',
@@ -959,14 +1342,8 @@
             }
         }
 
-        /**
-         * Formata entrada de moeda em tempo real com validação aprimorada
-         * @param {HTMLElement} input - Campo de entrada
-         */
         function formatCurrency(input) {
             let value = input.value.replace(/\D/g, '');
-
-            // Remove classe de erro se existir
             input.classList.remove('input-error');
 
             if (value.length === 0) {
@@ -974,7 +1351,6 @@
                 return;
             }
 
-            // Verifica limite máximo definido no data attribute
             const maxValue = parseInt(input.dataset.max) || 999999999;
             const numValue = parseInt(value);
 
@@ -984,21 +1360,15 @@
                 return;
             }
 
-            // Adiciona zeros à esquerda se necessário
             while (value.length < 3) {
                 value = '0' + value;
             }
 
-            // Insere vírgula antes dos dois últimos dígitos
             const formatted = value.slice(0, -2) + ',' + value.slice(-2);
-
-            // Adiciona pontos de milhares
             const parts = formatted.split(',');
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
             input.value = parts.join(',');
 
-            // Adiciona classe de sucesso se valor válido
             const parsedValue = parseBRL(input.value);
             if (!isNaN(parsedValue) && parsedValue > 0) {
                 input.classList.add('input-success');
@@ -1006,44 +1376,25 @@
             }
         }
 
-        /**
-         * Exibe erro específico de campo
-         * @param {HTMLElement} field - Campo com erro
-         * @param {string} message - Mensagem de erro
-         */
         function showFieldError(field, message) {
             const errorId = field.id + '-error';
             const errorEl = document.getElementById(errorId);
-
             if (errorEl) {
                 errorEl.textContent = message;
                 errorEl.classList.remove('hidden');
             }
-
             field.classList.add('input-error');
         }
 
-        /**
-         * Esconde erro de campo
-         * @param {HTMLElement} field - Campo
-         */
         function hideFieldError(field) {
             const errorId = field.id + '-error';
             const errorEl = document.getElementById(errorId);
-
             if (errorEl) {
                 errorEl.classList.add('hidden');
             }
-
             field.classList.remove('input-error');
         }
 
-        /**
-         * Exibe toast de notificação com correções
-         * @param {string} title - Título da notificação
-         * @param {string} message - Mensagem da notificação
-         * @param {string} type - Tipo: 'success', 'error', 'warning', 'info'
-         */
         function showToast(title, message, type = 'success') {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toastIcon');
@@ -1051,64 +1402,34 @@
             const messageEl = document.getElementById('toastMessage');
 
             const configs = {
-                success: {
-                    icon: 'fas fa-check-circle text-green-500',
-                    border: 'border-green-500'
-                },
-                error: {
-                    icon: 'fas fa-exclamation-circle text-red-500',
-                    border: 'border-red-500'
-                },
-                warning: {
-                    icon: 'fas fa-exclamation-triangle text-yellow-500',
-                    border: 'border-yellow-500'
-                },
-                info: {
-                    icon: 'fas fa-info-circle text-blue-500',
-                    border: 'border-blue-500'
-                }
+                success: { icon: 'fas fa-check-circle text-green-500', border: 'border-green-500' },
+                error: { icon: 'fas fa-exclamation-circle text-red-500', border: 'border-red-500' },
+                warning: { icon: 'fas fa-exclamation-triangle text-yellow-500', border: 'border-yellow-500' },
+                info: { icon: 'fas fa-info-circle text-blue-500', border: 'border-blue-500' }
             };
 
             const config = configs[type] || configs.success;
-
             icon.className = config.icon;
             toast.firstElementChild.className = `bg-white border-l-4 ${config.border} rounded-lg shadow-lg p-4 flex items-center space-x-3`;
             titleEl.textContent = title;
             messageEl.textContent = message;
 
-            // Mostrar toast
             toast.classList.add('show');
-
-            // Esconder após 4 segundos
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+            setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        /**
-         * Define data atual nos campos de data com validação
-         */
         function setToday() {
             const today = new Date().toISOString().split('T')[0];
-
             const receitaData = document.getElementById('receita-data');
             const despesaData = document.getElementById('despesa-data');
-
             if (receitaData) receitaData.value = today;
             if (despesaData) despesaData.value = today;
         }
 
-        /**
-         * Valida formulário completo
-         * @param {HTMLFormElement} form - Formulário a ser validado
-         * @param {string} type - Tipo: 'receita', 'despesa', 'patrimonio'
-         * @returns {Object|null} - Dados validados ou null se inválido
-         */
         function validateForm(form, type) {
             let isValid = true;
             const errors = {};
 
-            // Validar descrição
             const descricao = sanitizeString(form.descricao.value);
             if (!descricao || descricao.length < 3) {
                 errors.descricao = 'Descrição deve ter pelo menos 3 caracteres';
@@ -1118,7 +1439,6 @@
                 isValid = false;
             }
 
-            // Validar valor
             const valor = parseBRL(form.valor.value);
             if (isNaN(valor) || valor <= 0) {
                 errors.valor = 'Valor deve ser maior que zero';
@@ -1128,7 +1448,6 @@
                 isValid = false;
             }
 
-            // Validar categoria
             const categoriaValida = ['Salário', 'Freelancer', 'Investimentos', 'Vendas', 'Aluguel', 'Bonus', 'Outros',
                 'Habitação', 'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Roupas',
                 'Tecnologia', 'Contas', 'Imóvel', 'Veículo', 'Poupança', 'Financiamento',
@@ -1139,7 +1458,6 @@
                 isValid = false;
             }
 
-            // Validar data (apenas para transações)
             if (type !== 'patrimonio') {
                 if (!isValidDate(form.data.value)) {
                     errors.data = 'Data inválida';
@@ -1147,7 +1465,6 @@
                 }
             }
 
-            // Validar tipo (apenas para patrimônio)
             if (type === 'patrimonio') {
                 if (!['bem', 'divida'].includes(form.tipo.value)) {
                     errors.tipo = 'Tipo inválido';
@@ -1155,7 +1472,6 @@
                 }
             }
 
-            // Mostrar erros
             Object.keys(errors).forEach(field => {
                 const input = form[field];
                 if (input) {
@@ -1168,7 +1484,6 @@
                 return null;
             }
 
-            // Retornar dados validados
             const data = {
                 descricao: descricao,
                 valor: valor,
@@ -1187,33 +1502,22 @@
 
         // ==================== AUTENTICAÇÃO ====================
 
-        /**
-         * Faz login com Google com tratamento de erro aprimorado
-         */
         async function loginWithGoogle() {
             const loginBtn = document.getElementById('loginBtn');
-
             try {
                 loginBtn.classList.add('loading');
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Conectando...';
-
                 const result = await signInWithPopup(auth, provider);
                 currentUser = result.user;
-
                 showToast('Sucesso', 'Login realizado com sucesso!', 'success');
             } catch (error) {
                 console.error('Erro no login:', error);
-
                 let errorMessage = 'Falha ao fazer login. Tente novamente.';
-
                 if (error.code === 'auth/popup-closed-by-user') {
                     errorMessage = 'Login cancelado pelo usuário';
                 } else if (error.code === 'auth/popup-blocked') {
                     errorMessage = 'Pop-up bloqueado. Permita pop-ups para este site';
-                } else if (error.code === 'auth/cancelled-popup-request') {
-                    errorMessage = 'Solicitação cancelada';
                 }
-
                 showToast('Erro', errorMessage, 'error');
             } finally {
                 loginBtn.classList.remove('loading');
@@ -1221,9 +1525,6 @@
             }
         }
 
-        /**
-         * Faz logout do usuário
-         */
         async function logout() {
             try {
                 await signOut(auth);
@@ -1234,9 +1535,6 @@
             }
         }
 
-        /**
-         * Monitora mudanças no estado de autenticação
-         */
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -1249,42 +1547,29 @@
             }
         });
 
-        /**
-         * Mostra tela de login
-         */
         function showLogin() {
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('appScreen').classList.add('hidden');
         }
 
-        /**
-         * Mostra tela principal do app
-         */
         function showApp() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('appScreen').classList.remove('hidden');
 
-            // Atualiza informações do usuário
             document.getElementById('userName').textContent = currentUser.displayName;
-            document.getElementById('userPhoto').src = currentUser.photoURL ||
+            document.getElementById('userPhoto').src = currentUser.photoURL || 
                 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM2MzY2RjEiLz4KPHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjw/dGV4dD4KPC9zdmc+';
 
-            // Define data atual nos formulários
             setToday();
-
-            // Carrega tab salva ou dashboard
+            initYearFilter();
             const savedTab = localStorage.getItem('currentTab') || 'dashboard';
             showTab(savedTab);
         }
 
-        // ==================== FIRESTORE OPERATIONS COM TRATAMENTO DE ERRO ====================
+        // ==================== FIRESTORE OPERATIONS ====================
 
-        /**
-         * Inicializa dados do usuário com listeners em tempo real
-         */
         function initializeUserData() {
             if (!currentUser) return;
-
             try {
                 setupTransacoesListener();
                 setupPatrimonioListener();
@@ -1295,12 +1580,8 @@
             }
         }
 
-        /**
-         * Configura listener para transações em tempo real
-         */
         function setupTransacoesListener() {
             if (unsubscribeTransacoes) unsubscribeTransacoes();
-
             try {
                 const q = query(
                     collection(db, 'users', currentUser.uid, 'transacoes'),
@@ -1311,7 +1592,6 @@
                     transacoes = [];
                     snapshot.forEach((doc) => {
                         const data = doc.data();
-                        // Validar dados antes de adicionar
                         if (data.valor && data.descricao && data.categoria) {
                             transacoes.push({ id: doc.id, ...data });
                         }
@@ -1320,6 +1600,8 @@
                     renderTransacoes();
                     updateDashboard();
                     updateCharts();
+                    updateRelatorios();
+                    updateInsights();
                 }, (error) => {
                     console.error('Erro ao carregar transações:', error);
                     showToast('Erro', 'Erro ao carregar transações. Verifique sua conexão.', 'error');
@@ -1330,12 +1612,8 @@
             }
         }
 
-        /**
-         * Configura listener para patrimônio em tempo real
-         */
         function setupPatrimonioListener() {
             if (unsubscribePatrimonio) unsubscribePatrimonio();
-
             try {
                 const q = query(collection(db, 'users', currentUser.uid, 'patrimonio'));
 
@@ -1343,12 +1621,10 @@
                     patrimonio = [];
                     snapshot.forEach((doc) => {
                         const data = doc.data();
-                        // Validar dados antes de adicionar
                         if (data.valor && data.descricao && data.categoria && data.tipo) {
                             patrimonio.push({ id: doc.id, ...data });
                         }
                     });
-
                     renderPatrimonio();
                 }, (error) => {
                     console.error('Erro ao carregar patrimônio:', error);
@@ -1360,9 +1636,6 @@
             }
         }
 
-        /**
-         * Remove listeners ativos
-         */
         function cleanupListeners() {
             try {
                 if (unsubscribeTransacoes) {
@@ -1378,81 +1651,51 @@
             }
         }
 
-        /**
-         * Adiciona nova transação com validação e tratamento de erro
-         * @param {Object} data - Dados da transação
-         */
         async function addTransaction(data) {
             try {
-                if (!currentUser) {
-                    throw new Error('Usuário não autenticado');
-                }
-
+                if (!currentUser) throw new Error('Usuário não autenticado');
                 await addDoc(collection(db, 'users', currentUser.uid, 'transacoes'), {
                     ...data,
                     createdAt: serverTimestamp()
                 });
-
                 showToast('Sucesso', `${data.tipo === 'receita' ? 'Receita' : 'Despesa'} adicionada com sucesso!`, 'success');
             } catch (error) {
                 console.error('Erro ao salvar transação:', error);
-
                 let errorMessage = 'Erro ao salvar transação';
                 if (error.code === 'permission-denied') {
                     errorMessage = 'Permissão negada. Verifique suas credenciais.';
                 } else if (error.code === 'unavailable') {
                     errorMessage = 'Serviço indisponível. Tente novamente.';
                 }
-
                 showToast('Erro', errorMessage, 'error');
                 throw error;
             }
         }
 
-        /**
-         * Adiciona novo item de patrimônio
-         * @param {Object} data - Dados do patrimônio
-         */
         async function addPatrimony(data) {
             try {
-                if (!currentUser) {
-                    throw new Error('Usuário não autenticado');
-                }
-
+                if (!currentUser) throw new Error('Usuário não autenticado');
                 await addDoc(collection(db, 'users', currentUser.uid, 'patrimonio'), {
                     ...data,
                     createdAt: serverTimestamp()
                 });
-
                 showToast('Sucesso', `${data.tipo === 'bem' ? 'Bem' : 'Dívida'} adicionado(a) com sucesso!`, 'success');
             } catch (error) {
                 console.error('Erro ao salvar patrimônio:', error);
-
                 let errorMessage = 'Erro ao salvar patrimônio';
                 if (error.code === 'permission-denied') {
                     errorMessage = 'Permissão negada. Verifique suas credenciais.';
                 }
-
                 showToast('Erro', errorMessage, 'error');
                 throw error;
             }
         }
 
-        /**
-         * Atualiza item existente
-         * @param {string} collectionName - Coleção do item
-         * @param {string} id - ID do item
-         * @param {Object} data - Novos dados
-         */
         async function updateItem(collectionName, id, data) {
             try {
-                if (!currentUser || !id) {
-                    throw new Error('Dados inválidos para atualização');
-                }
-
+                if (!currentUser || !id) throw new Error('Dados inválidos para atualização');
                 const docRef = doc(db, 'users', currentUser.uid, collectionName, id);
                 await updateDoc(docRef, data);
-
                 showToast('Sucesso', 'Item atualizado com sucesso!', 'success');
             } catch (error) {
                 console.error('Erro ao atualizar:', error);
@@ -1461,17 +1704,9 @@
             }
         }
 
-        /**
-         * Deleta item
-         * @param {string} collectionName - Coleção do item
-         * @param {string} id - ID do item
-         */
         async function deleteItem(collectionName, id) {
             try {
-                if (!currentUser || !id) {
-                    throw new Error('Dados inválidos para exclusão');
-                }
-
+                if (!currentUser || !id) throw new Error('Dados inválidos para exclusão');
                 await deleteDoc(doc(db, 'users', currentUser.uid, collectionName, id));
                 showToast('Sucesso', 'Item removido com sucesso!', 'success');
             } catch (error) {
@@ -1481,11 +1716,69 @@
             }
         }
 
-        // ==================== UI RENDERING ====================
+        // ==================== FILTROS DE PERÍODO ====================
 
-        /**
-         * Renderiza lista de transações
-         */
+        function initYearFilter() {
+            const yearSelect = document.getElementById('dashboardYear');
+            if (!yearSelect) return;
+
+            yearSelect.innerHTML = '<option value="">Todos os anos</option>';
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= currentYear - 5; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === currentYear) option.selected = true;
+                yearSelect.appendChild(option);
+            }
+
+            // Define mês atual por padrão
+            const monthSelect = document.getElementById('dashboardMonth');
+            if (monthSelect) {
+                monthSelect.value = new Date().getMonth();
+            }
+
+            filtroMesAtual = new Date().getMonth();
+            filtroAnoAtual = currentYear;
+        }
+
+        function updateDashboardPeriod() {
+            const monthSelect = document.getElementById('dashboardMonth');
+            const yearSelect = document.getElementById('dashboardYear');
+
+            filtroMesAtual = monthSelect.value === '' ? null : parseInt(monthSelect.value);
+            filtroAnoAtual = yearSelect.value === '' ? null : parseInt(yearSelect.value);
+
+            updateDashboard();
+            updateCharts();
+        }
+
+        function filterTransactionsByPeriod(transactions) {
+            if (!filtroMesAtual && filtroMesAtual !== 0 && !filtroAnoAtual) {
+                return transactions;
+            }
+
+            return transactions.filter(t => {
+                if (!t.data) return false;
+                const dataTransacao = new Date(t.data);
+                
+                let mesMatch = true;
+                let anoMatch = true;
+
+                if (filtroMesAtual || filtroMesAtual === 0) {
+                    mesMatch = dataTransacao.getMonth() === filtroMesAtual;
+                }
+
+                if (filtroAnoAtual) {
+                    anoMatch = dataTransacao.getFullYear() === filtroAnoAtual;
+                }
+
+                return mesMatch && anoMatch;
+            });
+        }
+
+        // ==================== UI RENDERING APRIMORADO ====================
+
         function renderTransacoes() {
             const tbody = document.getElementById('transacoesTableBody');
             const totalEl = document.getElementById('totalTransacoes');
@@ -1498,11 +1791,13 @@
             receitasList.innerHTML = '';
             despesasList.innerHTML = '';
 
-            totalEl.textContent = `${transacoes.length} transações`;
+            // Aplica filtro de período
+            const transacoesFiltradas = filterTransactionsByPeriod(transacoes);
+            totalEl.textContent = `${transacoesFiltradas.length} transações`;
 
             try {
                 // Renderiza últimas 10 transações na tabela
-                transacoes.slice(0, 10).forEach(transacao => {
+                transacoesFiltradas.slice(0, 10).forEach(transacao => {
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50 transition-colors';
 
@@ -1527,7 +1822,7 @@
                         <td class="px-4 py-3 ${corValor} font-semibold text-right">
                             <i class="fas ${icone} mr-1"></i>${valor}
                         </td>
-                        <td class="px-4 py-3 text-center">
+                        <td class="px-4 py-3 text-center no-print">
                             <button onclick="editTransaction('${transacao.id}')" 
                                     class="text-blue-500 hover:text-blue-700 mr-2" title="Editar">
                                 <i class="fas fa-edit"></i>
@@ -1542,8 +1837,8 @@
                 });
 
                 // Renderiza listas específicas por tipo
-                const receitas = transacoes.filter(t => t.tipo === 'receita').slice(0, 5);
-                const despesas = transacoes.filter(t => t.tipo === 'despesa').slice(0, 5);
+                const receitas = transacoesFiltradas.filter(t => t.tipo === 'receita').slice(0, 5);
+                const despesas = transacoesFiltradas.filter(t => t.tipo === 'despesa').slice(0, 5);
 
                 receitas.forEach(receita => {
                     const item = createTransactionListItem(receita, 'green');
@@ -1555,13 +1850,12 @@
                     despesasList.appendChild(item);
                 });
 
-                // Mensagem se não há transações
                 if (receitas.length === 0) {
-                    receitasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma receita registrada</p>';
+                    receitasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma receita registrada no período</p>';
                 }
 
                 if (despesas.length === 0) {
-                    despesasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma despesa registrada</p>';
+                    despesasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma despesa registrada no período</p>';
                 }
             } catch (error) {
                 console.error('Erro ao renderizar transações:', error);
@@ -1569,11 +1863,6 @@
             }
         }
 
-        /**
-         * Cria item da lista de transações
-         * @param {Object} transacao - Dados da transação
-         * @param {string} color - Cor do item
-         */
         function createTransactionListItem(transacao, color) {
             const item = document.createElement('div');
             item.className = `flex items-center justify-between p-3 bg-${color}-50 border border-${color}-100 rounded-lg hover:bg-${color}-100 transition-colors`;
@@ -1593,7 +1882,7 @@
                     </div>
                     <div class="text-right">
                         <p class="font-bold text-${color}-700">${valor}</p>
-                        <div class="space-x-1">
+                        <div class="space-x-1 no-print">
                             <button onclick="editTransaction('${transacao.id}')" 
                                     class="text-blue-500 hover:text-blue-700 text-xs" title="Editar">
                                 <i class="fas fa-edit"></i>
@@ -1613,9 +1902,6 @@
             return item;
         }
 
-        /**
-         * Renderiza patrimônio
-         */
         function renderPatrimonio() {
             const bensContainer = document.getElementById('bensList');
             const dividasContainer = document.getElementById('dividasList');
@@ -1647,7 +1933,6 @@
                     }
                 });
 
-                // Mensagens se não há itens
                 if (quantidadeBens === 0) {
                     bensContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhum bem cadastrado</p>';
                 }
@@ -1673,13 +1958,6 @@
             }
         }
 
-        /**
-         * Cria item de patrimônio
-         * @param {Object} item - Dados do item
-         * @param {string} valor - Valor formatado
-         * @param {string} color - Cor do item
-         * @param {string} emoji - Emoji do item
-         */
         function createPatrimonioItem(item, valor, color, emoji) {
             const element = document.createElement('div');
             element.className = `flex items-center justify-between p-3 bg-${color}-50 border border-${color}-100 rounded-lg hover:bg-${color}-100 transition-colors`;
@@ -1695,7 +1973,7 @@
                     </div>
                     <div class="text-right">
                         <p class="font-bold text-${color}-700">${valor}</p>
-                        <div class="space-x-1">
+                        <div class="space-x-1 no-print">
                             <button onclick="editPatrimonio('${item.id}')" 
                                     class="text-blue-500 hover:text-blue-700 text-xs" title="Editar">
                                 <i class="fas fa-edit"></i>
@@ -1715,48 +1993,35 @@
             return element;
         }
 
-        // ==================== DASHBOARD E CÁLCULOS ====================
+        // ==================== DASHBOARD E CÁLCULOS APRIMORADOS ====================
 
-        /**
-         * Atualiza dashboard principal
-         */
         function updateDashboard() {
             try {
-                const agora = new Date();
-                const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
-                const fimMes = new Date(agora.getFullYear(), agora.getMonth() + 1, 0);
-
-                // Filtra transações do mês atual
-                const transacoesMes = transacoes.filter(t => {
-                    if (!t.data) return false;
-                    const dataTransacao = new Date(t.data);
-                    return dataTransacao >= inicioMes && dataTransacao <= fimMes;
-                });
-
-                const receitas = transacoesMes.filter(t => t.tipo === 'receita');
-                const despesas = transacoesMes.filter(t => t.tipo === 'despesa');
+                // Filtra transações do período selecionado
+                const transacoesPeriodo = filterTransactionsByPeriod(transacoes);
+                
+                const receitas = transacoesPeriodo.filter(t => t.tipo === 'receita');
+                const despesas = transacoesPeriodo.filter(t => t.tipo === 'despesa');
 
                 const totalReceitas = receitas.reduce((sum, t) => sum + (t.valor || 0), 0);
                 const totalDespesas = despesas.reduce((sum, t) => sum + (t.valor || 0), 0);
-                const saldoAtual = totalReceitas - totalDespesas;
-                const economiaMensal = saldoAtual;
+                const saldoPeriodo = totalReceitas - totalDespesas;
 
-                // Calcula médias anuais
-                const receitasAnuais = transacoes.filter(t => t.tipo === 'receita');
-                const despesasAnuais = transacoes.filter(t => t.tipo === 'despesa');
+                // Calcula médias gerais (todos os dados)
+                const receitasGerais = transacoes.filter(t => t.tipo === 'receita');
+                const despesasGerais = transacoes.filter(t => t.tipo === 'despesa');
 
-                const mediaReceitas = receitasAnuais.length > 0 ?
-                    receitasAnuais.reduce((sum, t) => sum + (t.valor || 0), 0) / 12 : 0;
-                const mediaDespesas = despesasAnuais.length > 0 ?
-                    despesasAnuais.reduce((sum, t) => sum + (t.valor || 0), 0) / 12 : 0;
+                const mediaReceitas = receitasGerais.length > 0 ?
+                    receitasGerais.reduce((sum, t) => sum + (t.valor || 0), 0) / 12 : 0;
+                const mediaDespesas = despesasGerais.length > 0 ?
+                    despesasGerais.reduce((sum, t) => sum + (t.valor || 0), 0) / 12 : 0;
 
                 // Atualiza elementos do dashboard
-                document.getElementById('saldoAtual').textContent = formatBRL(saldoAtual);
+                document.getElementById('saldoAtual').textContent = formatBRL(saldoPeriodo);
                 document.getElementById('receitasMes').textContent = formatBRL(totalReceitas);
                 document.getElementById('despesasMes').textContent = formatBRL(totalDespesas);
-                document.getElementById('economiaMensal').textContent = formatBRL(economiaMensal);
+                document.getElementById('economiaMensal').textContent = formatBRL(saldoPeriodo);
 
-                // Atualiza médias
                 document.getElementById('mediaReceitas').textContent = `Média: ${formatBRL(mediaReceitas)}`;
                 document.getElementById('mediaDespesas').textContent = `Média: ${formatBRL(mediaDespesas)}`;
 
@@ -1767,8 +2032,11 @@
                 document.getElementById('mediaDespesasMensal').textContent = formatBRL(mediaDespesas);
 
                 // Calcula percentuais
-                const percentualEconomia = totalReceitas > 0 ? (economiaMensal / totalReceitas * 100) : 0;
+                const percentualEconomia = totalReceitas > 0 ? (saldoPeriodo / totalReceitas * 100) : 0;
                 document.getElementById('percentualEconomia').textContent = `${percentualEconomia.toFixed(1)}% da receita`;
+
+                // Atualiza estatísticas avançadas
+                updateAdvancedStats(transacoesPeriodo);
 
                 // Chama cálculos de projeção
                 updateProjecaoCalculations();
@@ -1778,9 +2046,148 @@
             }
         }
 
-        /**
-         * Atualiza cálculos de projeção anual
-         */
+        function updateAdvancedStats(transacoesPeriodo) {
+            try {
+                // Tendências
+                updateTendencias();
+
+                // Maior categoria
+                updateMaiorCategoria(transacoesPeriodo);
+
+                // Médias diárias
+                updateMediasDiarias(transacoesPeriodo);
+            } catch (error) {
+                console.error('Erro nas estatísticas avançadas:', error);
+            }
+        }
+
+        function updateTendencias() {
+            try {
+                const agora = new Date();
+                const mesAtual = agora.getMonth();
+                const anoAtual = agora.getFullYear();
+
+                // Calcula dados do mês atual e anterior
+                const transacoesMesAtual = transacoes.filter(t => {
+                    const data = new Date(t.data);
+                    return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+                });
+
+                const mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1;
+                const anoAnterior = mesAtual === 0 ? anoAtual - 1 : anoAtual;
+
+                const transacoesMesAnterior = transacoes.filter(t => {
+                    const data = new Date(t.data);
+                    return data.getMonth() === mesAnterior && data.getFullYear() === anoAnterior;
+                });
+
+                // Calcula totais
+                const receitasAtual = transacoesMesAtual.filter(t => t.tipo === 'receita').reduce((sum, t) => sum + t.valor, 0);
+                const despesasAtual = transacoesMesAtual.filter(t => t.tipo === 'despesa').reduce((sum, t) => sum + t.valor, 0);
+                const economiaAtual = receitasAtual - despesasAtual;
+
+                const receitasAnterior = transacoesMesAnterior.filter(t => t.tipo === 'receita').reduce((sum, t) => sum + t.valor, 0);
+                const despesasAnterior = transacoesMesAnterior.filter(t => t.tipo === 'despesa').reduce((sum, t) => sum + t.valor, 0);
+                const economiaAnterior = receitasAnterior - despesasAnterior;
+
+                // Calcula percentuais de mudança
+                const tendenciaReceitas = receitasAnterior > 0 ? ((receitasAtual - receitasAnterior) / receitasAnterior * 100) : 0;
+                const tendenciaDespesas = despesasAnterior > 0 ? ((despesasAtual - despesasAnterior) / despesasAnterior * 100) : 0;
+                const tendenciaEconomia = economiaAnterior !== 0 ? ((economiaAtual - economiaAnterior) / Math.abs(economiaAnterior) * 100) : 0;
+
+                // Atualiza elementos
+                updateTrendElement('tendenciaReceitas', tendenciaReceitas);
+                updateTrendElement('tendenciaDespesas', tendenciaDespesas * -1); // Inverte para despesas
+                updateTrendElement('tendenciaEconomia', tendenciaEconomia);
+            } catch (error) {
+                console.error('Erro no cálculo de tendências:', error);
+            }
+        }
+
+        function updateTrendElement(elementId, percentage) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            const isPositive = percentage > 0;
+            const isNegative = percentage < 0;
+            const isNeutral = percentage === 0;
+
+            const icon = isPositive ? '↗️' : isNegative ? '↘️' : '➡️';
+            const className = isPositive ? 'stat-trend-up' : isNegative ? 'stat-trend-down' : 'stat-neutral';
+
+            element.textContent = `${icon} ${Math.abs(percentage).toFixed(1)}%`;
+            element.className = `text-sm font-medium ${className}`;
+        }
+
+        function updateMaiorCategoria(transacoesPeriodo) {
+            try {
+                const despesas = transacoesPeriodo.filter(t => t.tipo === 'despesa');
+                if (despesas.length === 0) {
+                    document.getElementById('maiorCategoriaNome').textContent = 'Nenhuma despesa';
+                    document.getElementById('maiorCategoriaValor').textContent = 'R$ 0,00';
+                    document.getElementById('maiorCategoriaPercent').textContent = '0% do total';
+                    return;
+                }
+
+                const categorias = {};
+                despesas.forEach(d => {
+                    categorias[d.categoria] = (categorias[d.categoria] || 0) + d.valor;
+                });
+
+                const categoriasMaior = Object.entries(categorias).sort(([,a], [,b]) => b - a);
+                const [nomeCategoria, valorCategoria] = categoriasMaior[0];
+                const totalDespesas = despesas.reduce((sum, d) => sum + d.valor, 0);
+                const percentual = (valorCategoria / totalDespesas * 100).toFixed(1);
+
+                // Mapeia emojis por categoria
+                const emojis = {
+                    'Habitação': '🏠', 'Alimentação': '🍽️', 'Transporte': '🚗',
+                    'Lazer': '🎯', 'Saúde': '⚕️', 'Educação': '📚', 'Roupas': '👕',
+                    'Tecnologia': '💻', 'Contas': '📄', 'Outros': '📝'
+                };
+
+                document.getElementById('maiorCategoriaIcon').textContent = emojis[nomeCategoria] || '📊';
+                document.getElementById('maiorCategoriaNome').textContent = nomeCategoria;
+                document.getElementById('maiorCategoriaValor').textContent = formatBRL(valorCategoria);
+                document.getElementById('maiorCategoriaPercent').textContent = `${percentual}% do total`;
+            } catch (error) {
+                console.error('Erro na maior categoria:', error);
+            }
+        }
+
+        function updateMediasDiarias(transacoesPeriodo) {
+            try {
+                if (transacoesPeriodo.length === 0) {
+                    document.getElementById('mediaDiariaReceitas').textContent = 'R$ 0,00';
+                    document.getElementById('mediaDiariaDespesas').textContent = 'R$ 0,00';
+                    document.getElementById('mediaDiariaSaldo').textContent = 'R$ 0,00';
+                    return;
+                }
+
+                // Calcula número de dias no período
+                const datas = transacoesPeriodo.map(t => new Date(t.data));
+                const minData = new Date(Math.min(...datas));
+                const maxData = new Date(Math.max(...datas));
+                const diasPeriodo = Math.max(1, Math.ceil((maxData - minData) / (1000 * 60 * 60 * 24)) + 1);
+
+                const receitas = transacoesPeriodo.filter(t => t.tipo === 'receita');
+                const despesas = transacoesPeriodo.filter(t => t.tipo === 'despesa');
+
+                const totalReceitas = receitas.reduce((sum, t) => sum + t.valor, 0);
+                const totalDespesas = despesas.reduce((sum, t) => sum + t.valor, 0);
+
+                const mediaDiariaReceitas = totalReceitas / diasPeriodo;
+                const mediaDiariaDespesas = totalDespesas / diasPeriodo;
+                const mediaDiariaSaldo = mediaDiariaReceitas - mediaDiariaDespesas;
+
+                document.getElementById('mediaDiariaReceitas').textContent = formatBRL(mediaDiariaReceitas);
+                document.getElementById('mediaDiariaDespesas').textContent = formatBRL(mediaDiariaDespesas);
+                document.getElementById('mediaDiariaSaldo').textContent = formatBRL(mediaDiariaSaldo);
+            } catch (error) {
+                console.error('Erro nas médias diárias:', error);
+            }
+        }
+
         function updateProjecaoCalculations() {
             try {
                 const agora = new Date();
@@ -1819,12 +2226,46 @@
             }
         }
 
-        /**
-         * Gera análise inteligente automática
-         * @param {number} economiaMensal - Economia mensal média
-         * @param {number} receitas - Total de receitas
-         * @param {number} despesas - Total de despesas
-         */
+        function updateProjecaoPersonalizada() {
+            try {
+                const aumentoReceita = parseFloat(document.getElementById('aumentoReceita').value) / 100;
+                const reducaoDespesas = parseFloat(document.getElementById('reducaoDespesas').value) / 100;
+                const metaEconomiaStr = document.getElementById('metaEconomia').value;
+                const metaEconomia = metaEconomiaStr ? parseBRL(metaEconomiaStr) : null;
+
+                const agora = new Date();
+                const mesesRestantes = 12 - agora.getMonth();
+
+                // Calcula médias atuais
+                const receitaTotal = transacoes
+                    .filter(t => t.tipo === 'receita' && new Date(t.data).getFullYear() === agora.getFullYear())
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const despesaTotal = transacoes
+                    .filter(t => t.tipo === 'despesa' && new Date(t.data).getFullYear() === agora.getFullYear())
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const mesesDecorridos = agora.getMonth() + 1;
+                const receitaMensalMedia = mesesDecorridos > 0 ? receitaTotal / mesesDecorridos : 0;
+                const despesaMensalMedia = mesesDecorridos > 0 ? despesaTotal / mesesDecorridos : 0;
+
+                // Aplica modificações
+                const novaReceita = receitaMensalMedia * (1 + aumentoReceita);
+                const novaDespesa = despesaMensalMedia * (1 - reducaoDespesas);
+                const novaEconomia = novaReceita - novaDespesa;
+
+                const projecaoPersonalizada = novaEconomia * mesesRestantes;
+
+                // Atualiza elementos
+                document.getElementById('cenarioPersonalizado').textContent = formatBRL(projecaoPersonalizada);
+                document.getElementById('personalizadoReceita').textContent = `Receita: ${(aumentoReceita * 100).toFixed(0)}%`;
+                document.getElementById('personalizadoDespesa').textContent = `Despesa: ${(reducaoDespesas * 100).toFixed(0)}%`;
+
+                updateProjecaoChart();
+            } catch (error) {
+                console.error('Erro na projeção personalizada:', error);
+            }
+        }
         function generateAnaliseInteligente(economiaMensal, receitas, despesas) {
             const container = document.getElementById('analiseInteligente');
             if (!container) return;
@@ -2745,3 +3186,4 @@ users/{uid}/
 </body>
 
 </html>
+
