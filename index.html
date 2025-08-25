@@ -62,7 +62,8 @@
                 height: 250px;
             }
 
-            header, nav {
+            header,
+            nav {
                 display: none !important;
             }
 
@@ -119,9 +120,12 @@
         }
 
         @keyframes pulseSuccess {
-            0%, 100% {
+
+            0%,
+            100% {
                 background-color: #10b981;
             }
+
             50% {
                 background-color: #059669;
             }
@@ -297,11 +301,11 @@
             <div id="dashboard" class="tab-content">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-3xl font-bold text-gray-800">Dashboard Financeiro</h2>
-                    
+
                     <!-- Filtros de Período -->
                     <div class="flex space-x-2 no-print">
-                        <select id="dashboardMonth" onchange="updateDashboardPeriod()" 
-                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <select id="dashboardMonth" onchange="updateDashboardPeriod()"
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
                             <option value="">Todos os meses</option>
                             <option value="0">Janeiro</option>
                             <option value="1">Fevereiro</option>
@@ -316,8 +320,8 @@
                             <option value="10">Novembro</option>
                             <option value="11">Dezembro</option>
                         </select>
-                        <select id="dashboardYear" onchange="updateDashboardPeriod()" 
-                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <select id="dashboardYear" onchange="updateDashboardPeriod()"
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
                             <option value="">Todos os anos</option>
                         </select>
                     </div>
@@ -462,8 +466,8 @@
                         </h3>
                         <div class="flex items-center space-x-4">
                             <span class="text-sm text-gray-500" id="totalTransacoes">0 transações</span>
-                            <button onclick="showTab('relatorios')" 
-                                    class="text-blue-500 hover:text-blue-700 text-sm font-medium no-print">
+                            <button onclick="showTab('relatorios')"
+                                class="text-blue-500 hover:text-blue-700 text-sm font-medium no-print">
                                 Ver todas →
                             </button>
                         </div>
@@ -501,7 +505,8 @@
                             </h3>
                             <form onsubmit="handleReceitaForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-descricao">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="receita-descricao">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
                                     <input name="descricao" id="receita-descricao" type="text" required
@@ -519,7 +524,8 @@
                                     <div class="text-xs text-red-500 mt-1 hidden" id="receita-valor-error"></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="receita-categoria">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="receita-categoria">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
                                     <select name="categoria" id="receita-categoria" required
@@ -599,7 +605,8 @@
                             </h3>
                             <form onsubmit="handleDespesaForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-descricao">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="despesa-descricao">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
                                     <input name="descricao" id="despesa-descricao" type="text" required
@@ -617,7 +624,8 @@
                                     <div class="text-xs text-red-500 mt-1 hidden" id="despesa-valor-error"></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="despesa-categoria">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="despesa-categoria">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
                                     <select name="categoria" id="despesa-categoria" required
@@ -815,373 +823,399 @@
             </div>
 
             <!-- Nova Tab: Relatórios -->
-            <div id="relatorios" class="tab-content hidden">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800">Relatórios Detalhados</h2>
-
-                <!-- Filtros Avançados -->
-                <div class="filter-container mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Período Inicial</label>
-                            <input type="date" id="filtroDataInicio" 
-                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Período Final</label>
-                            <input type="date" id="filtroDataFim" 
-                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Tipo</label>
-                            <select id="filtroTipo" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Todos</option>
-                                <option value="receita">Receitas</option>
-                                <option value="despesa">Despesas</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Categoria</label>
-                            <select id="filtroCategoria" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Todas</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="flex space-x-3 mt-4">
-                        <button onclick="aplicarFiltros()" 
-                                class="gradient-info text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all">
-                            <i class="fas fa-filter mr-2"></i>Aplicar Filtros
-                        </button>
-                        <button onclick="limparFiltros()" 
-                                class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-all">
-                            <i class="fas fa-times mr-2"></i>Limpar
-                        </button>
-                        <button onclick="exportarCSV()" 
-                                class="gradient-success text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all">
-                            <i class="fas fa-download mr-2"></i>Exportar CSV
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Resumo do Filtro -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600">Total de Registros</p>
-                                <p class="text-2xl font-bold text-gray-800" id="filtroTotalRegistros">0</p>
-                            </div>
-                            <i class="fas fa-list text-2xl text-gray-500"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600">Total Receitas</p>
-                                <p class="text-2xl font-bold text-green-600" id="filtroTotalReceitas">R$ 0,00</p>
-                            </div>
-                            <i class="fas fa-arrow-up text-2xl text-green-500"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600">Total Despesas</p>
-                                <p class="text-2xl font-bold text-red-600" id="filtroTotalDespesas">R$ 0,00</p>
-                            </div>
-                            <i class="fas fa-arrow-down text-2xl text-red-500"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600">Saldo Período</p>
-                                <p class="text-2xl font-bold" id="filtroSaldoPeriodo">R$ 0,00</p>
-                            </div>
-                            <i class="fas fa-calculator text-2xl text-blue-500"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tabela Completa de Transações -->
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-semibold">Todas as Transações</h3>
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-500" id="relatorioContador">0 transações encontradas</span>
-                            <div class="flex space-x-2">
-                                <button onclick="ordenarTabela('data')" class="text-gray-500 hover:text-gray-700" title="Ordenar por Data">
-                                    <i class="fas fa-sort"></i>
-                                </button>
-                                <button onclick="ordenarTabela('valor')" class="text-gray-500 hover:text-gray-700" title="Ordenar por Valor">
-                                    <i class="fas fa-sort-amount-down"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-wrapper" style="max-height: 600px;">
-                        <table class="w-full text-sm">
-                            <thead class="sticky-header">
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 font-semibold">Data</th>
-                                    <th class="text-left py-3 px-4 font-semibold">Tipo</th>
-                                    <th class="text-left py-3 px-4 font-semibold">Descrição</th>
-                                    <th class="text-left py-3 px-4 font-semibold">Categoria</th>
-                                    <th class="text-right py-3 px-4 font-semibold">Valor</th>
-                                    <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="relatorioTableBody">
-                                <!-- Transações filtradas serão carregadas aqui -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Nova Tab: Insights -->
-            <div id="insights" class="tab-content hidden">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800">Insights Avançados</h2>
-
-                <!-- Análises Comparativas -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-chart-line mr-2 text-blue-500"></i>
-                            Análise Mensal Comparativa
-                        </h3>
-                        <div class="chart-container">
-                            <canvas id="comparativoChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-chart-bar mr-2 text-purple-500"></i>
-                            Top 5 Categorias de Despesa
-                        </h3>
-                        <div class="chart-container">
-                            <canvas id="topCategoriasChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cards de Insights -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-calendar-week mr-2 text-green-500"></i>
-                            Melhor Dia da Semana
-                        </h3>
-                        <div class="text-center">
-                            <div id="melhorDiaIcon" class="text-4xl mb-2">📅</div>
-                            <p id="melhorDiaNome" class="text-xl font-bold text-gray-800">--</p>
-                            <p id="melhorDiaMotivo" class="text-sm text-gray-600">--</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-trophy mr-2 text-yellow-500"></i>
-                            Mês Mais Econômico
-                        </h3>
-                        <div class="text-center">
-                            <div id="melhorMesIcon" class="text-4xl mb-2">🏆</div>
-                            <p id="melhorMesNome" class="text-xl font-bold text-gray-800">--</p>
-                            <p id="melhorMesValor" class="text-sm text-gray-600">--</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>
-                            Categoria de Alerta
-                        </h3>
-                        <div class="text-center">
-                            <div id="categoriaAlertaIcon" class="text-4xl mb-2">⚠️</div>
-                            <p id="categoriaAlertaNome" class="text-xl font-bold text-gray-800">--</p>
-                            <p id="categoriaAlertaMotivo" class="text-sm text-gray-600">--</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Padrões de Gastos -->
-                <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-search mr-2 text-indigo-500"></i>
-                        Padrões Identificados
+            <!-- Tabela de Relatórios -->
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-table mr-2 text-gray-500"></i>
+                        Transações Detalhadas
                     </h3>
-                    <div id="padroesGastos" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Padrões serão gerados automaticamente -->
+                    <div class="text-sm text-gray-500">
+                        Clique nos cabeçalhos para ordenar
                     </div>
                 </div>
 
-                <!-- Previsões e Alertas -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-crystal-ball mr-2 text-purple-500"></i>
-                            Previsões Inteligentes
-                        </h3>
-                        <div id="previsoesInteligentes" class="space-y-3">
-                            <!-- Previsões serão geradas automaticamente -->
-                        </div>
-                    </div>
+                <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
+                    <table class="w-full text-sm">
+                        <thead class="sticky-header bg-gray-50">
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-semibold">
+                                    <button onclick="alterarOrdenacao('tipo')"
+                                        class="flex items-center hover:text-blue-600">
+                                        Tipo
+                                        <i class="fas fa-sort ml-1 text-xs"></i>
+                                    </button>
+                                </th>
+                                <th class="text-left py-3 px-4 font-semibold">
+                                    <button onclick="alterarOrdenacao('data')"
+                                        class="flex items-center hover:text-blue-600">
+                                        Data
+                                        <i class="fas fa-sort ml-1 text-xs"></i>
+                                    </button>
+                                </th>
+                                <th class="text-left py-3 px-4 font-semibold">
+                                    <button onclick="alterarOrdenacao('descricao')"
+                                        class="flex items-center hover:text-blue-600">
+                                        Descrição
+                                        <i class="fas fa-sort ml-1 text-xs"></i>
+                                    </button>
+                                </th>
+                                <th class="text-left py-3 px-4 font-semibold">
+                                    <button onclick="alterarOrdenacao('categoria')"
+                                        class="flex items-center hover:text-blue-600">
+                                        Categoria
+                                        <i class="fas fa-sort ml-1 text-xs"></i>
+                                    </button>
+                                </th>
+                                <th class="text-right py-3 px-4 font-semibold">
+                                    <button onclick="alterarOrdenacao('valor')"
+                                        class="flex items-center justify-end hover:text-blue-600">
+                                        Valor
+                                        <i class="fas fa-sort ml-1 text-xs"></i>
+                                    </button>
+                                </th>
+                                <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="relatoriosTableBody">
+                            <!-- Dados serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-bell mr-2 text-orange-500"></i>
-                            Alertas Personalizados
-                        </h3>
-                        <div id="alertasPersonalizados" class="space-y-3">
-                            <!-- Alertas serão gerados automaticamente -->
+
+            <!-- Resumo do Filtro -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Total de Registros</p>
+                            <p class="text-2xl font-bold text-gray-800" id="filtroTotalRegistros">0</p>
                         </div>
+                        <i class="fas fa-list text-2xl text-gray-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Total Receitas</p>
+                            <p class="text-2xl font-bold text-green-600" id="filtroTotalReceitas">R$ 0,00</p>
+                        </div>
+                        <i class="fas fa-arrow-up text-2xl text-green-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Total Despesas</p>
+                            <p class="text-2xl font-bold text-red-600" id="filtroTotalDespesas">R$ 0,00</p>
+                        </div>
+                        <i class="fas fa-arrow-down text-2xl text-red-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Saldo Período</p>
+                            <p class="text-2xl font-bold" id="filtroSaldoPeriodo">R$ 0,00</p>
+                        </div>
+                        <i class="fas fa-calculator text-2xl text-blue-500"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Projeção Tab (Aprimorada) -->
-            <div id="projecao" class="tab-content hidden">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Financeira Anual</h2>
+            <!-- Tabela Completa de Transações -->
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold">Todas as Transações</h3>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500" id="relatorioContador">0 transações encontradas</span>
+                        <div class="flex space-x-2">
+                            <button onclick="ordenarTabela('data')" class="text-gray-500 hover:text-gray-700"
+                                title="Ordenar por Data">
+                                <i class="fas fa-sort"></i>
+                            </button>
+                            <button onclick="ordenarTabela('valor')" class="text-gray-500 hover:text-gray-700"
+                                title="Ordenar por Valor">
+                                <i class="fas fa-sort-amount-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-wrapper" style="max-height: 600px;">
+                    <table class="w-full text-sm">
+                        <thead class="sticky-header">
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-semibold">Data</th>
+                                <th class="text-left py-3 px-4 font-semibold">Tipo</th>
+                                <th class="text-left py-3 px-4 font-semibold">Descrição</th>
+                                <th class="text-left py-3 px-4 font-semibold">Categoria</th>
+                                <th class="text-right py-3 px-4 font-semibold">Valor</th>
+                                <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="relatorioTableBody">
+                            <!-- Transações filtradas serão carregadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-                <!-- Controles de Simulação -->
-                <div class="filter-container mb-8">
-                    <h3 class="text-lg font-semibold mb-4">Simulador de Cenários</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Aumento de Receita (%)</label>
-                            <input type="number" id="aumentoReceita" value="0" min="-50" max="100" step="5"
-                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                   onchange="updateProjecaoPersonalizada()">
+        <!-- Nova Tab: Insights -->
+        <div id="insights" class="tab-content hidden">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Insights Financeiros</h2>
+
+            <!-- Análise de Tendências -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-trending-up mr-2 text-green-500"></i>
+                        Tendências (3 meses)
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Receitas</span>
+                            <span id="tendenciaReceitasTexto" class="text-sm font-medium">--</span>
                         </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Redução de Despesas (%)</label>
-                            <input type="number" id="reducaoDespesas" value="0" min="-50" max="50" step="5"
-                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                   onchange="updateProjecaoPersonalizada()">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Despesas</span>
+                            <span id="tendenciaDespesasTexto" class="text-sm font-medium">--</span>
                         </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Meta de Economia Mensal</label>
-                            <input type="text" id="metaEconomia" placeholder="1.000,00"
-                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                   oninput="formatCurrency(this)" onchange="updateProjecaoPersonalizada()">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Saldo</span>
+                            <span id="tendenciaSaldoTexto" class="text-sm font-medium">--</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Gráfico de Projeção -->
-                <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
+                        Padrões Mensais
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Mês com maior atividade</p>
+                            <p id="mesMaiorAtividade" class="font-medium text-blue-600">--</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Mês com menor atividade</p>
+                            <p id="mesMenorAtividade" class="font-medium text-gray-600">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
+                        Categoria Dominante
+                    </h3>
+                    <div class="space-y-2">
+                        <p id="categoriaMaiorGasto" class="font-medium text-purple-600">--</p>
+                        <p id="categoriaMaiorGastoValor" class="text-sm text-gray-600">R$ 0,00</p>
+                        <p id="categoriaMaiorGastoMedia" class="text-xs text-gray-500">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Tendência -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
                     <h3 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-chart-bar mr-2 text-purple-500"></i>
-                        Projeção de Economia Mensal
+                        <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                        Evolução Mensal
                     </h3>
                     <div class="chart-container">
-                        <canvas id="projecaoChart"></canvas>
+                        <canvas id="tendenciaMensalChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Cenários de Projeção Aprimorados -->
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mr-3"></i>
-                            <h3 class="text-lg font-bold text-yellow-700">Conservador</h3>
+                <!-- Previsões -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-crystal-ball mr-2 text-purple-500"></i>
+                        Projeção do Mês
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                            <span class="text-sm text-green-700">Receitas Projetadas</span>
+                            <span id="projecaoReceitasMes" class="font-bold text-green-600">R$ 0,00</span>
                         </div>
-                        <p class="text-3xl font-bold text-yellow-600 mb-3" id="cenarioConservador">R$ 0,00</p>
-                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
-                        <div class="space-y-2 text-xs text-gray-500">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
-                                <span>Considera imprevistos</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
-                                <span>Gastos emergenciais +10%</span>
-                            </div>
+                        <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                            <span class="text-sm text-red-700">Despesas Projetadas</span>
+                            <span id="projecaoDespesasMes" class="font-bold text-red-600">R$ 0,00</span>
                         </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-2 border-dashed">
+                            <span class="text-sm text-gray-700">Saldo Projetado</span>
+                            <span id="projecaoSaldoMes" class="font-bold">R$ 0,00</span>
+                        </div>
+                        <p class="text-xs text-gray-500 text-center">
+                            *Baseado no ritmo atual de gastos e receitas
+                        </p>
                     </div>
+                </div>
+            </div>
 
-                    <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-chart-line text-blue-500 text-2xl mr-3"></i>
-                            <h3 class="text-lg font-bold text-blue-700">Realista</h3>
-                        </div>
-                        <p class="text-3xl font-bold text-blue-600 mb-3" id="cenarioRealista">R$ 0,00</p>
-                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
-                        <div class="space-y-2 text-xs text-gray-500">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>
-                                <span>Padrão atual mantido</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>
-                                <span>Receita estável</span>
-                            </div>
-                        </div>
+            <!-- Alertas e Recomendações -->
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-bell mr-2 text-orange-500"></i>
+                    Alertas e Recomendações
+                </h3>
+                <div id="alertasContainer">
+                    <!-- Alertas serão carregados aqui -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Projeção Tab (Aprimorada) -->
+        <div id="projecao" class="tab-content hidden">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Financeira Anual</h2>
+
+            <!-- Controles de Simulação -->
+            <div class="filter-container mb-8">
+                <h3 class="text-lg font-semibold mb-4">Simulador de Cenários</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">Aumento de Receita (%)</label>
+                        <input type="number" id="aumentoReceita" value="0" min="-50" max="100" step="5"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            onchange="updateProjecaoPersonalizada()">
                     </div>
-
-                    <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-rocket text-green-500 text-2xl mr-3"></i>
-                            <h3 class="text-lg font-bold text-green-700">Otimista</h3>
-                        </div>
-                        <p class="text-3xl font-bold text-green-600 mb-3" id="cenarioOtimista">R$ 0,00</p>
-                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
-                        <div class="space-y-2 text-xs text-gray-500">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span>Aumento receita +15%</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span>Redução gastos -10%</span>
-                            </div>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">Redução de Despesas
+                            (%)</label>
+                        <input type="number" id="reducaoDespesas" value="0" min="-50" max="50" step="5"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            onchange="updateProjecaoPersonalizada()">
                     </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">Meta de Economia
+                            Mensal</label>
+                        <input type="text" id="metaEconomia" placeholder="1.000,00"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            oninput="formatCurrency(this)" onchange="updateProjecaoPersonalizada()">
+                    </div>
+                </div>
+            </div>
 
-                    <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-6">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-cogs text-purple-500 text-2xl mr-3"></i>
-                            <h3 class="text-lg font-bold text-purple-700">Personalizado</h3>
+            <!-- Gráfico de Projeção -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-purple-500"></i>
+                    Projeção de Economia Mensal
+                </h3>
+                <div class="chart-container">
+                    <canvas id="projecaoChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Cenários de Projeção Aprimorados -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold text-yellow-700">Conservador</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-yellow-600 mb-3" id="cenarioConservador">R$ 0,00</p>
+                    <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
+                    <div class="space-y-2 text-xs text-gray-500">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                            <span>Considera imprevistos</span>
                         </div>
-                        <p class="text-3xl font-bold text-purple-600 mb-3" id="cenarioPersonalizado">R$ 0,00</p>
-                        <p class="text-sm text-gray-600 mb-4">Sua simulação</p>
-                        <div class="space-y-2 text-xs text-gray-500">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-purple-500 mr-2"></i>
-                                <span id="personalizadoReceita">Receita: --</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-purple-500 mr-2"></i>
-                                <span id="personalizadoDespesa">Despesa: --</span>
-                            </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                            <span>Gastos emergenciais +10%</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Análise e Recomendações Aprimoradas -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
-                            Análise Inteligente
-                        </h3>
-                        <div id="analiseInteligente" class="space-y-3 text-sm text-gray-600">
-                            <!-- Análise será gerada automaticamente -->
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-chart-line text-blue-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold text-blue-700">Realista</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-blue-600 mb-3" id="cenarioRealista">R$ 0,00</p>
+                    <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
+                    <div class="space-y-2 text-xs text-gray-500">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                            <span>Padrão atual mantido</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                            <span>Receita estável</span>
                         </div>
                     </div>
+                </div>
 
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-target mr-2 text-purple-500"></i>
-                            Metas Sugeridas
-                        </h3>
-                        <div id="metasSugeridas" class="space-y-3 text-sm text-gray-600">
-                            <!-- Metas serão geradas automaticamente -->
+                <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-rocket text-green-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold text-green-700">Otimista</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-green-600 mb-3" id="cenarioOtimista">R$ 0,00</p>
+                    <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
+                    <div class="space-y-2 text-xs text-gray-500">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Aumento receita +15%</span>
                         </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Redução gastos -10%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-cogs text-purple-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold text-purple-700">Personalizado</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-purple-600 mb-3" id="cenarioPersonalizado">R$ 0,00</p>
+                    <p class="text-sm text-gray-600 mb-4">Sua simulação</p>
+                    <div class="space-y-2 text-xs text-gray-500">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i>
+                            <span id="personalizadoReceita">Receita: --</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-purple-500 mr-2"></i>
+                            <span id="personalizadoDespesa">Despesa: --</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análise e Recomendações Aprimoradas -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
+                        Análise Inteligente
+                    </h3>
+                    <div id="analiseInteligente" class="space-y-3 text-sm text-gray-600">
+                        <!-- Análise será gerada automaticamente -->
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-target mr-2 text-purple-500"></i>
+                        Metas Sugeridas
+                    </h3>
+                    <div id="metasSugeridas" class="space-y-3 text-sm text-gray-600">
+                        <!-- Metas serão geradas automaticamente -->
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Modal de Confirmação -->
@@ -1557,7 +1591,7 @@
             document.getElementById('appScreen').classList.remove('hidden');
 
             document.getElementById('userName').textContent = currentUser.displayName;
-            document.getElementById('userPhoto').src = currentUser.photoURL || 
+            document.getElementById('userPhoto').src = currentUser.photoURL ||
                 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM2MzY2RjEiLz4KPHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjw/dGV4dD4KPC9zdmc+';
 
             setToday();
@@ -1761,7 +1795,7 @@
             return transactions.filter(t => {
                 if (!t.data) return false;
                 const dataTransacao = new Date(t.data);
-                
+
                 let mesMatch = true;
                 let anoMatch = true;
 
@@ -1999,7 +2033,7 @@
             try {
                 // Filtra transações do período selecionado
                 const transacoesPeriodo = filterTransactionsByPeriod(transacoes);
-                
+
                 const receitas = transacoesPeriodo.filter(t => t.tipo === 'receita');
                 const despesas = transacoesPeriodo.filter(t => t.tipo === 'despesa');
 
@@ -2134,7 +2168,7 @@
                     categorias[d.categoria] = (categorias[d.categoria] || 0) + d.valor;
                 });
 
-                const categoriasMaior = Object.entries(categorias).sort(([,a], [,b]) => b - a);
+                const categoriasMaior = Object.entries(categorias).sort(([, a], [, b]) => b - a);
                 const [nomeCategoria, valorCategoria] = categoriasMaior[0];
                 const totalDespesas = despesas.reduce((sum, d) => sum + d.valor, 0);
                 const percentual = (valorCategoria / totalDespesas * 100).toFixed(1);
@@ -3065,12 +3099,23 @@
                     selectedBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium gradient-info text-white whitespace-nowrap';
                 }
 
+                // 🔹 Adicione este switch aqui
+                switch (tabName) {
+                    case 'relatorios':
+                        inicializarRelatorios();
+                        break;
+                    case 'insights':
+                        inicializarInsights();
+                        break;
+                }
+
                 // Salva tab atual
                 localStorage.setItem('currentTab', tabName);
             } catch (error) {
                 console.error('Erro ao navegar entre tabs:', error);
             }
         }
+
 
         // ==================== EXPORT TO WINDOW ====================
 
@@ -3098,6 +3143,636 @@
             // Define datas nos campos
             setToday();
         });
+
+        // ==================== RELATÓRIOS DETALHADOS - CORREÇÕES ====================
+
+        // Variáveis globais para relatórios
+        // let transacoesFiltradas = []; // Removido para evitar redeclaração
+        let ordenacaoAtual = { campo: 'data', direcao: 'desc' };
+
+        // Inicializar relatórios ao carregar a aba
+        function inicializarRelatorios() {
+            // Definir datas padrão (último mês)
+            const hoje = new Date();
+            const mesPassado = new Date(hoje.getFullYear(), hoje.getMonth() - 1, hoje.getDate());
+
+            document.getElementById('filtroDataInicio').value = mesPassado.toISOString().split('T')[0];
+            document.getElementById('filtroDataFim').value = hoje.toISOString().split('T')[0];
+
+            // Carregar categorias no filtro
+            carregarCategoriasFiltro();
+
+            // Aplicar filtros iniciais
+            aplicarFiltros();
+        }
+
+        // Carregar categorias para o filtro
+        function carregarCategoriasFiltro() {
+            const categorias = new Set();
+            const todasTransacoes = [...(JSON.parse(localStorage.getItem('receitas') || '[]')),
+            ...JSON.parse(localStorage.getItem('despesas') || '[]')];
+
+            todasTransacoes.forEach(t => categorias.add(t.categoria));
+
+            const select = document.getElementById('filtroCategoria');
+            select.innerHTML = '<option value="">Todas</option>';
+
+            [...categorias].sort().forEach(categoria => {
+                select.innerHTML += `<option value="${categoria}">${categoria}</option>`;
+            });
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const dataInicio = document.getElementById('filtroDataInicio').value;
+            const dataFim = document.getElementById('filtroDataFim').value;
+            const tipo = document.getElementById('filtroTipo').value;
+            const categoria = document.getElementById('filtroCategoria').value;
+
+            // Buscar todas as transações
+            const receitas = JSON.parse(localStorage.getItem('receitas') || '[]')
+                .map(r => ({ ...r, tipo: 'receita' }));
+            const despesas = JSON.parse(localStorage.getItem('despesas') || '[]')
+                .map(d => ({ ...d, tipo: 'despesa' }));
+
+            let todasTransacoes = [...receitas, ...despesas];
+
+            // Aplicar filtros
+            transacoesFiltradas = todasTransacoes.filter(transacao => {
+                const dataTransacao = new Date(transacao.data);
+                const filtroDataInicioDate = dataInicio ? new Date(dataInicio) : null;
+                const filtroDataFimDate = dataFim ? new Date(dataFim) : null;
+
+                // Filtro por data
+                if (filtroDataInicioDate && dataTransacao < filtroDataInicioDate) return false;
+                if (filtroDataFimDate && dataTransacao > filtroDataFimDate) return false;
+
+                // Filtro por tipo
+                if (tipo && transacao.tipo !== tipo) return false;
+
+                // Filtro por categoria
+                if (categoria && transacao.categoria !== categoria) return false;
+
+                return true;
+            });
+
+            // Aplicar ordenação atual
+            ordenarTransacoes();
+
+            // Atualizar resumo e tabela
+            atualizarResumoFiltros();
+            atualizarTabelaRelatorios();
+        }
+
+        // Ordenar transações
+        function ordenarTransacoes() {
+            transacoesFiltradas.sort((a, b) => {
+                let valorA = a[ordenacaoAtual.campo];
+                let valorB = b[ordenacaoAtual.campo];
+
+                if (ordenacaoAtual.campo === 'valor') {
+                    valorA = parseFloat(valorA);
+                    valorB = parseFloat(valorB);
+                } else if (ordenacaoAtual.campo === 'data') {
+                    valorA = new Date(valorA);
+                    valorB = new Date(valorB);
+                }
+
+                if (ordenacaoAtual.direcao === 'asc') {
+                    return valorA > valorB ? 1 : -1;
+                } else {
+                    return valorA < valorB ? 1 : -1;
+                }
+            });
+        }
+
+        // Alterar ordenação
+        function alterarOrdenacao(campo) {
+            if (ordenacaoAtual.campo === campo) {
+                ordenacaoAtual.direcao = ordenacaoAtual.direcao === 'asc' ? 'desc' : 'asc';
+            } else {
+                ordenacaoAtual.campo = campo;
+                ordenacaoAtual.direcao = 'desc';
+            }
+
+            ordenarTransacoes();
+            atualizarTabelaRelatorios();
+        }
+
+        // Atualizar resumo dos filtros
+        function atualizarResumoFiltros() {
+            const totalReceitas = transacoesFiltradas
+                .filter(t => t.tipo === 'receita')
+                .reduce((sum, t) => sum + parseFloat(t.valor), 0);
+
+            const totalDespesas = transacoesFiltradas
+                .filter(t => t.tipo === 'despesa')
+                .reduce((sum, t) => sum + parseFloat(t.valor), 0);
+
+            const saldo = totalReceitas - totalDespesas;
+
+            document.getElementById('filtroTotalRegistros').textContent = transacoesFiltradas.length;
+            document.getElementById('filtroTotalReceitas').textContent = formatCurrencyDisplay(totalReceitas);
+            document.getElementById('filtroTotalDespesas').textContent = formatCurrencyDisplay(totalDespesas);
+
+            const saldoElement = document.getElementById('filtroSaldoPeriodo');
+            saldoElement.textContent = formatCurrencyDisplay(saldo);
+            saldoElement.className = `text-2xl font-bold ${saldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        }
+
+        // Atualizar tabela de relatórios
+        function atualizarTabelaRelatorios() {
+            const tbody = document.getElementById('relatoriosTableBody');
+            tbody.innerHTML = '';
+
+            if (transacoesFiltradas.length === 0) {
+                tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-8 text-gray-500">
+                    <i class="fas fa-search text-3xl mb-2"></i>
+                    <p>Nenhuma transação encontrada com os filtros aplicados</p>
+                </td>
+            </tr>`;
+                return;
+            }
+
+            transacoesFiltradas.forEach(transacao => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100 hover:bg-gray-50';
+
+                const tipoIcon = transacao.tipo === 'receita' ?
+                    '<i class="fas fa-arrow-up text-green-500"></i>' :
+                    '<i class="fas fa-arrow-down text-red-500"></i>';
+
+                const valorClass = transacao.tipo === 'receita' ? 'text-green-600' : 'text-red-600';
+                const valorPrefix = transacao.tipo === 'receita' ? '+' : '-';
+
+                row.innerHTML = `
+            <td class="py-3 px-4">
+                <div class="flex items-center space-x-2">
+                    ${tipoIcon}
+                    <span class="text-xs ${transacao.tipo === 'receita' ? 'text-green-600' : 'text-red-600'} font-medium">
+                        ${transacao.tipo.toUpperCase()}
+                    </span>
+                </div>
+            </td>
+            <td class="py-3 px-4">${formatDateDisplay(transacao.data)}</td>
+            <td class="py-3 px-4">
+                <div>
+                    <p class="font-medium">${transacao.descricao}</p>
+                    <p class="text-xs text-gray-500">${transacao.categoria}</p>
+                </div>
+            </td>
+            <td class="py-3 px-4">
+                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
+                    ${transacao.categoria}
+                </span>
+            </td>
+            <td class="py-3 px-4 text-right">
+                <span class="font-bold ${valorClass}">
+                    ${valorPrefix} ${formatCurrencyDisplay(transacao.valor)}
+                </span>
+            </td>
+            <td class="py-3 px-4 text-center no-print">
+                <button onclick="editarTransacao('${transacao.id}', '${transacao.tipo}')" 
+                        class="text-blue-500 hover:text-blue-700 mr-2" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="excluirTransacao('${transacao.id}', '${transacao.tipo}')" 
+                        class="text-red-500 hover:text-red-700" title="Excluir">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        // Limpar filtros
+        function limparFiltros() {
+            document.getElementById('filtroDataInicio').value = '';
+            document.getElementById('filtroDataFim').value = '';
+            document.getElementById('filtroTipo').value = '';
+            document.getElementById('filtroCategoria').value = '';
+
+            aplicarFiltros();
+        }
+
+        // Exportar para CSV
+        function exportarCSV() {
+            if (transacoesFiltradas.length === 0) {
+                showToast('Nenhuma transação para exportar', 'warning');
+                return;
+            }
+
+            const headers = ['Tipo', 'Data', 'Descrição', 'Categoria', 'Valor'];
+            const csvContent = [
+                headers.join(','),
+                ...transacoesFiltradas.map(t => [
+                    t.tipo,
+                    t.data,
+                    `"${t.descricao}"`,
+                    `"${t.categoria}"`,
+                    t.valor.toString().replace('.', ',')
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `relatorio-financeiro-${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showToast('Relatório exportado com sucesso!', 'success');
+            }
+        }
+
+        // Editar transação (placeholder - você pode implementar conforme necessário)
+        function editarTransacao(id, tipo) {
+            showToast('Funcionalidade de edição em desenvolvimento', 'info');
+        }
+
+        // Excluir transação
+        function excluirTransacao(id, tipo) {
+            if (!confirm('Tem certeza que deseja excluir esta transação?')) return;
+
+            const storageKey = tipo === 'receita' ? 'receitas' : 'despesas';
+            let items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+
+            items = items.filter(item => item.id !== id);
+            localStorage.setItem(storageKey, JSON.stringify(items));
+
+            // Recarregar dados
+            aplicarFiltros();
+            updateDashboard();
+
+            showToast('Transação excluída com sucesso!', 'success');
+        }
+
+        // ==================== INSIGHTS AVANÇADOS ====================
+
+        // Inicializar insights
+        function inicializarInsights() {
+            gerarInsightsCompletos();
+            criarGraficosInsights();
+        }
+
+        // Gerar insights completos
+        function gerarInsightsCompletos() {
+            const receitas = JSON.parse(localStorage.getItem('receitas') || '[]');
+            const despesas = JSON.parse(localStorage.getItem('despesas') || '[]');
+
+            // Análises temporais
+            analisarTendencias(receitas, despesas);
+            analisarPadroesMensais(receitas, despesas);
+
+            // Análises de categorias
+            analisarCategorias(despesas);
+
+            // Alertas e previsões
+            gerarAlertas(receitas, despesas);
+            gerarPrevisoes(receitas, despesas);
+
+            // Comparações
+            gerarComparacoes(receitas, despesas);
+        }
+
+        // Analisar tendências
+        function analisarTendencias(receitas, despesas) {
+            const ultimosTresMeses = obterUltimosTresMeses();
+            const dados = ultimosTresMeses.map(mes => {
+                const receitasMes = receitas.filter(r => r.data.startsWith(mes)).reduce((sum, r) => sum + parseFloat(r.valor), 0);
+                const despesasMes = despesas.filter(d => d.data.startsWith(mes)).reduce((sum, d) => sum + parseFloat(d.valor), 0);
+                return { mes, receitas: receitasMes, despesas: despesasMes, saldo: receitasMes - despesasMes };
+            });
+
+            // Calcular tendências
+            const tendenciaReceitas = calcularTendencia(dados.map(d => d.receitas));
+            const tendenciaDespesas = calcularTendencia(dados.map(d => d.despesas));
+            const tendenciaSaldo = calcularTendencia(dados.map(d => d.saldo));
+
+            // Atualizar UI
+            document.getElementById('tendenciaReceitasTexto').textContent = formatarTendencia(tendenciaReceitas);
+            document.getElementById('tendenciaDespesasTexto').textContent = formatarTendencia(tendenciaDespesas);
+            document.getElementById('tendenciaSaldoTexto').textContent = formatarTendencia(tendenciaSaldo);
+
+            // Adicionar classes de cor
+            aplicarClasseTendencia('tendenciaReceitasTexto', tendenciaReceitas);
+            aplicarClasseTendencia('tendenciaDespesasTexto', tendenciaDespesas);
+            aplicarClasseTendencia('tendenciaSaldoTexto', tendenciaSaldo);
+        }
+
+        // Analisar padrões mensais
+        function analisarPadroesMensais(receitas, despesas) {
+            const padroesMensais = {};
+
+            [...receitas, ...despesas].forEach(transacao => {
+                const mes = new Date(transacao.data).getMonth();
+                const tipo = receitas.includes(transacao) ? 'receita' : 'despesa';
+
+                if (!padroesMensais[mes]) {
+                    padroesMensais[mes] = { receitas: 0, despesas: 0 };
+                }
+
+                padroesMensais[mes][tipo === 'receita' ? 'receitas' : 'despesas'] += parseFloat(transacao.valor);
+            });
+
+            // Encontrar mês com maior e menor atividade
+            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            let maiorAtividade = { mes: 0, valor: 0 };
+            let menorAtividade = { mes: 0, valor: Infinity };
+
+            Object.entries(padroesMensais).forEach(([mes, dados]) => {
+                const total = dados.receitas + dados.despesas;
+                if (total > maiorAtividade.valor) {
+                    maiorAtividade = { mes: parseInt(mes), valor: total };
+                }
+                if (total < menorAtividade.valor) {
+                    menorAtividade = { mes: parseInt(mes), valor: total };
+                }
+            });
+
+            document.getElementById('mesMaiorAtividade').textContent =
+                `${meses[maiorAtividade.mes]} (${formatCurrencyDisplay(maiorAtividade.valor)})`;
+            document.getElementById('mesMenorAtividade').textContent =
+                menorAtividade.valor !== Infinity ?
+                    `${meses[menorAtividade.mes]} (${formatCurrencyDisplay(menorAtividade.valor)})` : 'N/A';
+        }
+
+        // Analisar categorias
+        function analisarCategorias(despesas) {
+            const categoriaAnalise = {};
+
+            despesas.forEach(despesa => {
+                if (!categoriaAnalise[despesa.categoria]) {
+                    categoriaAnalise[despesa.categoria] = { total: 0, count: 0 };
+                }
+                categoriaAnalise[despesa.categoria].total += parseFloat(despesa.valor);
+                categoriaAnalise[despesa.categoria].count++;
+            });
+
+            // Encontrar categoria com maior gasto
+            let maiorCategoria = { nome: 'N/A', valor: 0, media: 0 };
+            Object.entries(categoriaAnalise).forEach(([categoria, dados]) => {
+                if (dados.total > maiorCategoria.valor) {
+                    maiorCategoria = {
+                        nome: categoria,
+                        valor: dados.total,
+                        media: dados.total / dados.count
+                    };
+                }
+            });
+
+            document.getElementById('categoriaMaiorGasto').textContent = maiorCategoria.nome;
+            document.getElementById('categoriaMaiorGastoValor').textContent = formatCurrencyDisplay(maiorCategoria.valor);
+            document.getElementById('categoriaMaiorGastoMedia').textContent =
+                `Média: ${formatCurrencyDisplay(maiorCategoria.media)}`;
+        }
+
+        // Gerar alertas
+        function gerarAlertas(receitas, despesas) {
+            const alertas = [];
+            const mesAtual = new Date().toISOString().slice(0, 7);
+
+            // Receitas e despesas do mês atual
+            const receitasMesAtual = receitas.filter(r => r.data.startsWith(mesAtual))
+                .reduce((sum, r) => sum + parseFloat(r.valor), 0);
+            const despesasMesAtual = despesas.filter(d => d.data.startsWith(mesAtual))
+                .reduce((sum, d) => sum + parseFloat(d.valor), 0);
+
+            // Alerta: Gastos superiores à receita
+            if (despesasMesAtual > receitasMesAtual) {
+                alertas.push({
+                    tipo: 'danger',
+                    titulo: 'Gastos Excedem Receitas',
+                    mensagem: `Suas despesas deste mês (${formatCurrencyDisplay(despesasMesAtual)}) são maiores que suas receitas (${formatCurrencyDisplay(receitasMesAtual)}).`
+                });
+            }
+
+            // Alerta: Categoria com gasto alto
+            const categoriasGasto = {};
+            despesas.filter(d => d.data.startsWith(mesAtual)).forEach(d => {
+                categoriasGasto[d.categoria] = (categoriasGasto[d.categoria] || 0) + parseFloat(d.valor);
+            });
+
+            const totalDespesasMes = Object.values(categoriasGasto).reduce((sum, val) => sum + val, 0);
+            Object.entries(categoriasGasto).forEach(([categoria, valor]) => {
+                const percentual = (valor / totalDespesasMes) * 100;
+                if (percentual > 40) {
+                    alertas.push({
+                        tipo: 'warning',
+                        titulo: 'Categoria com Gasto Alto',
+                        mensagem: `A categoria "${categoria}" representa ${percentual.toFixed(1)}% dos seus gastos este mês.`
+                    });
+                }
+            });
+
+            // Alerta: Meta de economia
+            const metaEconomia = receitasMesAtual * 0.2; // 20% de economia
+            const economiaAtual = receitasMesAtual - despesasMesAtual;
+
+            if (economiaAtual < metaEconomia) {
+                alertas.push({
+                    tipo: 'info',
+                    titulo: 'Meta de Economia',
+                    mensagem: `Para economizar 20% da renda, você precisa reduzir ${formatCurrencyDisplay(metaEconomia - economiaAtual)} em gastos.`
+                });
+            }
+
+            exibirAlertas(alertas);
+        }
+
+        // Exibir alertas
+        function exibirAlertas(alertas) {
+            const container = document.getElementById('alertasContainer');
+            container.innerHTML = '';
+
+            if (alertas.length === 0) {
+                container.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
+                <p>Nenhum alerta no momento!</p>
+                <p class="text-sm">Sua situação financeira está equilibrada.</p>
+            </div>`;
+                return;
+            }
+
+            alertas.forEach(alerta => {
+                const cor = {
+                    'danger': 'red',
+                    'warning': 'yellow',
+                    'info': 'blue'
+                }[alerta.tipo];
+
+                const icone = {
+                    'danger': 'exclamation-triangle',
+                    'warning': 'exclamation-circle',
+                    'info': 'info-circle'
+                }[alerta.tipo];
+
+                container.innerHTML += `
+            <div class="bg-${cor}-50 border border-${cor}-200 rounded-lg p-4 mb-4">
+                <div class="flex items-start">
+                    <i class="fas fa-${icone} text-${cor}-500 mt-1 mr-3"></i>
+                    <div>
+                        <h4 class="font-semibold text-${cor}-800">${alerta.titulo}</h4>
+                        <p class="text-${cor}-700 text-sm mt-1">${alerta.mensagem}</p>
+                    </div>
+                </div>
+            </div>`;
+            });
+        }
+
+        // Gerar previsões
+        function gerarPrevisoes(receitas, despesas) {
+            const mesAtual = new Date().toISOString().slice(0, 7);
+            const diaAtual = new Date().getDate();
+            const diasNoMes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+
+            // Receitas e despesas até agora no mês
+            const receitasMesAtual = receitas.filter(r => r.data.startsWith(mesAtual))
+                .reduce((sum, r) => sum + parseFloat(r.valor), 0);
+            const despesasMesAtual = despesas.filter(d => d.data.startsWith(mesAtual))
+                .reduce((sum, d) => sum + parseFloat(d.valor), 0);
+
+            // Projeção simples baseada no ritmo atual
+            const projecaoReceitas = (receitasMesAtual / diaAtual) * diasNoMes;
+            const projecaoDespesas = (despesasMesAtual / diaAtual) * diasNoMes;
+            const projecaoSaldo = projecaoReceitas - projecaoDespesas;
+
+            document.getElementById('projecaoReceitasMes').textContent = formatCurrencyDisplay(projecaoReceitas);
+            document.getElementById('projecaoDespesasMes').textContent = formatCurrencyDisplay(projecaoDespesas);
+
+            const saldoElement = document.getElementById('projecaoSaldoMes');
+            saldoElement.textContent = formatCurrencyDisplay(projecaoSaldo);
+            saldoElement.className = `text-lg font-bold ${projecaoSaldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        }
+
+        // Criar gráficos de insights
+        function criarGraficosInsights() {
+            criarGraficoTendenciaMensal();
+            criarGraficoComparacaoTrimestral();
+        }
+
+        // Gráfico de tendência mensal
+        function criarGraficoTendenciaMensal() {
+            const ctx = document.getElementById('tendenciaMensalChart');
+            if (!ctx) return;
+
+            const receitas = JSON.parse(localStorage.getItem('receitas') || '[]');
+            const despesas = JSON.parse(localStorage.getItem('despesas') || '[]');
+
+            const ultimosSeisMeses = obterUltimosSeisMeses();
+            const dadosReceitas = ultimosSeisMeses.map(mes =>
+                receitas.filter(r => r.data.startsWith(mes)).reduce((sum, r) => sum + parseFloat(r.valor), 0)
+            );
+            const dadosDespesas = ultimosSeisMeses.map(mes =>
+                despesas.filter(d => d.data.startsWith(mes)).reduce((sum, d) => sum + parseFloat(d.valor), 0)
+            );
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ultimosSeisMeses.map(mes => formatarMesAbrev(mes)),
+                    datasets: [{
+                        label: 'Receitas',
+                        data: dadosReceitas,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Despesas',
+                        data: dadosDespesas,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Tendência dos Últimos 6 Meses'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funções auxiliares
+        function obterUltimosTresMeses() {
+            const meses = [];
+            const hoje = new Date();
+            for (let i = 2; i >= 0; i--) {
+                const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+                meses.push(data.toISOString().slice(0, 7));
+            }
+            return meses;
+        }
+
+        function obterUltimosSeisMeses() {
+            const meses = [];
+            const hoje = new Date();
+            for (let i = 5; i >= 0; i--) {
+                const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+                meses.push(data.toISOString().slice(0, 7));
+            }
+            return meses;
+        }
+
+        function calcularTendencia(valores) {
+            if (valores.length < 2) return 0;
+
+            const primeiro = valores[0];
+            const ultimo = valores[valores.length - 1];
+
+            if (primeiro === 0) return ultimo > 0 ? 100 : 0;
+
+            return ((ultimo - primeiro) / primeiro) * 100;
+        }
+
+        function formatarTendencia(tendencia) {
+            const abs = Math.abs(tendencia);
+            const sinal = tendencia >= 0 ? '+' : '-';
+            return `${sinal}${abs.toFixed(1)}%`;
+        }
+
+        function aplicarClasseTendencia(elementId, tendencia) {
+            const elemento = document.getElementById(elementId);
+            if (tendencia > 0) {
+                elemento.className = 'text-green-600 font-semibold';
+            } else if (tendencia < 0) {
+                elemento.className = 'text-red-600 font-semibold';
+            } else {
+                elemento.className = 'text-gray-600 font-semibold';
+            }
+        }
+
+        function formatarMesAbrev(mes) {
+            const [ano, mesNum] = mes.split('-');
+            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            return `${meses[parseInt(mesNum) - 1]}/${ano.slice(2)}`;
+        }
+
 
     </script>
 
@@ -3186,4 +3861,3 @@ users/{uid}/
 </body>
 
 </html>
-
