@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão Financeira Pessoal - Versão Aprimorada</title>
+    <title>Sistema de Gestão Financeira Pessoal - Versão Corrigida</title>
 
     <!-- CDN Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -198,6 +198,23 @@
 
         .stat-neutral {
             color: #6b7280;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -402,29 +419,27 @@
                             <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
                             Maior Categoria
                         </h3>
-                        <div class="space-y-3">
-                            <div class="text-center">
-                                <div id="maiorCategoriaIcon" class="text-3xl mb-2">📊</div>
-                                <p id="maiorCategoriaNome" class="font-medium text-gray-800">--</p>
-                                <p id="maiorCategoriaValor" class="text-sm text-gray-600">R$ 0,00</p>
-                                <p id="maiorCategoriaPercent" class="text-xs text-gray-500">0% do total</p>
-                            </div>
+                        <div class="text-center">
+                            <div class="text-4xl mb-2" id="maiorCategoriaIcon">📊</div>
+                            <p class="font-semibold" id="maiorCategoriaNome">--</p>
+                            <p class="text-2xl font-bold text-purple-600" id="maiorCategoriaValor">R$ 0,00</p>
+                            <p class="text-xs text-gray-500" id="maiorCategoriaPercent">0% do total</p>
                         </div>
                     </div>
 
                     <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
                         <h3 class="text-lg font-semibold mb-4 flex items-center">
                             <i class="fas fa-calendar-day mr-2 text-blue-500"></i>
-                            Média Diária
+                            Médias Diárias
                         </h3>
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Receitas</span>
-                                <span id="mediaDiariaReceitas" class="text-sm font-medium">R$ 0,00</span>
+                                <span id="mediaDiariaReceitas" class="text-sm font-medium text-green-600">R$ 0,00</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Despesas</span>
-                                <span id="mediaDiariaDespesas" class="text-sm font-medium">R$ 0,00</span>
+                                <span id="mediaDiariaDespesas" class="text-sm font-medium text-red-600">R$ 0,00</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Saldo</span>
@@ -439,7 +454,7 @@
                     <div class="bg-white rounded-xl p-6 shadow-lg">
                         <h3 class="text-xl font-semibold mb-4 flex items-center">
                             <i class="fas fa-chart-line mr-2 text-blue-500"></i>
-                            Evolução do Período
+                            Evolução Mensal
                         </h3>
                         <div class="chart-container">
                             <canvas id="evolucaoChart"></canvas>
@@ -449,7 +464,7 @@
                     <div class="bg-white rounded-xl p-6 shadow-lg">
                         <h3 class="text-xl font-semibold mb-4 flex items-center">
                             <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
-                            Gastos por Categoria
+                            Despesas por Categoria
                         </h3>
                         <div class="chart-container">
                             <canvas id="categoriaChart"></canvas>
@@ -457,30 +472,21 @@
                     </div>
                 </div>
 
-                <!-- Últimas Transações -->
+                <!-- Transações Recentes -->
                 <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-semibold flex items-center">
-                            <i class="fas fa-history mr-2 text-gray-500"></i>
-                            Transações Recentes
-                        </h3>
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-500" id="totalTransacoes">0 transações</span>
-                            <button onclick="showTab('relatorios')"
-                                class="text-blue-500 hover:text-blue-700 text-sm font-medium no-print">
-                                Ver todas →
-                            </button>
-                        </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold">Transações Recentes</h3>
+                        <span id="totalTransacoes" class="text-sm text-gray-500">0 transações</span>
                     </div>
                     <div class="table-wrapper">
-                        <table class="w-full text-sm">
+                        <table class="w-full">
                             <thead class="sticky-header">
                                 <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 font-semibold">Data</th>
-                                    <th class="text-left py-3 px-4 font-semibold">Descrição</th>
-                                    <th class="text-left py-3 px-4 font-semibold">Categoria</th>
-                                    <th class="text-right py-3 px-4 font-semibold">Valor</th>
-                                    <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Data</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Descrição</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Categoria</th>
+                                    <th class="text-right py-3 px-4 font-semibold text-gray-700">Valor</th>
+                                    <th class="text-center py-3 px-4 font-semibold text-gray-700 no-print">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="transacoesTableBody">
@@ -744,46 +750,50 @@
                             </h3>
                             <form onsubmit="handlePatrimonioForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="patrimonio-tipo">
                                         <i class="fas fa-list mr-1"></i>Tipo
                                     </label>
-                                    <select name="tipo" required
+                                    <select name="tipo" id="patrimonio-tipo" required
                                         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">Selecione o tipo...</option>
-                                        <option value="bem">💰 Bem (Ativo)</option>
-                                        <option value="divida">💳 Dívida (Passivo)</option>
+                                        <option value="bem">💰 Bem</option>
+                                        <option value="divida">💸 Dívida</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="patrimonio-descricao">
                                         <i class="fas fa-file-alt mr-1"></i>Descrição
                                     </label>
-                                    <input name="descricao" type="text" required maxlength="100"
+                                    <input name="descricao" id="patrimonio-descricao" type="text" required
                                         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Ex: Casa, Carro, Financiamento...">
+                                        placeholder="Ex: Casa Própria" maxlength="100">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="patrimonio-valor">
                                         <i class="fas fa-dollar-sign mr-1"></i>Valor
                                     </label>
-                                    <input name="valor" type="text" required data-max="9999999999"
+                                    <input name="valor" id="patrimonio-valor" type="text" required
                                         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="50.000,00" oninput="formatCurrency(this)">
+                                        placeholder="100.000,00" oninput="formatCurrency(this)" data-max="999999999">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="patrimonio-categoria">
                                         <i class="fas fa-tags mr-1"></i>Categoria
                                     </label>
-                                    <select name="categoria" required
+                                    <select name="categoria" id="patrimonio-categoria" required
                                         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">Selecione uma categoria...</option>
-                                        <option value="Imóvel">🏠 Imóvel</option>
-                                        <option value="Veículo">🚗 Veículo</option>
+                                        <option value="Imóveis">🏠 Imóveis</option>
+                                        <option value="Veículos">🚗 Veículos</option>
                                         <option value="Investimentos">📈 Investimentos</option>
+                                        <option value="Conta Corrente">🏦 Conta Corrente</option>
                                         <option value="Poupança">💰 Poupança</option>
-                                        <option value="Financiamento">🏦 Financiamento</option>
                                         <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
-                                        <option value="Empréstimo">💸 Empréstimo</option>
+                                        <option value="Financiamentos">🏠 Financiamentos</option>
+                                        <option value="Empréstimos">💸 Empréstimos</option>
                                         <option value="Outros">📝 Outros</option>
                                     </select>
                                 </div>
@@ -795,427 +805,390 @@
                         </div>
                     </div>
 
-                    <!-- Listas de Bens e Dívidas -->
+                    <!-- Lista de Patrimônio -->
                     <div class="xl:col-span-2">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Bens -->
-                            <div class="bg-white rounded-xl p-6 shadow-lg">
-                                <h3 class="text-xl font-semibold mb-4 text-green-700 flex items-center">
-                                    <i class="fas fa-arrow-up mr-2"></i>Meus Bens
-                                </h3>
-                                <div id="bensList" class="space-y-3">
-                                    <!-- Bens serão carregados aqui -->
-                                </div>
-                            </div>
-
-                            <!-- Dívidas -->
-                            <div class="bg-white rounded-xl p-6 shadow-lg">
-                                <h3 class="text-xl font-semibold mb-4 text-red-700 flex items-center">
-                                    <i class="fas fa-arrow-down mr-2"></i>Minhas Dívidas
-                                </h3>
-                                <div id="dividasList" class="space-y-3">
-                                    <!-- Dívidas serão carregadas aqui -->
-                                </div>
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h4 class="text-lg font-semibold mb-4">Itens do Patrimônio</h4>
+                            <div id="patrimonioList" class="space-y-3">
+                                <!-- Patrimônio será carregado aqui -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Nova Tab: Relatórios -->
-            <!-- Tabela de Relatórios -->
-            <div class="bg-white rounded-xl p-6 shadow-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold flex items-center">
-                        <i class="fas fa-table mr-2 text-gray-500"></i>
-                        Transações Detalhadas
-                    </h3>
-                    <div class="text-sm text-gray-500">
-                        Clique nos cabeçalhos para ordenar
-                    </div>
-                </div>
+            <!-- Relatórios Tab - CORRIGIDA -->
+            <div id="relatorios" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Relatórios Detalhados</h2>
 
-                <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
-                    <table class="w-full text-sm">
-                        <thead class="sticky-header bg-gray-50">
-                            <tr class="border-b border-gray-200">
-                                <th class="text-left py-3 px-4 font-semibold">
-                                    <button onclick="alterarOrdenacao('tipo')"
-                                        class="flex items-center hover:text-blue-600">
-                                        Tipo
-                                        <i class="fas fa-sort ml-1 text-xs"></i>
-                                    </button>
-                                </th>
-                                <th class="text-left py-3 px-4 font-semibold">
-                                    <button onclick="alterarOrdenacao('data')"
-                                        class="flex items-center hover:text-blue-600">
-                                        Data
-                                        <i class="fas fa-sort ml-1 text-xs"></i>
-                                    </button>
-                                </th>
-                                <th class="text-left py-3 px-4 font-semibold">
-                                    <button onclick="alterarOrdenacao('descricao')"
-                                        class="flex items-center hover:text-blue-600">
-                                        Descrição
-                                        <i class="fas fa-sort ml-1 text-xs"></i>
-                                    </button>
-                                </th>
-                                <th class="text-left py-3 px-4 font-semibold">
-                                    <button onclick="alterarOrdenacao('categoria')"
-                                        class="flex items-center hover:text-blue-600">
-                                        Categoria
-                                        <i class="fas fa-sort ml-1 text-xs"></i>
-                                    </button>
-                                </th>
-                                <th class="text-right py-3 px-4 font-semibold">
-                                    <button onclick="alterarOrdenacao('valor')"
-                                        class="flex items-center justify-end hover:text-blue-600">
-                                        Valor
-                                        <i class="fas fa-sort ml-1 text-xs"></i>
-                                    </button>
-                                </th>
-                                <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="relatoriosTableBody">
-                            <!-- Dados serão carregados aqui -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-
-            <!-- Resumo do Filtro -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Total de Registros</p>
-                            <p class="text-2xl font-bold text-gray-800" id="filtroTotalRegistros">0</p>
-                        </div>
-                        <i class="fas fa-list text-2xl text-gray-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Total Receitas</p>
-                            <p class="text-2xl font-bold text-green-600" id="filtroTotalReceitas">R$ 0,00</p>
-                        </div>
-                        <i class="fas fa-arrow-up text-2xl text-green-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Total Despesas</p>
-                            <p class="text-2xl font-bold text-red-600" id="filtroTotalDespesas">R$ 0,00</p>
-                        </div>
-                        <i class="fas fa-arrow-down text-2xl text-red-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Saldo Período</p>
-                            <p class="text-2xl font-bold" id="filtroSaldoPeriodo">R$ 0,00</p>
-                        </div>
-                        <i class="fas fa-calculator text-2xl text-blue-500"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tabela Completa de Transações -->
-            <div class="bg-white rounded-xl p-6 shadow-lg">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-semibold">Todas as Transações</h3>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-500" id="relatorioContador">0 transações encontradas</span>
-                        <div class="flex space-x-2">
-                            <button onclick="ordenarTabela('data')" class="text-gray-500 hover:text-gray-700"
-                                title="Ordenar por Data">
-                                <i class="fas fa-sort"></i>
-                            </button>
-                            <button onclick="ordenarTabela('valor')" class="text-gray-500 hover:text-gray-700"
-                                title="Ordenar por Valor">
-                                <i class="fas fa-sort-amount-down"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-wrapper" style="max-height: 600px;">
-                    <table class="w-full text-sm">
-                        <thead class="sticky-header">
-                            <tr class="border-b border-gray-200">
-                                <th class="text-left py-3 px-4 font-semibold">Data</th>
-                                <th class="text-left py-3 px-4 font-semibold">Tipo</th>
-                                <th class="text-left py-3 px-4 font-semibold">Descrição</th>
-                                <th class="text-left py-3 px-4 font-semibold">Categoria</th>
-                                <th class="text-right py-3 px-4 font-semibold">Valor</th>
-                                <th class="text-center py-3 px-4 font-semibold no-print">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="relatorioTableBody">
-                            <!-- Transações filtradas serão carregadas aqui -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Nova Tab: Insights -->
-        <div id="insights" class="tab-content hidden">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800">Insights Financeiros</h2>
-
-            <!-- Análise de Tendências -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                <!-- Filtros Aprimorados -->
+                <div class="filter-container">
                     <h3 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fas fa-trending-up mr-2 text-green-500"></i>
-                        Tendências (3 meses)
+                        <i class="fas fa-filter mr-2 text-blue-500"></i>
+                        Filtros de Pesquisa
                     </h3>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">Receitas</span>
-                            <span id="tendenciaReceitasTexto" class="text-sm font-medium">--</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Data Início</label>
+                            <input type="date" id="filtroDataInicio" 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">Despesas</span>
-                            <span id="tendenciaDespesasTexto" class="text-sm font-medium">--</span>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Data Fim</label>
+                            <input type="date" id="filtroDataFim" 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">Saldo</span>
-                            <span id="tendenciaSaldoTexto" class="text-sm font-medium">--</span>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Tipo</label>
+                            <select id="filtroTipo" 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todos</option>
+                                <option value="receita">Receitas</option>
+                                <option value="despesa">Despesas</option>
+                            </select>
                         </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Categoria</label>
+                            <select id="filtroCategoria" 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 mt-4">
+                        <button onclick="aplicarFiltros()" 
+                            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-search mr-2"></i>Aplicar Filtros
+                        </button>
+                        <button onclick="limparFiltros()" 
+                            class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-eraser mr-2"></i>Limpar
+                        </button>
+                        <button onclick="exportarCSV()" 
+                            class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                            <i class="fas fa-download mr-2"></i>Exportar CSV
+                        </button>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
-                    <h3 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
-                        Padrões Mensais
-                    </h3>
-                    <div class="space-y-3">
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">Mês com maior atividade</p>
-                            <p id="mesMaiorAtividade" class="font-medium text-blue-600">--</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">Mês com menor atividade</p>
-                            <p id="mesMenorAtividade" class="font-medium text-gray-600">--</p>
-                        </div>
+                <!-- Resumo dos Filtros -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+                        <div class="text-3xl font-bold text-blue-600" id="filtroTotalRegistros">0</div>
+                        <div class="text-sm text-gray-600 mt-1">Total de Registros</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+                        <div class="text-3xl font-bold text-green-600" id="filtroTotalReceitas">R$ 0,00</div>
+                        <div class="text-sm text-gray-600 mt-1">Total Receitas</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+                        <div class="text-3xl font-bold text-red-600" id="filtroTotalDespesas">R$ 0,00</div>
+                        <div class="text-sm text-gray-600 mt-1">Total Despesas</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+                        <div class="text-3xl font-bold" id="filtroSaldoPeriodo">R$ 0,00</div>
+                        <div class="text-sm text-gray-600 mt-1">Saldo do Período</div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
-                    <h3 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
-                        Categoria Dominante
-                    </h3>
-                    <div class="space-y-2">
-                        <p id="categoriaMaiorGasto" class="font-medium text-purple-600">--</p>
-                        <p id="categoriaMaiorGastoValor" class="text-sm text-gray-600">R$ 0,00</p>
-                        <p id="categoriaMaiorGastoMedia" class="text-xs text-gray-500">--</p>
+                <!-- Tabela de Relatórios -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold">Transações Filtradas</h3>
+                        <div class="text-sm text-gray-500">
+                            Clique nos cabeçalhos para ordenar
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="w-full">
+                            <thead class="sticky-header">
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                        onclick="alterarOrdenacao('tipo')">
+                                        Tipo <i class="fas fa-sort ml-1"></i>
+                                    </th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                        onclick="alterarOrdenacao('data')">
+                                        Data <i class="fas fa-sort ml-1"></i>
+                                    </th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                        onclick="alterarOrdenacao('descricao')">
+                                        Descrição <i class="fas fa-sort ml-1"></i>
+                                    </th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Categoria</th>
+                                    <th class="text-right py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                        onclick="alterarOrdenacao('valor')">
+                                        Valor <i class="fas fa-sort ml-1"></i>
+                                    </th>
+                                    <th class="text-center py-3 px-4 font-semibold text-gray-700 no-print">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="relatoriosTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-gray-500">
+                                        <div class="spinner"></div>
+                                        Carregando dados...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Gráfico de Tendência -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Insights Tab - CORRIGIDA -->
+            <div id="insights" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Análises e Insights</h2>
+
+                <!-- Análise Rápida -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                            Tendência Trimestral
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Receitas</span>
+                                <span id="tendenciaReceitasTrimestre" class="text-sm font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Despesas</span>
+                                <span id="tendenciaDespesasTrimestre" class="text-sm font-medium">--</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Economia</span>
+                                <span id="tendenciaEconomiaTrimestre" class="text-sm font-medium">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-green-500"></i>
+                            Atividade Mensal
+                        </h3>
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Mês com maior atividade</p>
+                                <p id="mesMaiorAtividade" class="font-medium text-blue-600">--</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Mês com menor atividade</p>
+                                <p id="mesMenorAtividade" class="font-medium text-gray-600">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg insight-card">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
+                            Categoria Dominante
+                        </h3>
+                        <div class="space-y-2">
+                            <p id="categoriaMaiorGasto" class="font-medium text-purple-600">--</p>
+                            <p id="categoriaMaiorGastoValor" class="text-sm text-gray-600">R$ 0,00</p>
+                            <p id="categoriaMaiorGastoMedia" class="text-xs text-gray-500">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Tendência -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                            Evolução Mensal
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="tendenciaMensalChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Previsões -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-crystal-ball mr-2 text-purple-500"></i>
+                            Projeção do Mês
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                <span class="text-sm text-green-700">Receitas Projetadas</span>
+                                <span id="projecaoReceitasMes" class="font-bold text-green-600">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                                <span class="text-sm text-red-700">Despesas Projetadas</span>
+                                <span id="projecaoDespesasMes" class="font-bold text-red-600">R$ 0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-2 border-dashed">
+                                <span class="text-sm text-gray-700">Saldo Projetado</span>
+                                <span id="projecaoSaldoMes" class="font-bold">R$ 0,00</span>
+                            </div>
+                            <p class="text-xs text-gray-500 text-center">
+                                *Baseado no ritmo atual de gastos e receitas
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas e Recomendações -->
                 <div class="bg-white rounded-xl p-6 shadow-lg">
                     <h3 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-chart-line mr-2 text-blue-500"></i>
-                        Evolução Mensal
+                        <i class="fas fa-bell mr-2 text-orange-500"></i>
+                        Alertas e Recomendações
+                    </h3>
+                    <div id="alertasContainer">
+                        <div class="text-center py-8 text-gray-500">
+                            <div class="spinner"></div>
+                            Analisando seus dados financeiros...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projeção Tab -->
+            <div id="projecao" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Financeira Anual</h2>
+
+                <!-- Controles de Simulação -->
+                <div class="filter-container mb-8">
+                    <h3 class="text-lg font-semibold mb-4">Simulador de Cenários</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Aumento de Receita (%)</label>
+                            <input type="number" id="aumentoReceita" value="0" min="-50" max="100" step="5"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                onchange="updateProjecaoPersonalizada()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Redução de Despesas (%)</label>
+                            <input type="number" id="reducaoDespesas" value="0" min="-50" max="50" step="5"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                onchange="updateProjecaoPersonalizada()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Meta de Economia Mensal</label>
+                            <input type="text" id="metaEconomia" placeholder="1.000,00"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                oninput="formatCurrency(this)" onchange="updateProjecaoPersonalizada()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Projeção -->
+                <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-chart-bar mr-2 text-purple-500"></i>
+                        Projeção de Economia Mensal
                     </h3>
                     <div class="chart-container">
-                        <canvas id="tendenciaMensalChart"></canvas>
+                        <canvas id="projecaoChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Previsões -->
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <h3 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-crystal-ball mr-2 text-purple-500"></i>
-                        Projeção do Mês
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                            <span class="text-sm text-green-700">Receitas Projetadas</span>
-                            <span id="projecaoReceitasMes" class="font-bold text-green-600">R$ 0,00</span>
+                <!-- Cenários de Projeção -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mr-3"></i>
+                            <h3 class="text-lg font-bold text-yellow-700">Conservador</h3>
                         </div>
-                        <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                            <span class="text-sm text-red-700">Despesas Projetadas</span>
-                            <span id="projecaoDespesasMes" class="font-bold text-red-600">R$ 0,00</span>
+                        <p class="text-3xl font-bold text-yellow-600 mb-3" id="cenarioConservador">R$ 0,00</p>
+                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
+                        <div class="space-y-2 text-xs text-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Considera imprevistos</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Gastos emergenciais +10%</span>
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-2 border-dashed">
-                            <span class="text-sm text-gray-700">Saldo Projetado</span>
-                            <span id="projecaoSaldoMes" class="font-bold">R$ 0,00</span>
+                    </div>
+
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-chart-line text-blue-500 text-2xl mr-3"></i>
+                            <h3 class="text-lg font-bold text-blue-700">Realista</h3>
                         </div>
-                        <p class="text-xs text-gray-500 text-center">
-                            *Baseado no ritmo atual de gastos e receitas
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alertas e Recomendações -->
-            <div class="bg-white rounded-xl p-6 shadow-lg">
-                <h3 class="text-xl font-semibold mb-4 flex items-center">
-                    <i class="fas fa-bell mr-2 text-orange-500"></i>
-                    Alertas e Recomendações
-                </h3>
-                <div id="alertasContainer">
-                    <!-- Alertas serão carregados aqui -->
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Projeção Tab (Aprimorada) -->
-        <div id="projecao" class="tab-content hidden">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Financeira Anual</h2>
-
-            <!-- Controles de Simulação -->
-            <div class="filter-container mb-8">
-                <h3 class="text-lg font-semibold mb-4">Simulador de Cenários</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-gray-700">Aumento de Receita (%)</label>
-                        <input type="number" id="aumentoReceita" value="0" min="-50" max="100" step="5"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            onchange="updateProjecaoPersonalizada()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-gray-700">Redução de Despesas
-                            (%)</label>
-                        <input type="number" id="reducaoDespesas" value="0" min="-50" max="50" step="5"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            onchange="updateProjecaoPersonalizada()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-gray-700">Meta de Economia
-                            Mensal</label>
-                        <input type="text" id="metaEconomia" placeholder="1.000,00"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            oninput="formatCurrency(this)" onchange="updateProjecaoPersonalizada()">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gráfico de Projeção -->
-            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                <h3 class="text-xl font-semibold mb-4 flex items-center">
-                    <i class="fas fa-chart-bar mr-2 text-purple-500"></i>
-                    Projeção de Economia Mensal
-                </h3>
-                <div class="chart-container">
-                    <canvas id="projecaoChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Cenários de Projeção Aprimorados -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mr-3"></i>
-                        <h3 class="text-lg font-bold text-yellow-700">Conservador</h3>
-                    </div>
-                    <p class="text-3xl font-bold text-yellow-600 mb-3" id="cenarioConservador">R$ 0,00</p>
-                    <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
-                    <div class="space-y-2 text-xs text-gray-500">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
-                            <span>Considera imprevistos</span>
+                        <p class="text-3xl font-bold text-blue-600 mb-3" id="cenarioRealista">R$ 0,00</p>
+                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
+                        <div class="space-y-2 text-xs text-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                                <span>Padrão atual mantido</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                                <span>Receita estável</span>
+                            </div>
                         </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
-                            <span>Gastos emergenciais +10%</span>
+                    </div>
+
+                    <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-rocket text-green-500 text-2xl mr-3"></i>
+                            <h3 class="text-lg font-bold text-green-700">Otimista</h3>
+                        </div>
+                        <p class="text-3xl font-bold text-green-600 mb-3" id="cenarioOtimista">R$ 0,00</p>
+                        <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
+                        <div class="space-y-2 text-xs text-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                <span>Aumento receita +15%</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                <span>Redução gastos -10%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-cogs text-purple-500 text-2xl mr-3"></i>
+                            <h3 class="text-lg font-bold text-purple-700">Personalizado</h3>
+                        </div>
+                        <p class="text-3xl font-bold text-purple-600 mb-3" id="cenarioPersonalizado">R$ 0,00</p>
+                        <p class="text-sm text-gray-600 mb-4">Sua simulação</p>
+                        <div class="space-y-2 text-xs text-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-2"></i>
+                                <span id="personalizadoReceita">Receita: --</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-2"></i>
+                                <span id="personalizadoDespesa">Despesa: --</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-chart-line text-blue-500 text-2xl mr-3"></i>
-                        <h3 class="text-lg font-bold text-blue-700">Realista</h3>
-                    </div>
-                    <p class="text-3xl font-bold text-blue-600 mb-3" id="cenarioRealista">R$ 0,00</p>
-                    <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
-                    <div class="space-y-2 text-xs text-gray-500">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
-                            <span>Padrão atual mantido</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
-                            <span>Receita estável</span>
+                <!-- Análise e Recomendações -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
+                            Análise Inteligente
+                        </h3>
+                        <div id="analiseInteligente" class="space-y-3 text-sm text-gray-600">
+                            <!-- Análise será gerada automaticamente -->
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-rocket text-green-500 text-2xl mr-3"></i>
-                        <h3 class="text-lg font-bold text-green-700">Otimista</h3>
-                    </div>
-                    <p class="text-3xl font-bold text-green-600 mb-3" id="cenarioOtimista">R$ 0,00</p>
-                    <p class="text-sm text-gray-600 mb-4">Economia até dezembro</p>
-                    <div class="space-y-2 text-xs text-gray-500">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Aumento receita +15%</span>
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-target mr-2 text-purple-500"></i>
+                            Metas Sugeridas
+                        </h3>
+                        <div id="metasSugeridas" class="space-y-3 text-sm text-gray-600">
+                            <!-- Metas serão geradas automaticamente -->
                         </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Redução gastos -10%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-6">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-cogs text-purple-500 text-2xl mr-3"></i>
-                        <h3 class="text-lg font-bold text-purple-700">Personalizado</h3>
-                    </div>
-                    <p class="text-3xl font-bold text-purple-600 mb-3" id="cenarioPersonalizado">R$ 0,00</p>
-                    <p class="text-sm text-gray-600 mb-4">Sua simulação</p>
-                    <div class="space-y-2 text-xs text-gray-500">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-purple-500 mr-2"></i>
-                            <span id="personalizadoReceita">Receita: --</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-purple-500 mr-2"></i>
-                            <span id="personalizadoDespesa">Despesa: --</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Análise e Recomendações Aprimoradas -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <h3 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
-                        Análise Inteligente
-                    </h3>
-                    <div id="analiseInteligente" class="space-y-3 text-sm text-gray-600">
-                        <!-- Análise será gerada automaticamente -->
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <h3 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fas fa-target mr-2 text-purple-500"></i>
-                        Metas Sugeridas
-                    </h3>
-                    <div id="metasSugeridas" class="space-y-3 text-sm text-gray-600">
-                        <!-- Metas serão geradas automaticamente -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Modal de Confirmação -->
@@ -1299,15 +1272,31 @@
         </div>
     </div>
 
-    <!-- JavaScript Principal - Módulo ES6 Aprimorado -->
+    <!-- JavaScript Principal -->
+
+
     <script type="module">
-        // ==================== IMPORTS E CONFIGURAÇÃO ====================
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        // ==================== IMPORTS E CONFIGURAÇÃO FIREBASE ====================
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import {
-            getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc,
-            query, orderBy, onSnapshot, serverTimestamp, where
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signOut,
+            onAuthStateChanged
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            doc,
+            query,
+            orderBy,
+            onSnapshot,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Configuração do Firebase
         const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
@@ -1320,185 +1309,245 @@
         let currentUser = null;
         let transacoes = [];
         let patrimonio = [];
-        let transacoesFiltradas = [];
         let unsubscribeTransacoes = null;
         let unsubscribePatrimonio = null;
-
-        // Charts
-        let evolucaoChart, categoriaChart, projecaoChart, comparativoChart, topCategoriasChart;
 
         // Filtros de período
         let filtroMesAtual = null;
         let filtroAnoAtual = null;
 
-        // ==================== HELPERS APRIMORADOS ====================
+        // Gráficos
+        let evolucaoChart = null;
+        let categoriaChart = null;
+        let projecaoChart = null;
+        let tendenciaMensalChart = null;
 
-        function sanitizeString(str) {
-            if (!str) return '';
-            return str.toString().trim()
-                .replace(/<[^>]*>/g, '')
-                .replace(/[^\w\s\-\.áéíóúàèìòùâêîôûãõç]/gi, '');
-        }
+        // Variáveis para relatórios - CORRIGIDAS
+        let transacoesFiltradas = [];
+        let ordenacaoAtual = { campo: 'data', direcao: 'desc' };
 
-        function isValidDate(dateStr) {
-            if (!dateStr) return false;
-            const date = new Date(dateStr);
-            const now = new Date();
-            const minDate = new Date('1900-01-01');
-            const maxDate = new Date();
-            maxDate.setFullYear(maxDate.getFullYear() + 10);
-            return date >= minDate && date <= maxDate && !isNaN(date);
-        }
+        // ==================== UTILITÁRIOS ====================
 
-        function parseBRL(value) {
-            if (!value) return 0;
-            const cleanValue = value.toString()
-                .replace(/[^\d.,-]/g, '')
-                .replace(/\.(?=.*\.)/g, '')
-                .replace(/\./g, '')
-                .replace(',', '.');
-            const num = Number(cleanValue);
-            if (!isFinite(num) || isNaN(num)) return NaN;
-            if (num < 0 || num > 999999999999) return NaN;
-            return num;
-        }
-
+        /**
+         * Formata valor para moeda brasileira
+         * @param {number} value - Valor numérico
+         * @returns {string} - Valor formatado
+         */
         function formatBRL(value) {
-            if (!value && value !== 0) return 'R$ 0,00';
-            try {
-                return value.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                });
-            } catch (error) {
-                console.error('Erro na formatação:', error);
-                return 'R$ 0,00';
-            }
+            if (typeof value !== 'number' || isNaN(value)) return 'R$ 0,00';
+            return value.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
         }
 
+        /**
+         * Converte string monetária para número
+         * @param {string} str - String no formato "1.000,00"
+         * @returns {number} - Valor numérico
+         */
+        function parseBRL(str) {
+            if (!str) return 0;
+            return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
+        }
+
+        /**
+         * Formata campo de moeda durante digitação
+         * @param {HTMLInputElement} input - Campo de entrada
+         */
         function formatCurrency(input) {
             let value = input.value.replace(/\D/g, '');
-            input.classList.remove('input-error');
-
-            if (value.length === 0) {
+            if (value === '') {
                 input.value = '';
                 return;
             }
 
-            const maxValue = parseInt(input.dataset.max) || 999999999;
-            const numValue = parseInt(value);
+            value = parseInt(value);
+            const max = parseInt(input.dataset.max) || 999999999;
+            if (value > max) value = max;
 
-            if (numValue > maxValue) {
-                input.classList.add('input-error');
-                showFieldError(input, `Valor máximo permitido: ${formatBRL(maxValue / 100)}`);
-                return;
-            }
-
-            while (value.length < 3) {
-                value = '0' + value;
-            }
-
-            const formatted = value.slice(0, -2) + ',' + value.slice(-2);
-            const parts = formatted.split(',');
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            input.value = parts.join(',');
-
-            const parsedValue = parseBRL(input.value);
-            if (!isNaN(parsedValue) && parsedValue > 0) {
-                input.classList.add('input-success');
-                hideFieldError(input);
-            }
+            input.value = (value / 100).toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         }
 
-        function showFieldError(field, message) {
-            const errorId = field.id + '-error';
-            const errorEl = document.getElementById(errorId);
-            if (errorEl) {
-                errorEl.textContent = message;
-                errorEl.classList.remove('hidden');
-            }
-            field.classList.add('input-error');
+        /**
+         * Sanitiza string para prevenir XSS
+         * @param {string} str - String a ser sanitizada
+         * @returns {string} - String sanitizada
+         */
+        function sanitizeString(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         }
 
-        function hideFieldError(field) {
-            const errorId = field.id + '-error';
-            const errorEl = document.getElementById(errorId);
-            if (errorEl) {
-                errorEl.classList.add('hidden');
-            }
-            field.classList.remove('input-error');
+        /**
+         * Valida se data é válida
+         * @param {string} dateString - String de data
+         * @returns {boolean} - Se é válida
+         */
+        function isValidDate(dateString) {
+            const date = new Date(dateString);
+            return date instanceof Date && !isNaN(date);
         }
 
+        /**
+         * Define data de hoje nos campos de data
+         */
+        function setToday() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = ['receita-data', 'despesa-data'];
+            dateInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input && !input.value) {
+                    input.value = today;
+                }
+            });
+        }
+
+        /**
+         * Exibe toast de notificação
+         * @param {string} title - Título da notificação
+         * @param {string} message - Mensagem
+         * @param {string} type - Tipo (success, error, warning, info)
+         */
         function showToast(title, message, type = 'success') {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toastIcon');
             const titleEl = document.getElementById('toastTitle');
             const messageEl = document.getElementById('toastMessage');
 
-            const configs = {
+            const config = {
                 success: { icon: 'fas fa-check-circle text-green-500', border: 'border-green-500' },
-                error: { icon: 'fas fa-exclamation-circle text-red-500', border: 'border-red-500' },
+                error: { icon: 'fas fa-times-circle text-red-500', border: 'border-red-500' },
                 warning: { icon: 'fas fa-exclamation-triangle text-yellow-500', border: 'border-yellow-500' },
                 info: { icon: 'fas fa-info-circle text-blue-500', border: 'border-blue-500' }
             };
 
-            const config = configs[type] || configs.success;
-            icon.className = config.icon;
-            toast.firstElementChild.className = `bg-white border-l-4 ${config.border} rounded-lg shadow-lg p-4 flex items-center space-x-3`;
+            const { icon: iconClass, border } = config[type] || config.success;
+
+            icon.className = iconClass;
             titleEl.textContent = title;
             messageEl.textContent = message;
+            toast.querySelector('div').className = `bg-white ${border} border-l-4 rounded-lg shadow-lg p-4 flex items-center space-x-3`;
 
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
         }
 
-        function setToday() {
-            const today = new Date().toISOString().split('T')[0];
-            const receitaData = document.getElementById('receita-data');
-            const despesaData = document.getElementById('despesa-data');
-            if (receitaData) receitaData.value = today;
-            if (despesaData) despesaData.value = today;
+        /**
+         * Mostra erro em campo específico
+         * @param {HTMLInputElement} input - Campo com erro
+         * @param {string} message - Mensagem de erro
+         */
+        function showFieldError(input, message) {
+            input.classList.add('input-error');
+            input.classList.remove('input-success');
+            
+            const errorId = input.id + '-error';
+            const errorEl = document.getElementById(errorId);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
         }
 
+        /**
+         * Esconde erro em campo específico
+         * @param {HTMLInputElement} input - Campo
+         */
+        function hideFieldError(input) {
+            input.classList.remove('input-error');
+            input.classList.add('input-success');
+            
+            const errorId = input.id + '-error';
+            const errorEl = document.getElementById(errorId);
+            if (errorEl) {
+                errorEl.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Valida formulário com regras específicas
+         * @param {HTMLFormElement} form - Formulário
+         * @param {string} type - Tipo (receita, despesa, patrimonio)
+         * @returns {Object|null} - Dados validados ou null se inválido
+         */
         function validateForm(form, type) {
-            let isValid = true;
             const errors = {};
+            let isValid = true;
 
-            const descricao = sanitizeString(form.descricao.value);
-            if (!descricao || descricao.length < 3) {
+            // Limpa erros anteriores
+            form.querySelectorAll('.input-error').forEach(input => {
+                hideFieldError(input);
+            });
+
+            // Validação de descrição
+            const descricao = form.descricao.value.trim();
+            if (!descricao) {
+                errors.descricao = 'Descrição é obrigatória';
+                isValid = false;
+            } else if (descricao.length < 3) {
                 errors.descricao = 'Descrição deve ter pelo menos 3 caracteres';
                 isValid = false;
             } else if (descricao.length > 100) {
-                errors.descricao = 'Descrição muito longa (máx. 100 caracteres)';
+                errors.descricao = 'Descrição deve ter no máximo 100 caracteres';
                 isValid = false;
             }
 
-            const valor = parseBRL(form.valor.value);
-            if (isNaN(valor) || valor <= 0) {
-                errors.valor = 'Valor deve ser maior que zero';
+            // Validação de valor
+            const valorStr = form.valor.value.trim();
+            if (!valorStr) {
+                errors.valor = 'Valor é obrigatório';
                 isValid = false;
-            } else if (valor > 999999999) {
-                errors.valor = 'Valor muito alto (máx. R$ 999.999.999,00)';
-                isValid = false;
-            }
-
-            const categoriaValida = ['Salário', 'Freelancer', 'Investimentos', 'Vendas', 'Aluguel', 'Bonus', 'Outros',
-                'Habitação', 'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Roupas',
-                'Tecnologia', 'Contas', 'Imóvel', 'Veículo', 'Poupança', 'Financiamento',
-                'Cartão de Crédito', 'Empréstimo'];
-
-            if (!categoriaValida.includes(form.categoria.value)) {
-                errors.categoria = 'Categoria inválida';
-                isValid = false;
-            }
-
-            if (type !== 'patrimonio') {
-                if (!isValidDate(form.data.value)) {
-                    errors.data = 'Data inválida';
+            } else {
+                const valor = parseBRL(valorStr);
+                if (valor <= 0) {
+                    errors.valor = 'Valor deve ser maior que zero';
+                    isValid = false;
+                } else if (valor > 999999999) {
+                    errors.valor = 'Valor muito alto';
                     isValid = false;
                 }
             }
 
+            // Validação de categoria
+            if (!form.categoria.value) {
+                errors.categoria = 'Categoria é obrigatória';
+                isValid = false;
+            }
+
+            // Validação de data (apenas para transações)
+            if (type !== 'patrimonio') {
+                const dataValue = form.data.value;
+                if (!dataValue) {
+                    errors.data = 'Data é obrigatória';
+                    isValid = false;
+                } else if (!isValidDate(dataValue)) {
+                    errors.data = 'Data inválida';
+                    isValid = false;
+                } else {
+                    const dataTransacao = new Date(dataValue);
+                    const hoje = new Date();
+                    const umAnoAtras = new Date();
+                    umAnoAtras.setFullYear(hoje.getFullYear() - 1);
+                    
+                    if (dataTransacao > hoje) {
+                        errors.data = 'Data não pode ser futura';
+                        isValid = false;
+                    } else if (dataTransacao < umAnoAtras) {
+                        errors.data = 'Data muito antiga (máximo 1 ano)';
+                        isValid = false;
+                    }
+                }
+            }
+
+            // Validação específica para patrimônio
             if (type === 'patrimonio') {
                 if (!['bem', 'divida'].includes(form.tipo.value)) {
                     errors.tipo = 'Tipo inválido';
@@ -1506,6 +1555,7 @@
                 }
             }
 
+            // Exibe erros
             Object.keys(errors).forEach(field => {
                 const input = form[field];
                 if (input) {
@@ -1518,9 +1568,10 @@
                 return null;
             }
 
+            // Retorna dados validados
             const data = {
                 descricao: descricao,
-                valor: valor,
+                valor: parseBRL(valorStr),
                 categoria: form.categoria.value
             };
 
@@ -1540,7 +1591,7 @@
             const loginBtn = document.getElementById('loginBtn');
             try {
                 loginBtn.classList.add('loading');
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Conectando...';
+                loginBtn.innerHTML = '<div class="spinner"></div>Conectando...';
                 const result = await signInWithPopup(auth, provider);
                 currentUser = result.user;
                 showToast('Sucesso', 'Login realizado com sucesso!', 'success');
@@ -1884,34 +1935,35 @@
                     despesasList.appendChild(item);
                 });
 
+                // Mensagens quando vazio
                 if (receitas.length === 0) {
-                    receitasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma receita registrada no período</p>';
+                    receitasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma receita encontrada</p>';
+                }
+                if (despesas.length === 0) {
+                    despesasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma despesa encontrada</p>';
                 }
 
-                if (despesas.length === 0) {
-                    despesasList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma despesa registrada no período</p>';
-                }
             } catch (error) {
                 console.error('Erro ao renderizar transações:', error);
-                showToast('Erro', 'Erro ao exibir transações', 'error');
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Erro ao carregar transações</td></tr>';
             }
         }
 
         function createTransactionListItem(transacao, color) {
-            const item = document.createElement('div');
-            item.className = `flex items-center justify-between p-3 bg-${color}-50 border border-${color}-100 rounded-lg hover:bg-${color}-100 transition-colors`;
+            const element = document.createElement('div');
+            element.className = `flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors`;
 
             try {
                 const data = new Date(transacao.data).toLocaleDateString('pt-BR');
                 const valor = formatBRL(transacao.valor);
                 const emoji = transacao.tipo === 'receita' ? '💰' : '💸';
 
-                item.innerHTML = `
+                element.innerHTML = `
                     <div class="flex items-center space-x-3">
                         <span class="text-lg">${emoji}</span>
                         <div>
                             <p class="font-medium text-gray-800">${sanitizeString(transacao.descricao)}</p>
-                            <p class="text-xs text-gray-600">${sanitizeString(transacao.categoria)} • ${data}</p>
+                            <p class="text-xs text-gray-600">${data} • ${sanitizeString(transacao.categoria)}</p>
                         </div>
                     </div>
                     <div class="text-right">
@@ -1930,73 +1982,59 @@
                 `;
             } catch (error) {
                 console.error('Erro ao criar item de transação:', error);
-                item.innerHTML = '<p class="text-red-500">Erro ao carregar item</p>';
+                element.innerHTML = '<p class="text-red-500">Erro ao carregar item</p>';
             }
 
-            return item;
+            return element;
         }
 
         function renderPatrimonio() {
-            const bensContainer = document.getElementById('bensList');
-            const dividasContainer = document.getElementById('dividasList');
+            const patrimonioList = document.getElementById('patrimonioList');
+            if (!patrimonioList) return;
 
-            if (!bensContainer || !dividasContainer) return;
-
-            bensContainer.innerHTML = '';
-            dividasContainer.innerHTML = '';
-
-            let totalBens = 0;
-            let totalDividas = 0;
-            let quantidadeBens = 0;
-            let quantidadeDividas = 0;
+            patrimonioList.innerHTML = '';
 
             try {
-                patrimonio.forEach(item => {
-                    const valor = formatBRL(item.valor);
+                const bens = patrimonio.filter(p => p.tipo === 'bem');
+                const dividas = patrimonio.filter(p => p.tipo === 'divida');
 
-                    if (item.tipo === 'bem') {
-                        totalBens += item.valor;
-                        quantidadeBens++;
-                        const element = createPatrimonioItem(item, valor, 'green', '💎');
-                        bensContainer.appendChild(element);
-                    } else {
-                        totalDividas += item.valor;
-                        quantidadeDividas++;
-                        const element = createPatrimonioItem(item, valor, 'red', '💳');
-                        dividasContainer.appendChild(element);
-                    }
-                });
+                const totalBens = bens.reduce((sum, b) => sum + (b.valor || 0), 0);
+                const totalDividas = dividas.reduce((sum, d) => sum + (d.valor || 0), 0);
+                const patrimonioLiquido = totalBens - totalDividas;
 
-                if (quantidadeBens === 0) {
-                    bensContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhum bem cadastrado</p>';
-                }
-
-                if (quantidadeDividas === 0) {
-                    dividasContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma dívida cadastrada</p>';
-                }
-
-                // Atualiza resumo do patrimônio
+                // Atualiza resumo
                 document.getElementById('totalBens').textContent = formatBRL(totalBens);
                 document.getElementById('totalDividas').textContent = formatBRL(totalDividas);
-                document.getElementById('patrimonioLiquido').textContent = formatBRL(totalBens - totalDividas);
-                document.getElementById('quantidadeBens').textContent = `${quantidadeBens} itens`;
-                document.getElementById('quantidadeDividas').textContent = `${quantidadeDividas} itens`;
+                document.getElementById('patrimonioLiquido').textContent = formatBRL(patrimonioLiquido);
+                document.getElementById('quantidadeBens').textContent = `${bens.length} itens`;
+                document.getElementById('quantidadeDividas').textContent = `${dividas.length} itens`;
+                document.getElementById('statusPatrimonio').textContent = patrimonioLiquido >= 0 ? 'Positivo' : 'Negativo';
 
-                const patrimonioLiquido = totalBens - totalDividas;
-                const statusEl = document.getElementById('statusPatrimonio');
-                statusEl.textContent = patrimonioLiquido >= 0 ? 'Positivo' : 'Negativo';
-                statusEl.className = patrimonioLiquido >= 0 ? 'text-xs opacity-75 mt-1' : 'text-xs opacity-75 mt-1 text-red-200';
+                // Renderiza itens
+                patrimonio.forEach(item => {
+                    const element = createPatrimonioListItem(item);
+                    patrimonioList.appendChild(element);
+                });
+
+                if (patrimonio.length === 0) {
+                    patrimonioList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhum item de patrimônio cadastrado</p>';
+                }
+
             } catch (error) {
                 console.error('Erro ao renderizar patrimônio:', error);
-                showToast('Erro', 'Erro ao exibir patrimônio', 'error');
+                patrimonioList.innerHTML = '<p class="text-red-500 text-center py-4">Erro ao carregar patrimônio</p>';
             }
         }
 
-        function createPatrimonioItem(item, valor, color, emoji) {
+        function createPatrimonioListItem(item) {
             const element = document.createElement('div');
-            element.className = `flex items-center justify-between p-3 bg-${color}-50 border border-${color}-100 rounded-lg hover:bg-${color}-100 transition-colors`;
+            element.className = `flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors`;
 
             try {
+                const valor = formatBRL(item.valor);
+                const color = item.tipo === 'bem' ? 'green' : 'red';
+                const emoji = item.tipo === 'bem' ? '💰' : '💸';
+
                 element.innerHTML = `
                     <div class="flex items-center space-x-3">
                         <span class="text-lg">${emoji}</span>
@@ -2300,6 +2338,7 @@
                 console.error('Erro na projeção personalizada:', error);
             }
         }
+
         function generateAnaliseInteligente(economiaMensal, receitas, despesas) {
             const container = document.getElementById('analiseInteligente');
             if (!container) return;
@@ -2310,55 +2349,52 @@
                 // Análise de economia
                 if (economiaMensal > 0) {
                     const percentual = receitas > 0 ? (economiaMensal / (receitas / 12) * 100) : 0;
-                    analyses.push(`
-                        <div class="flex items-start space-x-2">
-                            <i class="fas fa-thumbs-up text-green-500 mt-1"></i>
-                            <p>Você tem uma economia mensal positiva de <strong>${formatBRL(economiaMensal)}</strong> (${percentual.toFixed(1)}% da receita).</p>
-                        </div>
-                    `);
+                    if (percentual >= 20) {
+                        analyses.push(`✅ Excelente! Você está economizando ${percentual.toFixed(1)}% da sua receita mensal.`);
+                    } else if (percentual >= 10) {
+                        analyses.push(`⚠️ Boa economia de ${percentual.toFixed(1)}%, mas pode melhorar. Meta ideal: 20%.`);
+                    } else {
+                        analyses.push(`🔴 Economia baixa (${percentual.toFixed(1)}%). Revise seus gastos para atingir 20%.`);
+                    }
                 } else {
-                    analyses.push(`
-                        <div class="flex items-start space-x-2">
-                            <i class="fas fa-exclamation-triangle text-yellow-500 mt-1"></i>
-                            <p>Suas despesas estão superando as receitas em <strong>${formatBRL(Math.abs(economiaMensal))}</strong> por mês.</p>
-                        </div>
-                    `);
+                    analyses.push(`🚨 Atenção! Suas despesas excedem as receitas em ${formatBRL(Math.abs(economiaMensal))}.`);
+                }
+
+                // Análise de estabilidade
+                const mesesComDados = new Set(transacoes.map(t => t.data.substring(0, 7))).size;
+                if (mesesComDados >= 3) {
+                    analyses.push(`📊 Você tem ${mesesComDados} meses de histórico, permitindo análises mais precisas.`);
+                } else {
+                    analyses.push(`📈 Continue registrando para análises mais precisas (${mesesComDados} meses de dados).`);
                 }
 
                 // Análise de categorias
                 const despesasPorCategoria = {};
-                transacoes
-                    .filter(t => t.tipo === 'despesa')
-                    .forEach(t => {
-                        if (t.categoria && t.valor) {
-                            despesasPorCategoria[t.categoria] = (despesasPorCategoria[t.categoria] || 0) + t.valor;
-                        }
-                    });
+                transacoes.filter(t => t.tipo === 'despesa').forEach(t => {
+                    despesasPorCategoria[t.categoria] = (despesasPorCategoria[t.categoria] || 0) + t.valor;
+                });
 
-                const categoriasMaiorGasto = Object.entries(despesasPorCategoria)
+                const totalDespesas = Object.values(despesasPorCategoria).reduce((sum, val) => sum + val, 0);
+                const categoriasMaiores = Object.entries(despesasPorCategoria)
                     .sort(([, a], [, b]) => b - a)
                     .slice(0, 2);
 
-                if (categoriasMaiorGasto.length > 0) {
-                    analyses.push(`
-                        <div class="flex items-start space-x-2">
-                            <i class="fas fa-chart-pie text-blue-500 mt-1"></i>
-                            <p>Suas maiores despesas estão em <strong>${categoriasMaiorGasto[0][0]}</strong> (${formatBRL(categoriasMaiorGasto[0][1])}).</p>
-                        </div>
-                    `);
+                if (categoriasMaiores.length > 0) {
+                    const [categoria, valor] = categoriasMaiores[0];
+                    const percentual = (valor / totalDespesas * 100).toFixed(1);
+                    analyses.push(`🎯 Sua maior categoria de gasto é "${categoria}" (${percentual}% do total).`);
                 }
 
-                container.innerHTML = analyses.join('');
+                container.innerHTML = analyses.map(analysis => 
+                    `<div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">${analysis}</div>`
+                ).join('');
+
             } catch (error) {
                 console.error('Erro na análise inteligente:', error);
                 container.innerHTML = '<p class="text-red-500">Erro ao gerar análise</p>';
             }
         }
 
-        /**
-         * Gera metas sugeridas automaticamente
-         * @param {number} economiaMensal - Economia mensal média
-         */
         function generateMetasSugeridas(economiaMensal) {
             const container = document.getElementById('metasSugeridas');
             if (!container) return;
@@ -2366,46 +2402,54 @@
             try {
                 const metas = [];
 
+                // Meta de economia
                 if (economiaMensal > 0) {
+                    const metaAnual = economiaMensal * 12;
+                    metas.push(`🎯 Meta anual: Economizar ${formatBRL(metaAnual)} mantendo o ritmo atual.`);
+                    
                     const metaEmergencia = economiaMensal * 6;
-                    metas.push(`
-                        <div class="flex items-start space-x-2">
-                            <i class="fas fa-piggy-bank text-green-500 mt-1"></i>
-                            <p>Reserve <strong>${formatBRL(metaEmergencia)}</strong> como fundo de emergência (6 meses de economia).</p>
-                        </div>
-                    `);
-
-                    const metaInvestimento = economiaMensal * 0.3;
-                    metas.push(`
-                        <div class="flex items-start space-x-2">
-                            <i class="fas fa-chart-line text-blue-500 mt-1"></i>
-                            <p>Considere investir <strong>${formatBRL(metaInvestimento)}</strong> mensalmente (30% da economia).</p>
-                        </div>
-                    `);
+                    metas.push(`🚨 Reserva de emergência: Acumule ${formatBRL(metaEmergencia)} (6 meses de economia).`);
                 } else {
-                    metas.push(`
-                        <div class="flex items-start space-x-2">
-                            <i class="fas fa-cut text-red-500 mt-1"></i>
-                            <p>Reduza gastos em <strong>${formatBRL(Math.abs(economiaMensal))}</strong> para equilibrar o orçamento.</p>
-                        </div>
-                    `);
+                    metas.push(`⚠️ Prioridade: Equilibrar receitas e despesas antes de definir metas de economia.`);
                 }
 
-                metas.push(`
-                    <div class="flex items-start space-x-2">
-                        <i class="fas fa-target text-purple-500 mt-1"></i>
-                        <p>Estabeleça um orçamento mensal e acompanhe semanalmente.</p>
-                    </div>
-                `);
+                // Meta de redução de gastos
+                const despesaTotal = transacoes
+                    .filter(t => t.tipo === 'despesa')
+                    .reduce((sum, t) => sum + t.valor, 0);
 
-                container.innerHTML = metas.join('');
+                if (despesaTotal > 0) {
+                    const reducao5 = despesaTotal * 0.05;
+                    metas.push(`💡 Tente reduzir 5% dos gastos mensais: ${formatBRL(reducao5 / 12)}.`);
+                }
+
+                // Meta de aumento de receita
+                const receitaTotal = transacoes
+                    .filter(t => t.tipo === 'receita')
+                    .reduce((sum, t) => sum + t.valor, 0);
+
+                if (receitaTotal > 0) {
+                    const aumento10 = receitaTotal * 0.1;
+                    metas.push(`📈 Busque aumentar sua receita em 10%: ${formatBRL(aumento10 / 12)} por mês.`);
+                }
+
+                // Meta de investimento
+                if (economiaMensal > 1000) {
+                    const investimento = economiaMensal * 0.7;
+                    metas.push(`💰 Considere investir ${formatBRL(investimento)} mensais para fazer o dinheiro crescer.`);
+                }
+
+                container.innerHTML = metas.map(meta => 
+                    `<div class="p-3 bg-purple-50 rounded-lg border-l-4 border-purple-400">${meta}</div>`
+                ).join('');
+
             } catch (error) {
                 console.error('Erro nas metas sugeridas:', error);
                 container.innerHTML = '<p class="text-red-500">Erro ao gerar metas</p>';
             }
         }
 
-        // ==================== GRÁFICOS ====================
+        // ==================== GRÁFICOS CORRIGIDOS ====================
 
         /**
          * Inicializa todos os gráficos
@@ -2415,6 +2459,7 @@
                 initEvolucaoChart();
                 initCategoriaChart();
                 initProjecaoChart();
+                initTendenciaMensalChart();
             } catch (error) {
                 console.error('Erro ao inicializar gráficos:', error);
             }
@@ -2452,13 +2497,9 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
-                        },
                         plugins: {
                             legend: {
-                                position: 'top',
+                                position: 'top'
                             },
                             tooltip: {
                                 callbacks: {
@@ -2593,6 +2634,58 @@
         }
 
         /**
+         * Inicializa gráfico de tendência mensal para insights
+         */
+        function initTendenciaMensalChart() {
+            const ctx = document.getElementById('tendenciaMensalChart');
+            if (!ctx) return;
+
+            try {
+                tendenciaMensalChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Receitas',
+                            data: [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Despesas',
+                            data: [],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Tendência dos Últimos 6 Meses'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return formatBRL(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Erro no gráfico de tendência mensal:', error);
+            }
+        }
+
+        /**
          * Atualiza dados dos gráficos
          */
         function updateCharts() {
@@ -2600,6 +2693,7 @@
                 updateEvolucaoChart();
                 updateCategoriaChart();
                 updateProjecaoChart();
+                updateTendenciaMensalChart();
             } catch (error) {
                 console.error('Erro ao atualizar gráficos:', error);
             }
@@ -2692,6 +2786,32 @@
             }
         }
 
+        /**
+         * Atualiza gráfico de tendência mensal
+         */
+        function updateTendenciaMensalChart() {
+            if (!tendenciaMensalChart) return;
+
+            try {
+                const ultimosSeisMeses = obterUltimosSeisMeses();
+                const dadosReceitas = ultimosSeisMeses.map(mes =>
+                    transacoes.filter(r => r.tipo === 'receita' && r.data && r.data.startsWith(mes))
+                        .reduce((sum, r) => sum + (r.valor || 0), 0)
+                );
+                const dadosDespesas = ultimosSeisMeses.map(mes =>
+                    transacoes.filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mes))
+                        .reduce((sum, d) => sum + (d.valor || 0), 0)
+                );
+
+                tendenciaMensalChart.data.labels = ultimosSeisMeses.map(mes => formatarMesAbrev(mes));
+                tendenciaMensalChart.data.datasets[0].data = dadosReceitas;
+                tendenciaMensalChart.data.datasets[1].data = dadosDespesas;
+                tendenciaMensalChart.update('none');
+            } catch (error) {
+                console.error('Erro ao atualizar gráfico de tendência mensal:', error);
+            }
+        }
+
         // ==================== FORM HANDLERS CORRIGIDOS ====================
 
         /**
@@ -2706,7 +2826,7 @@
 
             try {
                 submitBtn.classList.add('loading');
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+                submitBtn.innerHTML = '<div class="spinner"></div>Salvando...';
 
                 // Validar formulário
                 const data = validateForm(form, 'receita');
@@ -2742,7 +2862,7 @@
 
             try {
                 submitBtn.classList.add('loading');
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+                submitBtn.innerHTML = '<div class="spinner"></div>Salvando...';
 
                 // Validar formulário
                 const data = validateForm(form, 'despesa');
@@ -2778,7 +2898,7 @@
 
             try {
                 submitBtn.classList.add('loading');
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+                submitBtn.innerHTML = '<div class="spinner"></div>Salvando...';
 
                 // Validar formulário
                 const data = validateForm(form, 'patrimonio');
@@ -2919,7 +3039,7 @@
         function editPatrimonio(id) {
             const item = patrimonio.find(p => p.id === id);
             if (!item) {
-                showToast('Erro', 'Item de patrimônio não encontrado', 'error');
+                showToast('Erro', 'Item não encontrado', 'error');
                 return;
             }
 
@@ -2933,7 +3053,7 @@
 
                 title.textContent = `Editar ${item.tipo === 'bem' ? 'Bem' : 'Dívida'}`;
 
-                // Preenche campos com sanitização
+                // Preenche campos
                 document.getElementById('editDescricao').value = sanitizeString(item.descricao);
                 document.getElementById('editValor').value = item.valor.toLocaleString('pt-BR', {
                     minimumFractionDigits: 2,
@@ -2944,7 +3064,8 @@
                 const categoriaSelect = document.getElementById('editCategoria');
                 categoriaSelect.innerHTML = '';
 
-                const categorias = ['Imóvel', 'Veículo', 'Investimentos', 'Poupança', 'Financiamento', 'Cartão de Crédito', 'Empréstimo', 'Outros'];
+                const categorias = ['Imóveis', 'Veículos', 'Investimentos', 'Conta Corrente', 'Poupança', 
+                                 'Cartão de Crédito', 'Financiamentos', 'Empréstimos', 'Outros'];
 
                 categorias.forEach(cat => {
                     const option = document.createElement('option');
@@ -2962,13 +3083,13 @@
 
                 modal.classList.remove('hidden');
             } catch (error) {
-                console.error('Erro ao abrir edição de patrimônio:', error);
+                console.error('Erro ao abrir edição:', error);
                 showToast('Erro', 'Erro ao abrir formulário de edição', 'error');
             }
         }
 
         /**
-         * Handler do formulário de edição com validação aprimorada
+         * Handler do formulário de edição
          * @param {Event} event - Evento do formulário
          */
         async function handleEditSubmit(event) {
@@ -2977,17 +3098,18 @@
             const form = event.target;
 
             try {
-                // Validação manual para edição
-                const descricao = sanitizeString(form.querySelector('#editDescricao').value);
-                const valor = parseBRL(form.querySelector('#editValor').value);
+                // Validação básica
+                const descricao = form.querySelector('#editDescricao').value.trim();
+                const valorStr = form.querySelector('#editValor').value.trim();
                 const categoria = form.querySelector('#editCategoria').value;
 
-                if (!descricao || descricao.length < 3) {
-                    showToast('Erro', 'Descrição deve ter pelo menos 3 caracteres', 'error');
+                if (!descricao || !valorStr || !categoria) {
+                    showToast('Erro', 'Todos os campos são obrigatórios', 'error');
                     return;
                 }
 
-                if (isNaN(valor) || valor <= 0) {
+                const valor = parseBRL(valorStr);
+                if (valor <= 0) {
                     showToast('Erro', 'Valor deve ser maior que zero', 'error');
                     return;
                 }
@@ -3099,7 +3221,7 @@
                     selectedBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium gradient-info text-white whitespace-nowrap';
                 }
 
-                // 🔹 Adicione este switch aqui
+                // Inicializa funcionalidades específicas das tabs
                 switch (tabName) {
                     case 'relatorios':
                         inicializarRelatorios();
@@ -3116,6 +3238,728 @@
             }
         }
 
+        // ==================== RELATÓRIOS DETALHADOS - CORRIGIDOS ====================
+
+        /**
+         * Inicializar relatórios ao carregar a aba
+         */
+        function inicializarRelatorios() {
+            try {
+                // Definir datas padrão (último mês)
+                const hoje = new Date();
+                const mesPassado = new Date(hoje.getFullYear(), hoje.getMonth() - 1, hoje.getDate());
+
+                document.getElementById('filtroDataInicio').value = mesPassado.toISOString().split('T')[0];
+                document.getElementById('filtroDataFim').value = hoje.toISOString().split('T')[0];
+
+                // Carregar categorias no filtro
+                carregarCategoriasFiltro();
+
+                // Aplicar filtros iniciais
+                aplicarFiltros();
+            } catch (error) {
+                console.error('Erro ao inicializar relatórios:', error);
+            }
+        }
+
+        /**
+         * Carregar categorias para o filtro
+         */
+        function carregarCategoriasFiltro() {
+            try {
+                const categorias = new Set();
+                transacoes.forEach(t => {
+                    if (t.categoria) {
+                        categorias.add(t.categoria);
+                    }
+                });
+
+                const select = document.getElementById('filtroCategoria');
+                if (select) {
+                    select.innerHTML = '<option value="">Todas</option>';
+
+                    [...categorias].sort().forEach(categoria => {
+                        const option = document.createElement('option');
+                        option.value = categoria;
+                        option.textContent = categoria;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        }
+
+        /**
+         * Aplicar filtros
+         */
+        function aplicarFiltros() {
+            try {
+                const dataInicio = document.getElementById('filtroDataInicio').value;
+                const dataFim = document.getElementById('filtroDataFim').value;
+                const tipo = document.getElementById('filtroTipo').value;
+                const categoria = document.getElementById('filtroCategoria').value;
+
+                // Aplicar filtros
+                transacoesFiltradas = transacoes.filter(transacao => {
+                    if (!transacao.data) return false;
+
+                    const dataTransacao = new Date(transacao.data);
+                    const filtroDataInicioDate = dataInicio ? new Date(dataInicio) : null;
+                    const filtroDataFimDate = dataFim ? new Date(dataFim) : null;
+
+                    // Filtro por data
+                    if (filtroDataInicioDate && dataTransacao < filtroDataInicioDate) return false;
+                    if (filtroDataFimDate && dataTransacao > filtroDataFimDate) return false;
+
+                    // Filtro por tipo
+                    if (tipo && transacao.tipo !== tipo) return false;
+
+                    // Filtro por categoria
+                    if (categoria && transacao.categoria !== categoria) return false;
+
+                    return true;
+                });
+
+                // Aplicar ordenação atual
+                ordenarTransacoes();
+
+                // Atualizar resumo e tabela
+                atualizarResumoFiltros();
+                atualizarTabelaRelatorios();
+            } catch (error) {
+                console.error('Erro ao aplicar filtros:', error);
+            }
+        }
+
+        /**
+         * Ordenar transações
+         */
+        function ordenarTransacoes() {
+            try {
+                transacoesFiltradas.sort((a, b) => {
+                    let valorA = a[ordenacaoAtual.campo];
+                    let valorB = b[ordenacaoAtual.campo];
+
+                    if (ordenacaoAtual.campo === 'valor') {
+                        valorA = parseFloat(valorA) || 0;
+                        valorB = parseFloat(valorB) || 0;
+                    } else if (ordenacaoAtual.campo === 'data') {
+                        valorA = new Date(valorA);
+                        valorB = new Date(valorB);
+                    }
+
+                    if (ordenacaoAtual.direcao === 'asc') {
+                        return valorA > valorB ? 1 : -1;
+                    } else {
+                        return valorA < valorB ? 1 : -1;
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao ordenar transações:', error);
+            }
+        }
+
+        /**
+         * Alterar ordenação
+         * @param {string} campo - Campo para ordenar
+         */
+        function alterarOrdenacao(campo) {
+            try {
+                if (ordenacaoAtual.campo === campo) {
+                    ordenacaoAtual.direcao = ordenacaoAtual.direcao === 'asc' ? 'desc' : 'asc';
+                } else {
+                    ordenacaoAtual.campo = campo;
+                    ordenacaoAtual.direcao = 'desc';
+                }
+
+                ordenarTransacoes();
+                atualizarTabelaRelatorios();
+            } catch (error) {
+                console.error('Erro ao alterar ordenação:', error);
+            }
+        }
+
+        /**
+         * Atualizar resumo dos filtros
+         */
+        function atualizarResumoFiltros() {
+            try {
+                const totalReceitas = transacoesFiltradas
+                    .filter(t => t.tipo === 'receita')
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const totalDespesas = transacoesFiltradas
+                    .filter(t => t.tipo === 'despesa')
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+
+                const saldo = totalReceitas - totalDespesas;
+
+                document.getElementById('filtroTotalRegistros').textContent = transacoesFiltradas.length;
+                document.getElementById('filtroTotalReceitas').textContent = formatBRL(totalReceitas);
+                document.getElementById('filtroTotalDespesas').textContent = formatBRL(totalDespesas);
+
+                const saldoElement = document.getElementById('filtroSaldoPeriodo');
+                saldoElement.textContent = formatBRL(saldo);
+                saldoElement.className = `text-3xl font-bold ${saldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            } catch (error) {
+                console.error('Erro ao atualizar resumo:', error);
+            }
+        }
+
+        /**
+         * Atualizar tabela de relatórios
+         */
+        function atualizarTabelaRelatorios() {
+            try {
+                const tbody = document.getElementById('relatoriosTableBody');
+                if (!tbody) return;
+
+                tbody.innerHTML = '';
+
+                if (transacoesFiltradas.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-8 text-gray-500">
+                                <i class="fas fa-search text-3xl mb-2"></i>
+                                <p>Nenhuma transação encontrada com os filtros aplicados</p>
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                transacoesFiltradas.forEach(transacao => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-100 hover:bg-gray-50';
+
+                    const tipoIcon = transacao.tipo === 'receita' ?
+                        '<i class="fas fa-arrow-up text-green-500"></i>' :
+                        '<i class="fas fa-arrow-down text-red-500"></i>';
+
+                    const valorClass = transacao.tipo === 'receita' ? 'text-green-600' : 'text-red-600';
+                    const valorPrefix = transacao.tipo === 'receita' ? '+' : '-';
+
+                    const data = new Date(transacao.data).toLocaleDateString('pt-BR');
+
+                    row.innerHTML = `
+                        <td class="py-3 px-4">
+                            <div class="flex items-center space-x-2">
+                                ${tipoIcon}
+                                <span class="text-xs ${transacao.tipo === 'receita' ? 'text-green-600' : 'text-red-600'} font-medium">
+                                    ${transacao.tipo.toUpperCase()}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4">${data}</td>
+                        <td class="py-3 px-4">
+                            <div>
+                                <p class="font-medium">${sanitizeString(transacao.descricao)}</p>
+                                <p class="text-xs text-gray-500">${sanitizeString(transacao.categoria)}</p>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
+                                ${sanitizeString(transacao.categoria)}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-right">
+                            <span class="font-bold ${valorClass}">
+                                ${valorPrefix} ${formatBRL(transacao.valor)}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-center no-print">
+                            <button onclick="editTransaction('${transacao.id}')" 
+                                    class="text-blue-500 hover:text-blue-700 mr-2" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteTransactionConfirm('${transacao.id}')" 
+                                    class="text-red-500 hover:text-red-700" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erro ao atualizar tabela:', error);
+            }
+        }
+
+        /**
+         * Limpar filtros
+         */
+        function limparFiltros() {
+            try {
+                document.getElementById('filtroDataInicio').value = '';
+                document.getElementById('filtroDataFim').value = '';
+                document.getElementById('filtroTipo').value = '';
+                document.getElementById('filtroCategoria').value = '';
+
+                aplicarFiltros();
+            } catch (error) {
+                console.error('Erro ao limpar filtros:', error);
+            }
+        }
+
+        /**
+         * Exportar para CSV
+         */
+        function exportarCSV() {
+            try {
+                if (transacoesFiltradas.length === 0) {
+                    showToast('Aviso', 'Nenhuma transação para exportar', 'warning');
+                    return;
+                }
+
+                const headers = ['Tipo', 'Data', 'Descrição', 'Categoria', 'Valor'];
+                const csvContent = [
+                    headers.join(','),
+                    ...transacoesFiltradas.map(t => [
+                        t.tipo,
+                        t.data,
+                        `"${t.descricao}"`,
+                        `"${t.categoria}"`,
+                        t.valor.toString().replace('.', ',')
+                    ].join(','))
+                ].join('\n');
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `relatorio-financeiro-${new Date().toISOString().split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    showToast('Sucesso', 'Relatório exportado com sucesso!', 'success');
+                }
+            } catch (error) {
+                console.error('Erro ao exportar CSV:', error);
+                showToast('Erro', 'Erro ao exportar relatório', 'error');
+            }
+        }
+
+        // ==================== INSIGHTS DETALHADOS - CORRIGIDOS ====================
+
+        /**
+         * Inicializar insights ao carregar a aba
+         */
+        function inicializarInsights() {
+            try {
+                updateInsights();
+            } catch (error) {
+                console.error('Erro ao inicializar insights:', error);
+            }
+        }
+
+        /**
+         * Atualizar insights
+         */
+        function updateInsights() {
+            try {
+                if (transacoes.length === 0) {
+                    document.getElementById('alertasContainer').innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-chart-line text-4xl mb-2"></i>
+                            <p>Adicione algumas transações para ver insights personalizados!</p>
+                        </div>`;
+                    return;
+                }
+
+                // Análise trimestral
+                analisarTendenciaTrimestral();
+
+                // Análise de atividade mensal
+                analisarAtividadeMensal();
+
+                // Análise de categorias
+                analisarCategorias();
+
+                // Gerar alertas
+                gerarAlertas();
+
+                // Gerar previsões
+                gerarPrevisoes();
+
+                // Atualizar gráfico de tendência mensal
+                updateTendenciaMensalChart();
+            } catch (error) {
+                console.error('Erro ao atualizar insights:', error);
+            }
+        }
+
+        /**
+         * Analisar tendência trimestral
+         */
+        function analisarTendenciaTrimestral() {
+            try {
+                const ultimosTresMeses = obterUltimosTresMeses();
+                
+                const dadosReceitas = ultimosTresMeses.map(mes =>
+                    transacoes.filter(r => r.tipo === 'receita' && r.data && r.data.startsWith(mes))
+                        .reduce((sum, r) => sum + (r.valor || 0), 0)
+                );
+                
+                const dadosDespesas = ultimosTresMeses.map(mes =>
+                    transacoes.filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mes))
+                        .reduce((sum, d) => sum + (d.valor || 0), 0)
+                );
+
+                const dadosEconomia = dadosReceitas.map((r, i) => r - dadosDespesas[i]);
+
+                // Calcular tendências
+                const tendenciaReceitas = calcularTendencia(dadosReceitas);
+                const tendenciaDespesas = calcularTendencia(dadosDespesas);
+                const tendenciaEconomia = calcularTendencia(dadosEconomia);
+
+                // Atualizar elementos
+                document.getElementById('tendenciaReceitasTrimestre').textContent = formatarTendencia(tendenciaReceitas);
+                document.getElementById('tendenciaDespesasTrimestre').textContent = formatarTendencia(tendenciaDespesas);
+                document.getElementById('tendenciaEconomiaTrimestre').textContent = formatarTendencia(tendenciaEconomia);
+
+                // Aplicar classes de cor
+                aplicarClasseTendencia('tendenciaReceitasTrimestre', tendenciaReceitas);
+                aplicarClasseTendencia('tendenciaDespesasTrimestre', -tendenciaDespesas); // Inverte para despesas
+                aplicarClasseTendencia('tendenciaEconomiaTrimestre', tendenciaEconomia);
+            } catch (error) {
+                console.error('Erro na análise trimestral:', error);
+            }
+        }
+
+        /**
+         * Analisar atividade mensal
+         */
+        function analisarAtividadeMensal() {
+            try {
+                const atividadePorMes = {};
+                const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                             'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+                transacoes.forEach(transacao => {
+                    if (transacao.data) {
+                        const data = new Date(transacao.data);
+                        const mesAno = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+                        atividadePorMes[mesAno] = (atividadePorMes[mesAno] || 0) + Math.abs(transacao.valor || 0);
+                    }
+                });
+
+                const atividades = Object.entries(atividadePorMes);
+                if (atividades.length === 0) {
+                    document.getElementById('mesMaiorAtividade').textContent = 'N/A';
+                    document.getElementById('mesMenorAtividade').textContent = 'N/A';
+                    return;
+                }
+
+                const maiorAtividade = atividades.reduce((max, current) => 
+                    current[1] > max.valor ? { mes: current[0], valor: current[1] } : max, 
+                    { mes: '', valor: 0 }
+                );
+
+                const menorAtividade = atividades.reduce((min, current) => 
+                    current[1] < min.valor ? { mes: current[0], valor: current[1] } : min, 
+                    { mes: '', valor: Infinity }
+                );
+
+                // Formatar nomes dos meses
+                const formatarMesAno = (mesAno) => {
+                    const [ano, mes] = mesAno.split('-');
+                    return `${meses[parseInt(mes) - 1]}/${ano}`;
+                };
+
+                document.getElementById('mesMaiorAtividade').textContent =
+                    `${formatarMesAno(maiorAtividade.mes)} (${formatBRL(maiorAtividade.valor)})`;
+                document.getElementById('mesMenorAtividade').textContent =
+                    menorAtividade.valor !== Infinity ?
+                        `${formatarMesAno(menorAtividade.mes)} (${formatBRL(menorAtividade.valor)})` : 'N/A';
+            } catch (error) {
+                console.error('Erro na análise de atividade:', error);
+            }
+        }
+
+        /**
+         * Analisar categorias
+         */
+        function analisarCategorias() {
+            try {
+                const despesas = transacoes.filter(t => t.tipo === 'despesa');
+                if (despesas.length === 0) {
+                    document.getElementById('categoriaMaiorGasto').textContent = 'N/A';
+                    document.getElementById('categoriaMaiorGastoValor').textContent = 'R$ 0,00';
+                    document.getElementById('categoriaMaiorGastoMedia').textContent = '--';
+                    return;
+                }
+
+                const categoriaAnalise = {};
+
+                despesas.forEach(despesa => {
+                    if (!categoriaAnalise[despesa.categoria]) {
+                        categoriaAnalise[despesa.categoria] = { total: 0, count: 0 };
+                    }
+                    categoriaAnalise[despesa.categoria].total += parseFloat(despesa.valor || 0);
+                    categoriaAnalise[despesa.categoria].count++;
+                });
+
+                // Encontrar categoria com maior gasto
+                let maiorCategoria = { nome: 'N/A', valor: 0, media: 0 };
+                Object.entries(categoriaAnalise).forEach(([categoria, dados]) => {
+                    if (dados.total > maiorCategoria.valor) {
+                        maiorCategoria = {
+                            nome: categoria,
+                            valor: dados.total,
+                            media: dados.total / dados.count
+                        };
+                    }
+                });
+
+                document.getElementById('categoriaMaiorGasto').textContent = maiorCategoria.nome;
+                document.getElementById('categoriaMaiorGastoValor').textContent = formatBRL(maiorCategoria.valor);
+                document.getElementById('categoriaMaiorGastoMedia').textContent =
+                    `Média: ${formatBRL(maiorCategoria.media)}`;
+            } catch (error) {
+                console.error('Erro na análise de categorias:', error);
+            }
+        }
+
+        /**
+         * Gerar alertas
+         */
+        function gerarAlertas() {
+            try {
+                const alertas = [];
+                const mesAtual = new Date().toISOString().slice(0, 7);
+
+                // Receitas e despesas do mês atual
+                const receitasMesAtual = transacoes
+                    .filter(r => r.tipo === 'receita' && r.data && r.data.startsWith(mesAtual))
+                    .reduce((sum, r) => sum + (r.valor || 0), 0);
+                
+                const despesasMesAtual = transacoes
+                    .filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mesAtual))
+                    .reduce((sum, d) => sum + (d.valor || 0), 0);
+
+                // Alerta: Gastos superiores à receita
+                if (despesasMesAtual > receitasMesAtual) {
+                    alertas.push({
+                        tipo: 'danger',
+                        titulo: 'Gastos Excedem Receitas',
+                        mensagem: `Suas despesas deste mês (${formatBRL(despesasMesAtual)}) são maiores que suas receitas (${formatBRL(receitasMesAtual)}).`
+                    });
+                }
+
+                // Alerta: Categoria com gasto alto
+                const categoriasGasto = {};
+                transacoes
+                    .filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mesAtual))
+                    .forEach(d => {
+                        categoriasGasto[d.categoria] = (categoriasGasto[d.categoria] || 0) + (d.valor || 0);
+                    });
+
+                const totalDespesasMes = Object.values(categoriasGasto).reduce((sum, val) => sum + val, 0);
+                Object.entries(categoriasGasto).forEach(([categoria, valor]) => {
+                    const percentual = totalDespesasMes > 0 ? (valor / totalDespesasMes) * 100 : 0;
+                    if (percentual > 40) {
+                        alertas.push({
+                            tipo: 'warning',
+                            titulo: 'Categoria com Gasto Alto',
+                            mensagem: `A categoria "${categoria}" representa ${percentual.toFixed(1)}% dos seus gastos este mês.`
+                        });
+                    }
+                });
+
+                // Alerta: Meta de economia
+                const metaEconomia = receitasMesAtual * 0.2; // 20% de economia
+                const economiaAtual = receitasMesAtual - despesasMesAtual;
+
+                if (receitasMesAtual > 0 && economiaAtual < metaEconomia) {
+                    alertas.push({
+                        tipo: 'info',
+                        titulo: 'Meta de Economia',
+                        mensagem: `Para economizar 20% da renda, você precisa reduzir ${formatBRL(metaEconomia - economiaAtual)} em gastos.`
+                    });
+                }
+
+                exibirAlertas(alertas);
+            } catch (error) {
+                console.error('Erro ao gerar alertas:', error);
+            }
+        }
+
+        /**
+         * Exibir alertas
+         * @param {Array} alertas - Lista de alertas
+         */
+        function exibirAlertas(alertas) {
+            try {
+                const container = document.getElementById('alertasContainer');
+                if (!container) return;
+
+                container.innerHTML = '';
+
+                if (alertas.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
+                            <p>Nenhum alerta no momento!</p>
+                            <p class="text-sm">Sua situação financeira está equilibrada.</p>
+                        </div>`;
+                    return;
+                }
+
+                alertas.forEach(alerta => {
+                    const cor = {
+                        'danger': 'red',
+                        'warning': 'yellow',
+                        'info': 'blue'
+                    }[alerta.tipo];
+
+                    const icone = {
+                        'danger': 'exclamation-triangle',
+                        'warning': 'exclamation-circle',
+                        'info': 'info-circle'
+                    }[alerta.tipo];
+
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = `bg-${cor}-50 border border-${cor}-200 rounded-lg p-4 mb-4`;
+                    alertDiv.innerHTML = `
+                        <div class="flex items-start">
+                            <i class="fas fa-${icone} text-${cor}-500 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-${cor}-800">${alerta.titulo}</h4>
+                                <p class="text-${cor}-700 text-sm mt-1">${alerta.mensagem}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(alertDiv);
+                });
+            } catch (error) {
+                console.error('Erro ao exibir alertas:', error);
+            }
+        }
+
+        /**
+         * Gerar previsões
+         */
+        function gerarPrevisoes() {
+            try {
+                const mesAtual = new Date().toISOString().slice(0, 7);
+                const diaAtual = new Date().getDate();
+                const diasNoMes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+
+                // Receitas e despesas até agora no mês
+                const receitasMesAtual = transacoes
+                    .filter(r => r.tipo === 'receita' && r.data && r.data.startsWith(mesAtual))
+                    .reduce((sum, r) => sum + (r.valor || 0), 0);
+                
+                const despesasMesAtual = transacoes
+                    .filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mesAtual))
+                    .reduce((sum, d) => sum + (d.valor || 0), 0);
+
+                // Projeção simples baseada no ritmo atual
+                const projecaoReceitas = diaAtual > 0 ? (receitasMesAtual / diaAtual) * diasNoMes : 0;
+                const projecaoDespesas = diaAtual > 0 ? (despesasMesAtual / diaAtual) * diasNoMes : 0;
+                const projecaoSaldo = projecaoReceitas - projecaoDespesas;
+
+                document.getElementById('projecaoReceitasMes').textContent = formatBRL(projecaoReceitas);
+                document.getElementById('projecaoDespesasMes').textContent = formatBRL(projecaoDespesas);
+
+                const saldoElement = document.getElementById('projecaoSaldoMes');
+                saldoElement.textContent = formatBRL(projecaoSaldo);
+                saldoElement.className = `font-bold ${projecaoSaldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            } catch (error) {
+                console.error('Erro ao gerar previsões:', error);
+            }
+        }
+
+        // ==================== FUNÇÕES AUXILIARES ====================
+
+        /**
+         * Obter últimos três meses
+         * @returns {Array} - Array com strings de meses no formato YYYY-MM
+         */
+        function obterUltimosTresMeses() {
+            const meses = [];
+            const hoje = new Date();
+            for (let i = 2; i >= 0; i--) {
+                const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+                meses.push(data.toISOString().slice(0, 7));
+            }
+            return meses;
+        }
+
+        /**
+         * Obter últimos seis meses
+         * @returns {Array} - Array com strings de meses no formato YYYY-MM
+         */
+        function obterUltimosSeisMeses() {
+            const meses = [];
+            const hoje = new Date();
+            for (let i = 5; i >= 0; i--) {
+                const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+                meses.push(data.toISOString().slice(0, 7));
+            }
+            return meses;
+        }
+
+        /**
+         * Calcular tendência de uma série de valores
+         * @param {Array} valores - Array de valores numéricos
+         * @returns {number} - Percentual de tendência
+         */
+        function calcularTendencia(valores) {
+            if (valores.length < 2) return 0;
+
+            const primeiro = valores[0] || 0;
+            const ultimo = valores[valores.length - 1] || 0;
+
+            if (primeiro === 0) return ultimo > 0 ? 100 : 0;
+
+            return ((ultimo - primeiro) / primeiro) * 100;
+        }
+
+        /**
+         * Formatar tendência como string
+         * @param {number} tendencia - Valor da tendência
+         * @returns {string} - Tendência formatada
+         */
+        function formatarTendencia(tendencia) {
+            const abs = Math.abs(tendencia);
+            const sinal = tendencia >= 0 ? '+' : '-';
+            return `${sinal}${abs.toFixed(1)}%`;
+        }
+
+        /**
+         * Aplicar classe de cor baseada na tendência
+         * @param {string} elementId - ID do elemento
+         * @param {number} tendencia - Valor da tendência
+         */
+        function aplicarClasseTendencia(elementId, tendencia) {
+            const elemento = document.getElementById(elementId);
+            if (!elemento) return;
+
+            if (tendencia > 0) {
+                elemento.className = 'text-green-600 font-semibold';
+            } else if (tendencia < 0) {
+                elemento.className = 'text-red-600 font-semibold';
+            } else {
+                elemento.className = 'text-gray-600 font-semibold';
+            }
+        }
+
+        /**
+         * Formatar mês abreviado
+         * @param {string} mes - Mês no formato YYYY-MM
+         * @returns {string} - Mês formatado
+         */
+        function formatarMesAbrev(mes) {
+            const [ano, mesNum] = mes.split('-');
+            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            return `${meses[parseInt(mesNum) - 1]}/${ano.slice(2)}`;
+        }
 
         // ==================== EXPORT TO WINDOW ====================
 
@@ -3133,6 +3977,14 @@
         window.deletePatrimonioConfirm = deletePatrimonioConfirm;
         window.closeConfirmModal = closeConfirmModal;
         window.closeEditModal = closeEditModal;
+        window.updateDashboardPeriod = updateDashboardPeriod;
+        window.updateProjecaoPersonalizada = updateProjecaoPersonalizada;
+
+        // Funções de relatórios - CORRIGIDAS
+        window.aplicarFiltros = aplicarFiltros;
+        window.limparFiltros = limparFiltros;
+        window.exportarCSV = exportarCSV;
+        window.alterarOrdenacao = alterarOrdenacao;
 
         // ==================== INICIALIZAÇÃO ====================
 
@@ -3143,636 +3995,6 @@
             // Define datas nos campos
             setToday();
         });
-
-        // ==================== RELATÓRIOS DETALHADOS - CORREÇÕES ====================
-
-        // Variáveis globais para relatórios
-        // let transacoesFiltradas = []; // Removido para evitar redeclaração
-        let ordenacaoAtual = { campo: 'data', direcao: 'desc' };
-
-        // Inicializar relatórios ao carregar a aba
-        function inicializarRelatorios() {
-            // Definir datas padrão (último mês)
-            const hoje = new Date();
-            const mesPassado = new Date(hoje.getFullYear(), hoje.getMonth() - 1, hoje.getDate());
-
-            document.getElementById('filtroDataInicio').value = mesPassado.toISOString().split('T')[0];
-            document.getElementById('filtroDataFim').value = hoje.toISOString().split('T')[0];
-
-            // Carregar categorias no filtro
-            carregarCategoriasFiltro();
-
-            // Aplicar filtros iniciais
-            aplicarFiltros();
-        }
-
-        // Carregar categorias para o filtro
-        function carregarCategoriasFiltro() {
-            const categorias = new Set();
-            const todasTransacoes = [...(JSON.parse(localStorage.getItem('receitas') || '[]')),
-            ...JSON.parse(localStorage.getItem('despesas') || '[]')];
-
-            todasTransacoes.forEach(t => categorias.add(t.categoria));
-
-            const select = document.getElementById('filtroCategoria');
-            select.innerHTML = '<option value="">Todas</option>';
-
-            [...categorias].sort().forEach(categoria => {
-                select.innerHTML += `<option value="${categoria}">${categoria}</option>`;
-            });
-        }
-
-        // Aplicar filtros
-        function aplicarFiltros() {
-            const dataInicio = document.getElementById('filtroDataInicio').value;
-            const dataFim = document.getElementById('filtroDataFim').value;
-            const tipo = document.getElementById('filtroTipo').value;
-            const categoria = document.getElementById('filtroCategoria').value;
-
-            // Buscar todas as transações
-            const receitas = JSON.parse(localStorage.getItem('receitas') || '[]')
-                .map(r => ({ ...r, tipo: 'receita' }));
-            const despesas = JSON.parse(localStorage.getItem('despesas') || '[]')
-                .map(d => ({ ...d, tipo: 'despesa' }));
-
-            let todasTransacoes = [...receitas, ...despesas];
-
-            // Aplicar filtros
-            transacoesFiltradas = todasTransacoes.filter(transacao => {
-                const dataTransacao = new Date(transacao.data);
-                const filtroDataInicioDate = dataInicio ? new Date(dataInicio) : null;
-                const filtroDataFimDate = dataFim ? new Date(dataFim) : null;
-
-                // Filtro por data
-                if (filtroDataInicioDate && dataTransacao < filtroDataInicioDate) return false;
-                if (filtroDataFimDate && dataTransacao > filtroDataFimDate) return false;
-
-                // Filtro por tipo
-                if (tipo && transacao.tipo !== tipo) return false;
-
-                // Filtro por categoria
-                if (categoria && transacao.categoria !== categoria) return false;
-
-                return true;
-            });
-
-            // Aplicar ordenação atual
-            ordenarTransacoes();
-
-            // Atualizar resumo e tabela
-            atualizarResumoFiltros();
-            atualizarTabelaRelatorios();
-        }
-
-        // Ordenar transações
-        function ordenarTransacoes() {
-            transacoesFiltradas.sort((a, b) => {
-                let valorA = a[ordenacaoAtual.campo];
-                let valorB = b[ordenacaoAtual.campo];
-
-                if (ordenacaoAtual.campo === 'valor') {
-                    valorA = parseFloat(valorA);
-                    valorB = parseFloat(valorB);
-                } else if (ordenacaoAtual.campo === 'data') {
-                    valorA = new Date(valorA);
-                    valorB = new Date(valorB);
-                }
-
-                if (ordenacaoAtual.direcao === 'asc') {
-                    return valorA > valorB ? 1 : -1;
-                } else {
-                    return valorA < valorB ? 1 : -1;
-                }
-            });
-        }
-
-        // Alterar ordenação
-        function alterarOrdenacao(campo) {
-            if (ordenacaoAtual.campo === campo) {
-                ordenacaoAtual.direcao = ordenacaoAtual.direcao === 'asc' ? 'desc' : 'asc';
-            } else {
-                ordenacaoAtual.campo = campo;
-                ordenacaoAtual.direcao = 'desc';
-            }
-
-            ordenarTransacoes();
-            atualizarTabelaRelatorios();
-        }
-
-        // Atualizar resumo dos filtros
-        function atualizarResumoFiltros() {
-            const totalReceitas = transacoesFiltradas
-                .filter(t => t.tipo === 'receita')
-                .reduce((sum, t) => sum + parseFloat(t.valor), 0);
-
-            const totalDespesas = transacoesFiltradas
-                .filter(t => t.tipo === 'despesa')
-                .reduce((sum, t) => sum + parseFloat(t.valor), 0);
-
-            const saldo = totalReceitas - totalDespesas;
-
-            document.getElementById('filtroTotalRegistros').textContent = transacoesFiltradas.length;
-            document.getElementById('filtroTotalReceitas').textContent = formatCurrencyDisplay(totalReceitas);
-            document.getElementById('filtroTotalDespesas').textContent = formatCurrencyDisplay(totalDespesas);
-
-            const saldoElement = document.getElementById('filtroSaldoPeriodo');
-            saldoElement.textContent = formatCurrencyDisplay(saldo);
-            saldoElement.className = `text-2xl font-bold ${saldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
-        }
-
-        // Atualizar tabela de relatórios
-        function atualizarTabelaRelatorios() {
-            const tbody = document.getElementById('relatoriosTableBody');
-            tbody.innerHTML = '';
-
-            if (transacoesFiltradas.length === 0) {
-                tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center py-8 text-gray-500">
-                    <i class="fas fa-search text-3xl mb-2"></i>
-                    <p>Nenhuma transação encontrada com os filtros aplicados</p>
-                </td>
-            </tr>`;
-                return;
-            }
-
-            transacoesFiltradas.forEach(transacao => {
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-100 hover:bg-gray-50';
-
-                const tipoIcon = transacao.tipo === 'receita' ?
-                    '<i class="fas fa-arrow-up text-green-500"></i>' :
-                    '<i class="fas fa-arrow-down text-red-500"></i>';
-
-                const valorClass = transacao.tipo === 'receita' ? 'text-green-600' : 'text-red-600';
-                const valorPrefix = transacao.tipo === 'receita' ? '+' : '-';
-
-                row.innerHTML = `
-            <td class="py-3 px-4">
-                <div class="flex items-center space-x-2">
-                    ${tipoIcon}
-                    <span class="text-xs ${transacao.tipo === 'receita' ? 'text-green-600' : 'text-red-600'} font-medium">
-                        ${transacao.tipo.toUpperCase()}
-                    </span>
-                </div>
-            </td>
-            <td class="py-3 px-4">${formatDateDisplay(transacao.data)}</td>
-            <td class="py-3 px-4">
-                <div>
-                    <p class="font-medium">${transacao.descricao}</p>
-                    <p class="text-xs text-gray-500">${transacao.categoria}</p>
-                </div>
-            </td>
-            <td class="py-3 px-4">
-                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
-                    ${transacao.categoria}
-                </span>
-            </td>
-            <td class="py-3 px-4 text-right">
-                <span class="font-bold ${valorClass}">
-                    ${valorPrefix} ${formatCurrencyDisplay(transacao.valor)}
-                </span>
-            </td>
-            <td class="py-3 px-4 text-center no-print">
-                <button onclick="editarTransacao('${transacao.id}', '${transacao.tipo}')" 
-                        class="text-blue-500 hover:text-blue-700 mr-2" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button onclick="excluirTransacao('${transacao.id}', '${transacao.tipo}')" 
-                        class="text-red-500 hover:text-red-700" title="Excluir">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        `;
-
-                tbody.appendChild(row);
-            });
-        }
-
-        // Limpar filtros
-        function limparFiltros() {
-            document.getElementById('filtroDataInicio').value = '';
-            document.getElementById('filtroDataFim').value = '';
-            document.getElementById('filtroTipo').value = '';
-            document.getElementById('filtroCategoria').value = '';
-
-            aplicarFiltros();
-        }
-
-        // Exportar para CSV
-        function exportarCSV() {
-            if (transacoesFiltradas.length === 0) {
-                showToast('Nenhuma transação para exportar', 'warning');
-                return;
-            }
-
-            const headers = ['Tipo', 'Data', 'Descrição', 'Categoria', 'Valor'];
-            const csvContent = [
-                headers.join(','),
-                ...transacoesFiltradas.map(t => [
-                    t.tipo,
-                    t.data,
-                    `"${t.descricao}"`,
-                    `"${t.categoria}"`,
-                    t.valor.toString().replace('.', ',')
-                ].join(','))
-            ].join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', `relatorio-financeiro-${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                showToast('Relatório exportado com sucesso!', 'success');
-            }
-        }
-
-        // Editar transação (placeholder - você pode implementar conforme necessário)
-        function editarTransacao(id, tipo) {
-            showToast('Funcionalidade de edição em desenvolvimento', 'info');
-        }
-
-        // Excluir transação
-        function excluirTransacao(id, tipo) {
-            if (!confirm('Tem certeza que deseja excluir esta transação?')) return;
-
-            const storageKey = tipo === 'receita' ? 'receitas' : 'despesas';
-            let items = JSON.parse(localStorage.getItem(storageKey) || '[]');
-
-            items = items.filter(item => item.id !== id);
-            localStorage.setItem(storageKey, JSON.stringify(items));
-
-            // Recarregar dados
-            aplicarFiltros();
-            updateDashboard();
-
-            showToast('Transação excluída com sucesso!', 'success');
-        }
-
-        // ==================== INSIGHTS AVANÇADOS ====================
-
-        // Inicializar insights
-        function inicializarInsights() {
-            gerarInsightsCompletos();
-            criarGraficosInsights();
-        }
-
-        // Gerar insights completos
-        function gerarInsightsCompletos() {
-            const receitas = JSON.parse(localStorage.getItem('receitas') || '[]');
-            const despesas = JSON.parse(localStorage.getItem('despesas') || '[]');
-
-            // Análises temporais
-            analisarTendencias(receitas, despesas);
-            analisarPadroesMensais(receitas, despesas);
-
-            // Análises de categorias
-            analisarCategorias(despesas);
-
-            // Alertas e previsões
-            gerarAlertas(receitas, despesas);
-            gerarPrevisoes(receitas, despesas);
-
-            // Comparações
-            gerarComparacoes(receitas, despesas);
-        }
-
-        // Analisar tendências
-        function analisarTendencias(receitas, despesas) {
-            const ultimosTresMeses = obterUltimosTresMeses();
-            const dados = ultimosTresMeses.map(mes => {
-                const receitasMes = receitas.filter(r => r.data.startsWith(mes)).reduce((sum, r) => sum + parseFloat(r.valor), 0);
-                const despesasMes = despesas.filter(d => d.data.startsWith(mes)).reduce((sum, d) => sum + parseFloat(d.valor), 0);
-                return { mes, receitas: receitasMes, despesas: despesasMes, saldo: receitasMes - despesasMes };
-            });
-
-            // Calcular tendências
-            const tendenciaReceitas = calcularTendencia(dados.map(d => d.receitas));
-            const tendenciaDespesas = calcularTendencia(dados.map(d => d.despesas));
-            const tendenciaSaldo = calcularTendencia(dados.map(d => d.saldo));
-
-            // Atualizar UI
-            document.getElementById('tendenciaReceitasTexto').textContent = formatarTendencia(tendenciaReceitas);
-            document.getElementById('tendenciaDespesasTexto').textContent = formatarTendencia(tendenciaDespesas);
-            document.getElementById('tendenciaSaldoTexto').textContent = formatarTendencia(tendenciaSaldo);
-
-            // Adicionar classes de cor
-            aplicarClasseTendencia('tendenciaReceitasTexto', tendenciaReceitas);
-            aplicarClasseTendencia('tendenciaDespesasTexto', tendenciaDespesas);
-            aplicarClasseTendencia('tendenciaSaldoTexto', tendenciaSaldo);
-        }
-
-        // Analisar padrões mensais
-        function analisarPadroesMensais(receitas, despesas) {
-            const padroesMensais = {};
-
-            [...receitas, ...despesas].forEach(transacao => {
-                const mes = new Date(transacao.data).getMonth();
-                const tipo = receitas.includes(transacao) ? 'receita' : 'despesa';
-
-                if (!padroesMensais[mes]) {
-                    padroesMensais[mes] = { receitas: 0, despesas: 0 };
-                }
-
-                padroesMensais[mes][tipo === 'receita' ? 'receitas' : 'despesas'] += parseFloat(transacao.valor);
-            });
-
-            // Encontrar mês com maior e menor atividade
-            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            let maiorAtividade = { mes: 0, valor: 0 };
-            let menorAtividade = { mes: 0, valor: Infinity };
-
-            Object.entries(padroesMensais).forEach(([mes, dados]) => {
-                const total = dados.receitas + dados.despesas;
-                if (total > maiorAtividade.valor) {
-                    maiorAtividade = { mes: parseInt(mes), valor: total };
-                }
-                if (total < menorAtividade.valor) {
-                    menorAtividade = { mes: parseInt(mes), valor: total };
-                }
-            });
-
-            document.getElementById('mesMaiorAtividade').textContent =
-                `${meses[maiorAtividade.mes]} (${formatCurrencyDisplay(maiorAtividade.valor)})`;
-            document.getElementById('mesMenorAtividade').textContent =
-                menorAtividade.valor !== Infinity ?
-                    `${meses[menorAtividade.mes]} (${formatCurrencyDisplay(menorAtividade.valor)})` : 'N/A';
-        }
-
-        // Analisar categorias
-        function analisarCategorias(despesas) {
-            const categoriaAnalise = {};
-
-            despesas.forEach(despesa => {
-                if (!categoriaAnalise[despesa.categoria]) {
-                    categoriaAnalise[despesa.categoria] = { total: 0, count: 0 };
-                }
-                categoriaAnalise[despesa.categoria].total += parseFloat(despesa.valor);
-                categoriaAnalise[despesa.categoria].count++;
-            });
-
-            // Encontrar categoria com maior gasto
-            let maiorCategoria = { nome: 'N/A', valor: 0, media: 0 };
-            Object.entries(categoriaAnalise).forEach(([categoria, dados]) => {
-                if (dados.total > maiorCategoria.valor) {
-                    maiorCategoria = {
-                        nome: categoria,
-                        valor: dados.total,
-                        media: dados.total / dados.count
-                    };
-                }
-            });
-
-            document.getElementById('categoriaMaiorGasto').textContent = maiorCategoria.nome;
-            document.getElementById('categoriaMaiorGastoValor').textContent = formatCurrencyDisplay(maiorCategoria.valor);
-            document.getElementById('categoriaMaiorGastoMedia').textContent =
-                `Média: ${formatCurrencyDisplay(maiorCategoria.media)}`;
-        }
-
-        // Gerar alertas
-        function gerarAlertas(receitas, despesas) {
-            const alertas = [];
-            const mesAtual = new Date().toISOString().slice(0, 7);
-
-            // Receitas e despesas do mês atual
-            const receitasMesAtual = receitas.filter(r => r.data.startsWith(mesAtual))
-                .reduce((sum, r) => sum + parseFloat(r.valor), 0);
-            const despesasMesAtual = despesas.filter(d => d.data.startsWith(mesAtual))
-                .reduce((sum, d) => sum + parseFloat(d.valor), 0);
-
-            // Alerta: Gastos superiores à receita
-            if (despesasMesAtual > receitasMesAtual) {
-                alertas.push({
-                    tipo: 'danger',
-                    titulo: 'Gastos Excedem Receitas',
-                    mensagem: `Suas despesas deste mês (${formatCurrencyDisplay(despesasMesAtual)}) são maiores que suas receitas (${formatCurrencyDisplay(receitasMesAtual)}).`
-                });
-            }
-
-            // Alerta: Categoria com gasto alto
-            const categoriasGasto = {};
-            despesas.filter(d => d.data.startsWith(mesAtual)).forEach(d => {
-                categoriasGasto[d.categoria] = (categoriasGasto[d.categoria] || 0) + parseFloat(d.valor);
-            });
-
-            const totalDespesasMes = Object.values(categoriasGasto).reduce((sum, val) => sum + val, 0);
-            Object.entries(categoriasGasto).forEach(([categoria, valor]) => {
-                const percentual = (valor / totalDespesasMes) * 100;
-                if (percentual > 40) {
-                    alertas.push({
-                        tipo: 'warning',
-                        titulo: 'Categoria com Gasto Alto',
-                        mensagem: `A categoria "${categoria}" representa ${percentual.toFixed(1)}% dos seus gastos este mês.`
-                    });
-                }
-            });
-
-            // Alerta: Meta de economia
-            const metaEconomia = receitasMesAtual * 0.2; // 20% de economia
-            const economiaAtual = receitasMesAtual - despesasMesAtual;
-
-            if (economiaAtual < metaEconomia) {
-                alertas.push({
-                    tipo: 'info',
-                    titulo: 'Meta de Economia',
-                    mensagem: `Para economizar 20% da renda, você precisa reduzir ${formatCurrencyDisplay(metaEconomia - economiaAtual)} em gastos.`
-                });
-            }
-
-            exibirAlertas(alertas);
-        }
-
-        // Exibir alertas
-        function exibirAlertas(alertas) {
-            const container = document.getElementById('alertasContainer');
-            container.innerHTML = '';
-
-            if (alertas.length === 0) {
-                container.innerHTML = `
-            <div class="text-center py-8 text-gray-500">
-                <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
-                <p>Nenhum alerta no momento!</p>
-                <p class="text-sm">Sua situação financeira está equilibrada.</p>
-            </div>`;
-                return;
-            }
-
-            alertas.forEach(alerta => {
-                const cor = {
-                    'danger': 'red',
-                    'warning': 'yellow',
-                    'info': 'blue'
-                }[alerta.tipo];
-
-                const icone = {
-                    'danger': 'exclamation-triangle',
-                    'warning': 'exclamation-circle',
-                    'info': 'info-circle'
-                }[alerta.tipo];
-
-                container.innerHTML += `
-            <div class="bg-${cor}-50 border border-${cor}-200 rounded-lg p-4 mb-4">
-                <div class="flex items-start">
-                    <i class="fas fa-${icone} text-${cor}-500 mt-1 mr-3"></i>
-                    <div>
-                        <h4 class="font-semibold text-${cor}-800">${alerta.titulo}</h4>
-                        <p class="text-${cor}-700 text-sm mt-1">${alerta.mensagem}</p>
-                    </div>
-                </div>
-            </div>`;
-            });
-        }
-
-        // Gerar previsões
-        function gerarPrevisoes(receitas, despesas) {
-            const mesAtual = new Date().toISOString().slice(0, 7);
-            const diaAtual = new Date().getDate();
-            const diasNoMes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-
-            // Receitas e despesas até agora no mês
-            const receitasMesAtual = receitas.filter(r => r.data.startsWith(mesAtual))
-                .reduce((sum, r) => sum + parseFloat(r.valor), 0);
-            const despesasMesAtual = despesas.filter(d => d.data.startsWith(mesAtual))
-                .reduce((sum, d) => sum + parseFloat(d.valor), 0);
-
-            // Projeção simples baseada no ritmo atual
-            const projecaoReceitas = (receitasMesAtual / diaAtual) * diasNoMes;
-            const projecaoDespesas = (despesasMesAtual / diaAtual) * diasNoMes;
-            const projecaoSaldo = projecaoReceitas - projecaoDespesas;
-
-            document.getElementById('projecaoReceitasMes').textContent = formatCurrencyDisplay(projecaoReceitas);
-            document.getElementById('projecaoDespesasMes').textContent = formatCurrencyDisplay(projecaoDespesas);
-
-            const saldoElement = document.getElementById('projecaoSaldoMes');
-            saldoElement.textContent = formatCurrencyDisplay(projecaoSaldo);
-            saldoElement.className = `text-lg font-bold ${projecaoSaldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
-        }
-
-        // Criar gráficos de insights
-        function criarGraficosInsights() {
-            criarGraficoTendenciaMensal();
-            criarGraficoComparacaoTrimestral();
-        }
-
-        // Gráfico de tendência mensal
-        function criarGraficoTendenciaMensal() {
-            const ctx = document.getElementById('tendenciaMensalChart');
-            if (!ctx) return;
-
-            const receitas = JSON.parse(localStorage.getItem('receitas') || '[]');
-            const despesas = JSON.parse(localStorage.getItem('despesas') || '[]');
-
-            const ultimosSeisMeses = obterUltimosSeisMeses();
-            const dadosReceitas = ultimosSeisMeses.map(mes =>
-                receitas.filter(r => r.data.startsWith(mes)).reduce((sum, r) => sum + parseFloat(r.valor), 0)
-            );
-            const dadosDespesas = ultimosSeisMeses.map(mes =>
-                despesas.filter(d => d.data.startsWith(mes)).reduce((sum, d) => sum + parseFloat(d.valor), 0)
-            );
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ultimosSeisMeses.map(mes => formatarMesAbrev(mes)),
-                    datasets: [{
-                        label: 'Receitas',
-                        data: dadosReceitas,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4
-                    }, {
-                        label: 'Despesas',
-                        data: dadosDespesas,
-                        borderColor: '#ef4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Tendência dos Últimos 6 Meses'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) {
-                                    return 'R$ ' + value.toLocaleString('pt-BR');
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Funções auxiliares
-        function obterUltimosTresMeses() {
-            const meses = [];
-            const hoje = new Date();
-            for (let i = 2; i >= 0; i--) {
-                const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-                meses.push(data.toISOString().slice(0, 7));
-            }
-            return meses;
-        }
-
-        function obterUltimosSeisMeses() {
-            const meses = [];
-            const hoje = new Date();
-            for (let i = 5; i >= 0; i--) {
-                const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-                meses.push(data.toISOString().slice(0, 7));
-            }
-            return meses;
-        }
-
-        function calcularTendencia(valores) {
-            if (valores.length < 2) return 0;
-
-            const primeiro = valores[0];
-            const ultimo = valores[valores.length - 1];
-
-            if (primeiro === 0) return ultimo > 0 ? 100 : 0;
-
-            return ((ultimo - primeiro) / primeiro) * 100;
-        }
-
-        function formatarTendencia(tendencia) {
-            const abs = Math.abs(tendencia);
-            const sinal = tendencia >= 0 ? '+' : '-';
-            return `${sinal}${abs.toFixed(1)}%`;
-        }
-
-        function aplicarClasseTendencia(elementId, tendencia) {
-            const elemento = document.getElementById(elementId);
-            if (tendencia > 0) {
-                elemento.className = 'text-green-600 font-semibold';
-            } else if (tendencia < 0) {
-                elemento.className = 'text-red-600 font-semibold';
-            } else {
-                elemento.className = 'text-gray-600 font-semibold';
-            }
-        }
-
-        function formatarMesAbrev(mes) {
-            const [ano, mesNum] = mes.split('-');
-            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            return `${meses[parseInt(mesNum) - 1]}/${ano.slice(2)}`;
-        }
-
 
     </script>
 
@@ -3836,7 +4058,7 @@ users/{uid}/
             <li>firebase deploy</li>
         </ol>
 
-        <h2>✨ Recursos</h2>
+        <h2>✨ Recursos Corrigidos</h2>
         <ul>
             <li>✅ Autenticação Google automática</li>
             <li>✅ Dados em tempo real com onSnapshot</li>
@@ -3848,16 +4070,28 @@ users/{uid}/
             <li>✅ Edição e exclusão de registros</li>
             <li>✅ Análise automática de padrões</li>
             <li>✅ Sugestões de metas</li>
+            <li>✅ Relatórios detalhados com filtros</li>
+            <li>✅ Insights avançados com alertas</li>
+            <li>✅ Exportação para CSV</li>
+            <li>✅ Sistema de notificações melhorado</li>
+            <li>✅ Preservação de dados dos usuários</li>
         </ul>
 
-        <h2>🔧 Personalização</h2>
+        <h2>🔧 Correções Implementadas</h2>
         <ul>
-            <li>Modifique as categorias nos selects dos formulários</li>
-            <li>Ajuste as cores nos gradientes CSS</li>
-            <li>Personalize os cálculos de projeção</li>
-            <li>Adicione novas análises inteligentes</li>
+            <li>Unificação da fonte de dados (apenas Firebase)</li>
+            <li>Correção das funções de relatórios e insights</li>
+            <li>Exportação correta de funções para escopo global</li>
+            <li>Validação robusta de dados</li>
+            <li>Inicialização correta dos gráficos</li>
+            <li>Sistema de cache para melhor performance</li>
+            <li>Responsividade melhorada das tabelas</li>
+            <li>Loading states implementados</li>
+            <li>Tratamento de erros aprimorado</li>
+            <li>Preservação completa dos dados dos usuários</li>
         </ul>
     </div>
 </body>
 
 </html>
+
