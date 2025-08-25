@@ -213,8 +213,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -750,8 +755,7 @@
                             </h3>
                             <form onsubmit="handlePatrimonioForm(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
-                                        for="patrimonio-tipo">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="patrimonio-tipo">
                                         <i class="fas fa-list mr-1"></i>Tipo
                                     </label>
                                     <select name="tipo" id="patrimonio-tipo" required
@@ -771,7 +775,8 @@
                                         placeholder="Ex: Casa Própria" maxlength="100">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2 text-gray-700" for="patrimonio-valor">
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700"
+                                        for="patrimonio-valor">
                                         <i class="fas fa-dollar-sign mr-1"></i>Valor
                                     </label>
                                     <input name="valor" id="patrimonio-valor" type="text" required
@@ -827,20 +832,46 @@
                         <i class="fas fa-filter mr-2 text-blue-500"></i>
                         Filtros de Pesquisa
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Mês</label>
+                            <select id="filtroMes" onchange="syncFiltersFromReports()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todos</option>
+                                <option value="0">Janeiro</option>
+                                <option value="1">Fevereiro</option>
+                                <option value="2">Março</option>
+                                <option value="3">Abril</option>
+                                <option value="4">Maio</option>
+                                <option value="5">Junho</option>
+                                <option value="6">Julho</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Setembro</option>
+                                <option value="9">Outubro</option>
+                                <option value="10">Novembro</option>
+                                <option value="11">Dezembro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Ano</label>
+                            <select id="filtroAno" onchange="syncFiltersFromReports()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2 text-gray-700">Data Início</label>
-                            <input type="date" id="filtroDataInicio" 
+                            <input type="date" id="filtroDataInicio"
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2 text-gray-700">Data Fim</label>
-                            <input type="date" id="filtroDataFim" 
+                            <input type="date" id="filtroDataFim"
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2 text-gray-700">Tipo</label>
-                            <select id="filtroTipo" 
+                            <select id="filtroTipo"
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                                 <option value="">Todos</option>
                                 <option value="receita">Receitas</option>
@@ -849,22 +880,22 @@
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2 text-gray-700">Categoria</label>
-                            <select id="filtroCategoria" 
+                            <select id="filtroCategoria"
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                                 <option value="">Todas</option>
                             </select>
                         </div>
                     </div>
                     <div class="flex space-x-3 mt-4">
-                        <button onclick="aplicarFiltros()" 
+                        <button onclick="aplicarFiltros()"
                             class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
                             <i class="fas fa-search mr-2"></i>Aplicar Filtros
                         </button>
-                        <button onclick="limparFiltros()" 
+                        <button onclick="limparFiltros()"
                             class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
                             <i class="fas fa-eraser mr-2"></i>Limpar
                         </button>
-                        <button onclick="exportarCSV()" 
+                        <button onclick="exportarCSV()"
                             class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
                             <i class="fas fa-download mr-2"></i>Exportar CSV
                         </button>
@@ -903,20 +934,20 @@
                         <table class="w-full">
                             <thead class="sticky-header">
                                 <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50"
                                         onclick="alterarOrdenacao('tipo')">
                                         Tipo <i class="fas fa-sort ml-1"></i>
                                     </th>
-                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50"
                                         onclick="alterarOrdenacao('data')">
                                         Data <i class="fas fa-sort ml-1"></i>
                                     </th>
-                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50"
                                         onclick="alterarOrdenacao('descricao')">
                                         Descrição <i class="fas fa-sort ml-1"></i>
                                     </th>
                                     <th class="text-left py-3 px-4 font-semibold text-gray-700">Categoria</th>
-                                    <th class="text-right py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50" 
+                                    <th class="text-right py-3 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-50"
                                         onclick="alterarOrdenacao('valor')">
                                         Valor <i class="fas fa-sort ml-1"></i>
                                     </th>
@@ -1020,7 +1051,8 @@
                                 <span class="text-sm text-red-700">Despesas Projetadas</span>
                                 <span id="projecaoDespesasMes" class="font-bold text-red-600">R$ 0,00</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-2 border-dashed">
+                            <div
+                                class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-2 border-dashed">
                                 <span class="text-sm text-gray-700">Saldo Projetado</span>
                                 <span id="projecaoSaldoMes" class="font-bold">R$ 0,00</span>
                             </div>
@@ -1061,13 +1093,15 @@
                                 onchange="updateProjecaoPersonalizada()">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Redução de Despesas (%)</label>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Redução de Despesas
+                                (%)</label>
                             <input type="number" id="reducaoDespesas" value="0" min="-50" max="50" step="5"
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                 onchange="updateProjecaoPersonalizada()">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold mb-2 text-gray-700">Meta de Economia Mensal</label>
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Meta de Economia
+                                Mensal</label>
                             <input type="text" id="metaEconomia" placeholder="1.000,00"
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                 oninput="formatCurrency(this)" onchange="updateProjecaoPersonalizada()">
@@ -1448,7 +1482,7 @@
         function showFieldError(input, message) {
             input.classList.add('input-error');
             input.classList.remove('input-success');
-            
+
             const errorId = input.id + '-error';
             const errorEl = document.getElementById(errorId);
             if (errorEl) {
@@ -1464,7 +1498,7 @@
         function hideFieldError(input) {
             input.classList.remove('input-error');
             input.classList.add('input-success');
-            
+
             const errorId = input.id + '-error';
             const errorEl = document.getElementById(errorId);
             if (errorEl) {
@@ -1532,11 +1566,11 @@
                     errors.data = 'Data inválida';
                     isValid = false;
                 } else {
-                    const dataTransacao = new Date(dataValue);
+                const dataTransacao = new Date(dataValue + 'T00:00:00');
                     const hoje = new Date();
                     const umAnoAtras = new Date();
                     umAnoAtras.setFullYear(hoje.getFullYear() - 1);
-                    
+
                     if (dataTransacao > hoje) {
                         errors.data = 'Data não pode ser futura';
                         isValid = false;
@@ -1834,8 +1868,63 @@
             filtroMesAtual = monthSelect.value === '' ? null : parseInt(monthSelect.value);
             filtroAnoAtual = yearSelect.value === '' ? null : parseInt(yearSelect.value);
 
+            // Sincroniza filtros em todas as abas
+            syncFiltersAcrossTabs();
+
             updateDashboard();
             updateCharts();
+            updateInsights();
+            updateRelatorios();
+        }
+
+        // Nova função para sincronizar filtros entre todas as abas
+        function syncFiltersAcrossTabs() {
+            const monthSelect = document.getElementById('dashboardMonth');
+            const yearSelect = document.getElementById('dashboardYear');
+            
+            // Sincroniza filtros de relatórios se existirem
+            const relatorioMes = document.getElementById('filtroMes');
+            const relatorioAno = document.getElementById('filtroAno');
+            
+            if (relatorioMes && relatorioAno) {
+                relatorioMes.value = monthSelect.value;
+                relatorioAno.value = yearSelect.value;
+            }
+            
+            // Atualiza insights se a aba estiver ativa
+            if (document.getElementById('insights') && !document.getElementById('insights').classList.contains('hidden')) {
+                updateInsights();
+            }
+            
+            // Atualiza relatórios se a aba estiver ativa
+            if (document.getElementById('relatorios') && !document.getElementById('relatorios').classList.contains('hidden')) {
+                if (typeof aplicarFiltros === 'function') {
+                    aplicarFiltros();
+                }
+            }
+        }
+
+        // Nova função para sincronizar filtros a partir dos relatórios
+        function syncFiltersFromReports() {
+            const relatorioMes = document.getElementById('filtroMes');
+            const relatorioAno = document.getElementById('filtroAno');
+            const monthSelect = document.getElementById('dashboardMonth');
+            const yearSelect = document.getElementById('dashboardYear');
+            
+            if (relatorioMes && relatorioAno && monthSelect && yearSelect) {
+                monthSelect.value = relatorioMes.value;
+                yearSelect.value = relatorioAno.value;
+                
+                // Atualiza as variáveis globais de filtro
+                filtroMesAtual = relatorioMes.value === '' ? null : parseInt(relatorioMes.value);
+                filtroAnoAtual = relatorioAno.value === '' ? null : parseInt(relatorioAno.value);
+                
+                // Atualiza todas as abas
+                updateDashboard();
+                updateCharts();
+                updateInsights();
+                aplicarFiltros();
+            }
         }
 
         function filterTransactionsByPeriod(transactions) {
@@ -1845,7 +1934,7 @@
 
             return transactions.filter(t => {
                 if (!t.data) return false;
-                const dataTransacao = new Date(t.data);
+                const dataTransacao = new Date(t.data + 'T00:00:00');
 
                 let mesMatch = true;
                 let anoMatch = true;
@@ -1886,7 +1975,7 @@
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50 transition-colors';
 
-                    const data = new Date(transacao.data).toLocaleDateString('pt-BR');
+                    const data = new Date(transacao.data + 'T00:00:00').toLocaleDateString('pt-BR');
                     const valor = formatBRL(transacao.valor);
                     const tipo = transacao.tipo;
                     const corValor = tipo === 'receita' ? 'text-green-600' : 'text-red-600';
@@ -2141,7 +2230,7 @@
 
                 // Calcula dados do mês atual e anterior
                 const transacoesMesAtual = transacoes.filter(t => {
-                    const data = new Date(t.data);
+                    const data = new Date(t.data + 'T00:00:00');
                     return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
                 });
 
@@ -2149,7 +2238,7 @@
                 const anoAnterior = mesAtual === 0 ? anoAtual - 1 : anoAtual;
 
                 const transacoesMesAnterior = transacoes.filter(t => {
-                    const data = new Date(t.data);
+                    const data = new Date(t.data + 'T00:00:00');
                     return data.getMonth() === mesAnterior && data.getFullYear() === anoAnterior;
                 });
 
@@ -2237,7 +2326,7 @@
                 }
 
                 // Calcula número de dias no período
-                const datas = transacoesPeriodo.map(t => new Date(t.data));
+                const datas = transacoesPeriodo.map(t => new Date(t.data + 'T00:00:00'));
                 const minData = new Date(Math.min(...datas));
                 const maxData = new Date(Math.max(...datas));
                 const diasPeriodo = Math.max(1, Math.ceil((maxData - minData) / (1000 * 60 * 60 * 24)) + 1);
@@ -2385,7 +2474,7 @@
                     analyses.push(`🎯 Sua maior categoria de gasto é "${categoria}" (${percentual}% do total).`);
                 }
 
-                container.innerHTML = analyses.map(analysis => 
+                container.innerHTML = analyses.map(analysis =>
                     `<div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">${analysis}</div>`
                 ).join('');
 
@@ -2406,7 +2495,7 @@
                 if (economiaMensal > 0) {
                     const metaAnual = economiaMensal * 12;
                     metas.push(`🎯 Meta anual: Economizar ${formatBRL(metaAnual)} mantendo o ritmo atual.`);
-                    
+
                     const metaEmergencia = economiaMensal * 6;
                     metas.push(`🚨 Reserva de emergência: Acumule ${formatBRL(metaEmergencia)} (6 meses de economia).`);
                 } else {
@@ -2439,7 +2528,7 @@
                     metas.push(`💰 Considere investir ${formatBRL(investimento)} mensais para fazer o dinheiro crescer.`);
                 }
 
-                container.innerHTML = metas.map(meta => 
+                container.innerHTML = metas.map(meta =>
                     `<div class="p-3 bg-purple-50 rounded-lg border-l-4 border-purple-400">${meta}</div>`
                 ).join('');
 
@@ -3064,8 +3153,8 @@
                 const categoriaSelect = document.getElementById('editCategoria');
                 categoriaSelect.innerHTML = '';
 
-                const categorias = ['Imóveis', 'Veículos', 'Investimentos', 'Conta Corrente', 'Poupança', 
-                                 'Cartão de Crédito', 'Financiamentos', 'Empréstimos', 'Outros'];
+                const categorias = ['Imóveis', 'Veículos', 'Investimentos', 'Conta Corrente', 'Poupança',
+                    'Cartão de Crédito', 'Financiamentos', 'Empréstimos', 'Outros'];
 
                 categorias.forEach(cat => {
                     const option = document.createElement('option');
@@ -3127,7 +3216,7 @@
                         showToast('Erro', 'Data inválida', 'error');
                         return;
                     }
-                    data.data = dataValue;
+                    data.data = dataValue + 'T00:00:00';
                 }
 
                 await updateItem(currentEditCollection, currentEditId, data);
@@ -3245,12 +3334,29 @@
          */
         function inicializarRelatorios() {
             try {
-                // Definir datas padrão (último mês)
-                const hoje = new Date();
-                const mesPassado = new Date(hoje.getFullYear(), hoje.getMonth() - 1, hoje.getDate());
+                // Inicializar filtros de ano
+                const anoSelect = document.getElementById('filtroAno');
+                if (anoSelect) {
+                    anoSelect.innerHTML = '<option value="">Todos</option>';
+                    const currentYear = new Date().getFullYear();
+                    for (let year = currentYear; year >= currentYear - 5; year--) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        anoSelect.appendChild(option);
+                    }
+                }
 
-                document.getElementById('filtroDataInicio').value = mesPassado.toISOString().split('T')[0];
-                document.getElementById('filtroDataFim').value = hoje.toISOString().split('T')[0];
+                // Sincronizar com filtros do dashboard
+                const monthSelect = document.getElementById('dashboardMonth');
+                const yearSelect = document.getElementById('dashboardYear');
+                const relatorioMes = document.getElementById('filtroMes');
+                const relatorioAno = document.getElementById('filtroAno');
+                
+                if (monthSelect && yearSelect && relatorioMes && relatorioAno) {
+                    relatorioMes.value = monthSelect.value;
+                    relatorioAno.value = yearSelect.value;
+                }
 
                 // Carregar categorias no filtro
                 carregarCategoriasFiltro();
@@ -3295,22 +3401,44 @@
          */
         function aplicarFiltros() {
             try {
+                const mesSelect = document.getElementById('filtroMes');
+                const anoSelect = document.getElementById('filtroAno');
                 const dataInicio = document.getElementById('filtroDataInicio').value;
                 const dataFim = document.getElementById('filtroDataFim').value;
                 const tipo = document.getElementById('filtroTipo').value;
                 const categoria = document.getElementById('filtroCategoria').value;
 
+                // Obter valores de mês e ano
+                const mesFiltro = mesSelect && mesSelect.value !== '' ? parseInt(mesSelect.value) : null;
+                const anoFiltro = anoSelect && anoSelect.value !== '' ? parseInt(anoSelect.value) : null;
+
                 // Aplicar filtros
                 transacoesFiltradas = transacoes.filter(transacao => {
                     if (!transacao.data) return false;
 
-                    const dataTransacao = new Date(transacao.data);
-                    const filtroDataInicioDate = dataInicio ? new Date(dataInicio) : null;
-                    const filtroDataFimDate = dataFim ? new Date(dataFim) : null;
+                    const dataTransacao = new Date(transacao.data + 'T00:00:00');
+                    const filtroDataInicioDate = dataInicio ? new Date(dataInicio + 'T00:00:00') : null;
+                    const filtroDataFimDate = dataFim ? new Date(dataFim + 'T00:00:00') : null;
 
-                    // Filtro por data
-                    if (filtroDataInicioDate && dataTransacao < filtroDataInicioDate) return false;
-                    if (filtroDataFimDate && dataTransacao > filtroDataFimDate) return false;
+                    // Filtro por mês e ano (prioridade sobre datas específicas)
+                    if (mesFiltro !== null || anoFiltro !== null) {
+                        let mesMatch = true;
+                        let anoMatch = true;
+
+                        if (mesFiltro !== null) {
+                            mesMatch = dataTransacao.getMonth() === mesFiltro;
+                        }
+
+                        if (anoFiltro !== null) {
+                            anoMatch = dataTransacao.getFullYear() === anoFiltro;
+                        }
+
+                        if (!mesMatch || !anoMatch) return false;
+                    } else {
+                        // Filtro por data específica (apenas se mês/ano não estiverem definidos)
+                        if (filtroDataInicioDate && dataTransacao < filtroDataInicioDate) return false;
+                        if (filtroDataFimDate && dataTransacao > filtroDataFimDate) return false;
+                    }
 
                     // Filtro por tipo
                     if (tipo && transacao.tipo !== tipo) return false;
@@ -3439,7 +3567,7 @@
                     const valorClass = transacao.tipo === 'receita' ? 'text-green-600' : 'text-red-600';
                     const valorPrefix = transacao.tipo === 'receita' ? '+' : '-';
 
-                    const data = new Date(transacao.data).toLocaleDateString('pt-BR');
+                    const data = new Date(transacao.data + 'T00:00:00').toLocaleDateString('pt-BR');
 
                     row.innerHTML = `
                         <td class="py-3 px-4">
@@ -3491,10 +3619,25 @@
          */
         function limparFiltros() {
             try {
+                document.getElementById('filtroMes').value = '';
+                document.getElementById('filtroAno').value = '';
                 document.getElementById('filtroDataInicio').value = '';
                 document.getElementById('filtroDataFim').value = '';
                 document.getElementById('filtroTipo').value = '';
                 document.getElementById('filtroCategoria').value = '';
+
+                // Sincronizar com dashboard
+                const monthSelect = document.getElementById('dashboardMonth');
+                const yearSelect = document.getElementById('dashboardYear');
+                if (monthSelect && yearSelect) {
+                    monthSelect.value = '';
+                    yearSelect.value = '';
+                    filtroMesAtual = null;
+                    filtroAnoAtual = null;
+                    updateDashboard();
+                    updateCharts();
+                    updateInsights();
+                }
 
                 aplicarFiltros();
             } catch (error) {
@@ -3599,12 +3742,12 @@
         function analisarTendenciaTrimestral() {
             try {
                 const ultimosTresMeses = obterUltimosTresMeses();
-                
+
                 const dadosReceitas = ultimosTresMeses.map(mes =>
                     transacoes.filter(r => r.tipo === 'receita' && r.data && r.data.startsWith(mes))
                         .reduce((sum, r) => sum + (r.valor || 0), 0)
                 );
-                
+
                 const dadosDespesas = ultimosTresMeses.map(mes =>
                     transacoes.filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mes))
                         .reduce((sum, d) => sum + (d.valor || 0), 0)
@@ -3638,7 +3781,7 @@
             try {
                 const atividadePorMes = {};
                 const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                             'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
                 transacoes.forEach(transacao => {
                     if (transacao.data) {
@@ -3655,13 +3798,13 @@
                     return;
                 }
 
-                const maiorAtividade = atividades.reduce((max, current) => 
-                    current[1] > max.valor ? { mes: current[0], valor: current[1] } : max, 
+                const maiorAtividade = atividades.reduce((max, current) =>
+                    current[1] > max.valor ? { mes: current[0], valor: current[1] } : max,
                     { mes: '', valor: 0 }
                 );
 
-                const menorAtividade = atividades.reduce((min, current) => 
-                    current[1] < min.valor ? { mes: current[0], valor: current[1] } : min, 
+                const menorAtividade = atividades.reduce((min, current) =>
+                    current[1] < min.valor ? { mes: current[0], valor: current[1] } : min,
                     { mes: '', valor: Infinity }
                 );
 
@@ -3737,7 +3880,7 @@
                 const receitasMesAtual = transacoes
                     .filter(r => r.tipo === 'receita' && r.data && r.data.startsWith(mesAtual))
                     .reduce((sum, r) => sum + (r.valor || 0), 0);
-                
+
                 const despesasMesAtual = transacoes
                     .filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mesAtual))
                     .reduce((sum, d) => sum + (d.valor || 0), 0);
@@ -3854,7 +3997,7 @@
                 const receitasMesAtual = transacoes
                     .filter(r => r.tipo === 'receita' && r.data && r.data.startsWith(mesAtual))
                     .reduce((sum, r) => sum + (r.valor || 0), 0);
-                
+
                 const despesasMesAtual = transacoes
                     .filter(d => d.tipo === 'despesa' && d.data && d.data.startsWith(mesAtual))
                     .reduce((sum, d) => sum + (d.valor || 0), 0);
@@ -3979,6 +4122,7 @@
         window.closeEditModal = closeEditModal;
         window.updateDashboardPeriod = updateDashboardPeriod;
         window.updateProjecaoPersonalizada = updateProjecaoPersonalizada;
+        window.syncFiltersFromReports = syncFiltersFromReports;
 
         // Funções de relatórios - CORRIGIDAS
         window.aplicarFiltros = aplicarFiltros;
@@ -4094,4 +4238,3 @@ users/{uid}/
 </body>
 
 </html>
-
