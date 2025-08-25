@@ -309,6 +309,26 @@
                         data-tab="insights">
                         <i class="fas fa-brain mr-1"></i>Insights
                     </button>
+                    <button onclick="showTab('orcamentos')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="orcamentos">
+                        <i class="fas fa-bullseye mr-1"></i>Orçamentos
+                    </button>
+                    <button onclick="showTab('recorrentes')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="recorrentes">
+                        <i class="fas fa-sync-alt mr-1"></i>Recorrentes
+                    </button>
+                    <button onclick="showTab('fluxo')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="fluxo">
+                        <i class="fas fa-chart-area mr-1"></i>Fluxo de Caixa
+                    </button>
+                    <button onclick="showTab('comparativo')"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
+                        data-tab="comparativo">
+                        <i class="fas fa-balance-scale mr-1"></i>Comparativo
+                    </button>
                     <button onclick="showTab('projecao')"
                         class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap"
                         data-tab="projecao">
@@ -1075,12 +1095,340 @@
                             Analisando seus dados financeiros...
                         </div>
                     </div>
+            </div>
+        </div>
+
+        <!-- Orçamentos Tab -->
+        <div id="orcamentos" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Orçamentos por Categoria</h2>
+                <button onclick="abrirModalOrcamento()" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Novo Orçamento
+                </button>
+            </div>
+
+            <!-- Cards de Orçamentos -->
+            <div id="orcamentosContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Orçamentos serão inseridos aqui dinamicamente -->
+            </div>
+
+            <!-- Resumo Geral -->
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-blue-500"></i>
+                    Resumo dos Orçamentos
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" id="totalOrcamentos">R$ 0,00</div>
+                        <div class="text-sm text-gray-600">Total Orçado</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" id="totalGasto">R$ 0,00</div>
+                        <div class="text-sm text-gray-600">Total Gasto</div>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600" id="totalDisponivel">R$ 0,00</div>
+                        <div class="text-sm text-gray-600">Disponível</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600" id="percentualGasto">0%</div>
+                        <div class="text-sm text-gray-600">% Utilizado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transações Recorrentes Tab -->
+        <div id="recorrentes" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Transações Recorrentes</h2>
+                <button onclick="abrirModalRecorrente()" 
+                        class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Nova Recorrente
+                </button>
+            </div>
+
+            <!-- Cards de Transações Recorrentes -->
+            <div id="recorrentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Transações recorrentes serão inseridas aqui dinamicamente -->
+            </div>
+
+            <!-- Próximas Execuções -->
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
+                    Próximas Execuções (30 dias)
+                </h3>
+                <div id="proximasExecucoes" class="space-y-3">
+                    <!-- Próximas execuções serão inseridas aqui -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Fluxo de Caixa Tab -->
+        <div id="fluxo" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Fluxo de Caixa</h2>
+                <div class="flex space-x-3">
+                    <select id="fluxoPeriodo" onchange="atualizarFluxoCaixa()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="6">Últimos 6 meses</option>
+                        <option value="12" selected>Últimos 12 meses</option>
+                        <option value="24">Últimos 24 meses</option>
+                    </select>
+                    <select id="fluxoTipo" onchange="atualizarFluxoCaixa()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="mensal" selected>Mensal</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="diario">Diário</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Projeção Tab -->
-            <div id="projecao" class="tab-content hidden">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Financeira Anual</h2>
+            <!-- Resumo do Fluxo -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Entradas</p>
+                            <p id="fluxoTotalEntradas" class="text-2xl font-bold text-green-600">R$ 0,00</p>
+                        </div>
+                        <div class="p-3 bg-green-100 rounded-full">
+                            <i class="fas fa-arrow-up text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Saídas</p>
+                            <p id="fluxoTotalSaidas" class="text-2xl font-bold text-red-600">R$ 0,00</p>
+                        </div>
+                        <div class="p-3 bg-red-100 rounded-full">
+                            <i class="fas fa-arrow-down text-red-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Fluxo Líquido</p>
+                            <p id="fluxoLiquido" class="text-2xl font-bold">R$ 0,00</p>
+                        </div>
+                        <div class="p-3 bg-blue-100 rounded-full">
+                            <i class="fas fa-balance-scale text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Média Mensal</p>
+                            <p id="fluxoMediaMensal" class="text-2xl font-bold text-purple-600">R$ 0,00</p>
+                        </div>
+                        <div class="p-3 bg-purple-100 rounded-full">
+                            <i class="fas fa-chart-bar text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Fluxo de Caixa -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-chart-area mr-2 text-blue-500"></i>
+                    Evolução do Fluxo de Caixa
+                </h3>
+                <div class="h-96">
+                    <canvas id="fluxoCaixaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Análise por Categoria -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Entradas por Categoria -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-arrow-up mr-2 text-green-500"></i>
+                        Entradas por Categoria
+                    </h3>
+                    <div id="fluxoEntradasCategoria" class="space-y-3">
+                        <!-- Categorias de entrada serão inseridas aqui -->
+                    </div>
+                </div>
+
+                <!-- Saídas por Categoria -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-arrow-down mr-2 text-red-500"></i>
+                        Saídas por Categoria
+                    </h3>
+                    <div id="fluxoSaidasCategoria" class="space-y-3">
+                        <!-- Categorias de saída serão inseridas aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Análise Comparativa Tab -->
+        <div id="comparativo" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Análise Comparativa</h2>
+                <div class="flex space-x-3">
+                    <select id="comparativoTipo" onchange="atualizarComparativo()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="mensal" selected>Mês Atual vs Anterior</option>
+                        <option value="trimestral">Trimestre Atual vs Anterior</option>
+                        <option value="anual">Ano Atual vs Anterior</option>
+                        <option value="personalizado">Período Personalizado</option>
+                    </select>
+                    <div id="comparativoPersonalizado" class="hidden flex space-x-2">
+                        <input id="comparativoPeriodo1Inicio" type="date" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <input id="comparativoPeriodo1Fim" type="date" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <span class="self-center text-gray-500">vs</span>
+                        <input id="comparativoPeriodo2Inicio" type="date" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <input id="comparativoPeriodo2Fim" type="date" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <button onclick="atualizarComparativo()" 
+                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                            Comparar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo Comparativo -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Receitas</h3>
+                        <i class="fas fa-arrow-up text-green-500"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoReceitasPeriodo1Label">Período 1</span>
+                            <div class="text-lg font-bold text-green-600" id="comparativoReceitasPeriodo1">R$ 0,00</div>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoReceitasPeriodo2Label">Período 2</span>
+                            <div class="text-lg font-bold text-green-600" id="comparativoReceitasPeriodo2">R$ 0,00</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i id="comparativoReceitasIcon" class="fas fa-arrow-up text-green-500"></i>
+                            <span id="comparativoReceitasVariacao" class="text-sm font-medium">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Despesas</h3>
+                        <i class="fas fa-arrow-down text-red-500"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoDespesasPeriodo1Label">Período 1</span>
+                            <div class="text-lg font-bold text-red-600" id="comparativoDespesasPeriodo1">R$ 0,00</div>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoDespesasPeriodo2Label">Período 2</span>
+                            <div class="text-lg font-bold text-red-600" id="comparativoDespesasPeriodo2">R$ 0,00</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i id="comparativoDespesasIcon" class="fas fa-arrow-up text-red-500"></i>
+                            <span id="comparativoDespesasVariacao" class="text-sm font-medium">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Saldo</h3>
+                        <i class="fas fa-balance-scale text-blue-500"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoSaldoPeriodo1Label">Período 1</span>
+                            <div class="text-lg font-bold" id="comparativoSaldoPeriodo1">R$ 0,00</div>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoSaldoPeriodo2Label">Período 2</span>
+                            <div class="text-lg font-bold" id="comparativoSaldoPeriodo2">R$ 0,00</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i id="comparativoSaldoIcon" class="fas fa-arrow-up text-green-500"></i>
+                            <span id="comparativoSaldoVariacao" class="text-sm font-medium">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Economia</h3>
+                        <i class="fas fa-piggy-bank text-purple-500"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoEconomiaPeriodo1Label">Período 1</span>
+                            <div class="text-lg font-bold text-purple-600" id="comparativoEconomiaPeriodo1">0%</div>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500" id="comparativoEconomiaPeriodo2Label">Período 2</span>
+                            <div class="text-lg font-bold text-purple-600" id="comparativoEconomiaPeriodo2">0%</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i id="comparativoEconomiaIcon" class="fas fa-arrow-up text-purple-500"></i>
+                            <span id="comparativoEconomiaVariacao" class="text-sm font-medium">0pp</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico Comparativo -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-blue-500"></i>
+                    Comparação por Categoria
+                </h3>
+                <div class="h-96">
+                    <canvas id="comparativoChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Análise Detalhada -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Maiores Variações -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-chart-line mr-2 text-orange-500"></i>
+                        Maiores Variações
+                    </h3>
+                    <div id="comparativoVariacoes" class="space-y-3">
+                        <!-- Variações serão inseridas aqui -->
+                    </div>
+                </div>
+
+                <!-- Insights e Recomendações -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
+                        Insights e Recomendações
+                    </h3>
+                    <div id="comparativoInsights" class="space-y-3">
+                        <!-- Insights serão inseridos aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projeção Tab -->
+        <div id="projecao" class="tab-content hidden">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Projeção Financeira Anual</h2>
 
                 <!-- Controles de Simulação -->
                 <div class="filter-container mb-8">
@@ -1295,6 +1643,143 @@
         </div>
     </div>
 
+    <!-- Modal de Orçamento -->
+    <div id="orcamentoModal"
+        class="fixed inset-0 bg-black bg-opacity-50 modal hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="orcamentoTitle" class="text-lg font-semibold">Novo Orçamento</h3>
+                <button onclick="fecharModalOrcamento()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="orcamentoForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Categoria</label>
+                    <select id="orcamentoCategoria" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Valor do Orçamento</label>
+                    <input id="orcamentoValor" type="text" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="R$ 0,00" oninput="formatCurrency(this)">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Período</label>
+                    <select id="orcamentoPeriodo" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="mensal">Mensal</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Descrição (opcional)</label>
+                    <textarea id="orcamentoDescricao" rows="3" maxlength="200"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Descreva o objetivo deste orçamento..."></textarea>
+                </div>
+                <div class="flex space-x-3">
+                    <button type="button" onclick="fecharModalOrcamento()"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        <span id="orcamentoSubmitText">Criar Orçamento</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Transação Recorrente -->
+    <div id="recorrenteModal"
+        class="fixed inset-0 bg-black bg-opacity-50 modal hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="recorrenteTitle" class="text-lg font-semibold">Nova Transação Recorrente</h3>
+                <button onclick="fecharModalRecorrente()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="recorrenteForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Tipo</label>
+                    <select id="recorrenteTipo" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="receita">Receita</option>
+                        <option value="despesa">Despesa</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Descrição</label>
+                    <input id="recorrenteDescricao" type="text" required maxlength="100"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Ex: Salário, Aluguel, Internet...">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Valor</label>
+                    <input id="recorrenteValor" type="text" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="R$ 0,00" oninput="formatCurrency(this)">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Categoria</label>
+                    <select id="recorrenteCategoria" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Frequência</label>
+                    <select id="recorrenteFrequencia" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="semanal">Semanal</option>
+                        <option value="mensal" selected>Mensal</option>
+                        <option value="bimestral">Bimestral</option>
+                        <option value="trimestral">Trimestral</option>
+                        <option value="semestral">Semestral</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Dia de Execução</label>
+                    <input id="recorrenteDia" type="number" min="1" max="31" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Ex: 5 (dia 5 de cada mês)">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Data de Início</label>
+                    <input id="recorrenteDataInicio" type="date" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Data de Fim (opcional)</label>
+                    <input id="recorrenteDataFim" type="date"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="flex items-center">
+                    <input id="recorrenteAtiva" type="checkbox" checked
+                        class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="recorrenteAtiva" class="text-sm text-gray-700">Ativa (executar automaticamente)</label>
+                </div>
+                <div class="flex space-x-3">
+                    <button type="button" onclick="fecharModalRecorrente()"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                        <span id="recorrenteSubmitText">Criar Recorrente</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast de Notificação -->
     <div id="toast" class="toast-container">
         <div class="bg-white border-l-4 border-green-500 rounded-lg shadow-lg p-4 flex items-center space-x-3">
@@ -1343,18 +1828,28 @@
         let currentUser = null;
         let transacoes = [];
         let patrimonio = [];
+        let orcamentos = [];
+        let recorrentes = [];
         let unsubscribeTransacoes = null;
         let unsubscribePatrimonio = null;
+        let unsubscribeOrcamentos = null;
+        let unsubscribeRecorrentes = null;
 
         // Filtros de período
         let filtroMesAtual = null;
         let filtroAnoAtual = null;
+
+        // Variáveis para edição
+        let orcamentoEditando = null;
+        let recorrenteEditando = null;
 
         // Gráficos
         let evolucaoChart = null;
         let categoriaChart = null;
         let projecaoChart = null;
         let tendenciaMensalChart = null;
+        let fluxoCaixaChart = null;
+        let comparativoChart = null;
 
         // Variáveis para relatórios - CORRIGIDAS
         let transacoesFiltradas = [];
@@ -1692,6 +2187,8 @@
             try {
                 setupTransacoesListener();
                 setupPatrimonioListener();
+                setupOrcamentosListener();
+                setupRecorrentesListener();
                 initCharts();
             } catch (error) {
                 console.error('Erro na inicialização:', error);
@@ -1764,6 +2261,14 @@
                 if (unsubscribePatrimonio) {
                     unsubscribePatrimonio();
                     unsubscribePatrimonio = null;
+                }
+                if (unsubscribeOrcamentos) {
+                    unsubscribeOrcamentos();
+                    unsubscribeOrcamentos = null;
+                }
+                if (unsubscribeRecorrentes) {
+                    unsubscribeRecorrentes();
+                    unsubscribeRecorrentes = null;
                 }
             } catch (error) {
                 console.error('Erro ao limpar listeners:', error);
@@ -4104,6 +4609,1582 @@
             return `${meses[parseInt(mesNum) - 1]}/${ano.slice(2)}`;
         }
 
+        // ==================== FUNCIONALIDADES DE ANÁLISE COMPARATIVA ====================
+
+        /**
+         * Atualizar análise comparativa
+         */
+        function atualizarComparativo() {
+            try {
+                const tipo = document.getElementById('comparativoTipo').value;
+                
+                // Mostrar/ocultar campos personalizados
+                const personalizado = document.getElementById('comparativoPersonalizado');
+                if (tipo === 'personalizado') {
+                    personalizado.classList.remove('hidden');
+                } else {
+                    personalizado.classList.add('hidden');
+                }
+                
+                const dadosComparativo = calcularDadosComparativos(tipo);
+                
+                atualizarResumoComparativo(dadosComparativo);
+                renderizarGraficoComparativo(dadosComparativo);
+                renderizarVariacoes(dadosComparativo);
+                renderizarInsightsComparativos(dadosComparativo);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar análise comparativa:', error);
+            }
+        }
+
+        /**
+         * Calcular dados comparativos
+         */
+        function calcularDadosComparativos(tipo) {
+            try {
+                let periodo1, periodo2, labelPeriodo1, labelPeriodo2;
+                const hoje = new Date();
+                
+                switch (tipo) {
+                    case 'mensal':
+                        // Mês atual vs anterior
+                        periodo1 = {
+                            inicio: new Date(hoje.getFullYear(), hoje.getMonth(), 1),
+                            fim: new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)
+                        };
+                        periodo2 = {
+                            inicio: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1),
+                            fim: new Date(hoje.getFullYear(), hoje.getMonth(), 0)
+                        };
+                        labelPeriodo1 = 'Mês Atual';
+                        labelPeriodo2 = 'Mês Anterior';
+                        break;
+                        
+                    case 'trimestral':
+                        // Trimestre atual vs anterior
+                        const trimestreAtual = Math.floor(hoje.getMonth() / 3);
+                        periodo1 = {
+                            inicio: new Date(hoje.getFullYear(), trimestreAtual * 3, 1),
+                            fim: new Date(hoje.getFullYear(), (trimestreAtual + 1) * 3, 0)
+                        };
+                        periodo2 = {
+                            inicio: new Date(hoje.getFullYear(), (trimestreAtual - 1) * 3, 1),
+                            fim: new Date(hoje.getFullYear(), trimestreAtual * 3, 0)
+                        };
+                        labelPeriodo1 = 'Trimestre Atual';
+                        labelPeriodo2 = 'Trimestre Anterior';
+                        break;
+                        
+                    case 'anual':
+                        // Ano atual vs anterior
+                        periodo1 = {
+                            inicio: new Date(hoje.getFullYear(), 0, 1),
+                            fim: new Date(hoje.getFullYear(), 11, 31)
+                        };
+                        periodo2 = {
+                            inicio: new Date(hoje.getFullYear() - 1, 0, 1),
+                            fim: new Date(hoje.getFullYear() - 1, 11, 31)
+                        };
+                        labelPeriodo1 = 'Ano Atual';
+                        labelPeriodo2 = 'Ano Anterior';
+                        break;
+                        
+                    case 'personalizado':
+                        const p1Inicio = document.getElementById('comparativoPeriodo1Inicio').value;
+                        const p1Fim = document.getElementById('comparativoPeriodo1Fim').value;
+                        const p2Inicio = document.getElementById('comparativoPeriodo2Inicio').value;
+                        const p2Fim = document.getElementById('comparativoPeriodo2Fim').value;
+                        
+                        if (!p1Inicio || !p1Fim || !p2Inicio || !p2Fim) {
+                            throw new Error('Preencha todas as datas para comparação personalizada');
+                        }
+                        
+                        periodo1 = {
+                            inicio: new Date(p1Inicio + 'T00:00:00'),
+                            fim: new Date(p1Fim + 'T23:59:59')
+                        };
+                        periodo2 = {
+                            inicio: new Date(p2Inicio + 'T00:00:00'),
+                            fim: new Date(p2Fim + 'T23:59:59')
+                        };
+                        labelPeriodo1 = 'Período 1';
+                        labelPeriodo2 = 'Período 2';
+                        break;
+                        
+                    default:
+                        throw new Error('Tipo de comparação inválido');
+                }
+                
+                // Filtrar transações por período
+                const transacoesPeriodo1 = transacoes.filter(t => {
+                    const data = new Date(t.data + 'T00:00:00');
+                    return data >= periodo1.inicio && data <= periodo1.fim;
+                });
+                
+                const transacoesPeriodo2 = transacoes.filter(t => {
+                    const data = new Date(t.data + 'T00:00:00');
+                    return data >= periodo2.inicio && data <= periodo2.fim;
+                });
+                
+                // Calcular totais
+                const dadosPeriodo1 = calcularTotaisPeriodo(transacoesPeriodo1);
+                const dadosPeriodo2 = calcularTotaisPeriodo(transacoesPeriodo2);
+                
+                return {
+                    periodo1: dadosPeriodo1,
+                    periodo2: dadosPeriodo2,
+                    labelPeriodo1,
+                    labelPeriodo2,
+                    tipo
+                };
+                
+            } catch (error) {
+                console.error('Erro ao calcular dados comparativos:', error);
+                return {
+                    periodo1: { receitas: 0, despesas: 0, saldo: 0, categorias: {} },
+                    periodo2: { receitas: 0, despesas: 0, saldo: 0, categorias: {} },
+                    labelPeriodo1: 'Período 1',
+                    labelPeriodo2: 'Período 2',
+                    tipo: 'mensal'
+                };
+            }
+        }
+
+        /**
+         * Calcular totais de um período
+         */
+        function calcularTotaisPeriodo(transacoesPeriodo) {
+            const receitas = transacoesPeriodo
+                .filter(t => t.tipo === 'receita')
+                .reduce((sum, t) => sum + t.valor, 0);
+                
+            const despesas = transacoesPeriodo
+                .filter(t => t.tipo === 'despesa')
+                .reduce((sum, t) => sum + t.valor, 0);
+                
+            const saldo = receitas - despesas;
+            
+            // Agrupar por categoria
+            const categorias = {};
+            transacoesPeriodo.forEach(t => {
+                if (!categorias[t.categoria]) {
+                    categorias[t.categoria] = { receitas: 0, despesas: 0 };
+                }
+                
+                if (t.tipo === 'receita') {
+                    categorias[t.categoria].receitas += t.valor;
+                } else {
+                    categorias[t.categoria].despesas += t.valor;
+                }
+            });
+            
+            return { receitas, despesas, saldo, categorias };
+        }
+
+        /**
+         * Atualizar resumo comparativo
+         */
+        function atualizarResumoComparativo(dados) {
+            try {
+                // Atualizar labels
+                document.getElementById('comparativoReceitasPeriodo1Label').textContent = dados.labelPeriodo1;
+                document.getElementById('comparativoReceitasPeriodo2Label').textContent = dados.labelPeriodo2;
+                document.getElementById('comparativoDespesasPeriodo1Label').textContent = dados.labelPeriodo1;
+                document.getElementById('comparativoDespesasPeriodo2Label').textContent = dados.labelPeriodo2;
+                document.getElementById('comparativoSaldoPeriodo1Label').textContent = dados.labelPeriodo1;
+                document.getElementById('comparativoSaldoPeriodo2Label').textContent = dados.labelPeriodo2;
+                document.getElementById('comparativoEconomiaPeriodo1Label').textContent = dados.labelPeriodo1;
+                document.getElementById('comparativoEconomiaPeriodo2Label').textContent = dados.labelPeriodo2;
+                
+                // Atualizar valores
+                document.getElementById('comparativoReceitasPeriodo1').textContent = formatBRL(dados.periodo1.receitas);
+                document.getElementById('comparativoReceitasPeriodo2').textContent = formatBRL(dados.periodo2.receitas);
+                document.getElementById('comparativoDespesasPeriodo1').textContent = formatBRL(dados.periodo1.despesas);
+                document.getElementById('comparativoDespesasPeriodo2').textContent = formatBRL(dados.periodo2.despesas);
+                
+                // Saldo com cores
+                const saldo1El = document.getElementById('comparativoSaldoPeriodo1');
+                const saldo2El = document.getElementById('comparativoSaldoPeriodo2');
+                saldo1El.textContent = formatBRL(dados.periodo1.saldo);
+                saldo2El.textContent = formatBRL(dados.periodo2.saldo);
+                saldo1El.className = `text-lg font-bold ${dados.periodo1.saldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                saldo2El.className = `text-lg font-bold ${dados.periodo2.saldo >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                
+                // Taxa de economia
+                const economia1 = dados.periodo1.receitas > 0 ? (dados.periodo1.saldo / dados.periodo1.receitas) * 100 : 0;
+                const economia2 = dados.periodo2.receitas > 0 ? (dados.periodo2.saldo / dados.periodo2.receitas) * 100 : 0;
+                document.getElementById('comparativoEconomiaPeriodo1').textContent = `${economia1.toFixed(1)}%`;
+                document.getElementById('comparativoEconomiaPeriodo2').textContent = `${economia2.toFixed(1)}%`;
+                
+                // Calcular variações
+                const varReceitas = calcularVariacao(dados.periodo1.receitas, dados.periodo2.receitas);
+                const varDespesas = calcularVariacao(dados.periodo1.despesas, dados.periodo2.despesas);
+                const varSaldo = calcularVariacao(dados.periodo1.saldo, dados.periodo2.saldo);
+                const varEconomia = economia1 - economia2;
+                
+                // Atualizar variações
+                atualizarVariacao('comparativoReceitas', varReceitas, true);
+                atualizarVariacao('comparativoDespesas', varDespesas, false);
+                atualizarVariacao('comparativoSaldo', varSaldo, true);
+                
+                const economiaIcon = document.getElementById('comparativoEconomiaIcon');
+                const economiaVariacao = document.getElementById('comparativoEconomiaVariacao');
+                economiaIcon.className = `fas ${varEconomia >= 0 ? 'fa-arrow-up text-green-500' : 'fa-arrow-down text-red-500'}`;
+                economiaVariacao.textContent = `${Math.abs(varEconomia).toFixed(1)}pp`;
+                economiaVariacao.className = `text-sm font-medium ${varEconomia >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                
+            } catch (error) {
+                console.error('Erro ao atualizar resumo comparativo:', error);
+            }
+        }
+
+        /**
+         * Calcular variação percentual
+         */
+        function calcularVariacao(valorAtual, valorAnterior) {
+            if (valorAnterior === 0) {
+                return valorAtual > 0 ? 100 : 0;
+            }
+            return ((valorAtual - valorAnterior) / Math.abs(valorAnterior)) * 100;
+        }
+
+        /**
+         * Atualizar indicador de variação
+         */
+        function atualizarVariacao(prefixo, variacao, positiveIsGood) {
+            const icon = document.getElementById(prefixo + 'Icon');
+            const text = document.getElementById(prefixo + 'Variacao');
+            
+            const isPositive = variacao >= 0;
+            const isGood = positiveIsGood ? isPositive : !isPositive;
+            
+            icon.className = `fas ${isPositive ? 'fa-arrow-up' : 'fa-arrow-down'} ${isGood ? 'text-green-500' : 'text-red-500'}`;
+            text.textContent = `${Math.abs(variacao).toFixed(1)}%`;
+            text.className = `text-sm font-medium ${isGood ? 'text-green-600' : 'text-red-600'}`;
+        }
+
+        /**
+         * Renderizar gráfico comparativo
+         */
+        function renderizarGraficoComparativo(dados) {
+            try {
+                const ctx = document.getElementById('comparativoChart');
+                if (!ctx) return;
+                
+                if (comparativoChart) {
+                    comparativoChart.destroy();
+                }
+                
+                // Obter todas as categorias
+                const todasCategorias = new Set([
+                    ...Object.keys(dados.periodo1.categorias),
+                    ...Object.keys(dados.periodo2.categorias)
+                ]);
+                
+                const categorias = Array.from(todasCategorias).sort();
+                const despesasPeriodo1 = categorias.map(cat => dados.periodo1.categorias[cat]?.despesas || 0);
+                const despesasPeriodo2 = categorias.map(cat => dados.periodo2.categorias[cat]?.despesas || 0);
+                
+                comparativoChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: categorias,
+                        datasets: [
+                            {
+                                label: dados.labelPeriodo1,
+                                data: despesasPeriodo1,
+                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                borderColor: 'rgb(59, 130, 246)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: dados.labelPeriodo2,
+                                data: despesasPeriodo2,
+                                backgroundColor: 'rgba(156, 163, 175, 0.8)',
+                                borderColor: 'rgb(156, 163, 175)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + formatBRL(context.parsed.y);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Categorias'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Valor (R$)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatBRL(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Erro ao renderizar gráfico comparativo:', error);
+            }
+        }
+
+        /**
+         * Renderizar maiores variações
+         */
+        function renderizarVariacoes(dados) {
+            try {
+                const container = document.getElementById('comparativoVariacoes');
+                
+                // Calcular variações por categoria
+                const variacoes = [];
+                const todasCategorias = new Set([
+                    ...Object.keys(dados.periodo1.categorias),
+                    ...Object.keys(dados.periodo2.categorias)
+                ]);
+                
+                todasCategorias.forEach(categoria => {
+                    const despesa1 = dados.periodo1.categorias[categoria]?.despesas || 0;
+                    const despesa2 = dados.periodo2.categorias[categoria]?.despesas || 0;
+                    
+                    if (despesa1 > 0 || despesa2 > 0) {
+                        const variacao = calcularVariacao(despesa1, despesa2);
+                        const diferenca = despesa1 - despesa2;
+                        
+                        variacoes.push({
+                            categoria,
+                            variacao,
+                            diferenca,
+                            valor1: despesa1,
+                            valor2: despesa2
+                        });
+                    }
+                });
+                
+                // Ordenar por maior variação absoluta
+                variacoes.sort((a, b) => Math.abs(b.variacao) - Math.abs(a.variacao));
+                
+                if (variacoes.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma variação encontrada</p>';
+                    return;
+                }
+                
+                container.innerHTML = variacoes.slice(0, 8).map(v => {
+                    const isAumento = v.variacao > 0;
+                    const isSignificativo = Math.abs(v.variacao) > 10;
+                    
+                    return `
+                        <div class="flex items-center justify-between p-3 ${isSignificativo ? 'bg-yellow-50' : 'bg-gray-50'} rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas ${isAumento ? 'fa-arrow-up text-red-500' : 'fa-arrow-down text-green-500'}"></i>
+                                <div>
+                                    <div class="font-medium">${v.categoria}</div>
+                                    <div class="text-sm text-gray-600">
+                                        ${formatBRL(v.valor2)} → ${formatBRL(v.valor1)}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold ${isAumento ? 'text-red-600' : 'text-green-600'}">
+                                    ${isAumento ? '+' : ''}${v.variacao.toFixed(1)}%
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    ${formatBRL(Math.abs(v.diferenca))}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Erro ao renderizar variações:', error);
+            }
+        }
+
+        /**
+         * Renderizar insights comparativos
+         */
+        function renderizarInsightsComparativos(dados) {
+            try {
+                const container = document.getElementById('comparativoInsights');
+                const insights = [];
+                
+                // Análise de receitas
+                const varReceitas = calcularVariacao(dados.periodo1.receitas, dados.periodo2.receitas);
+                if (Math.abs(varReceitas) > 5) {
+                    insights.push({
+                        icon: varReceitas > 0 ? 'fa-arrow-up text-green-500' : 'fa-arrow-down text-red-500',
+                        titulo: varReceitas > 0 ? 'Aumento nas Receitas' : 'Redução nas Receitas',
+                        descricao: `Suas receitas ${varReceitas > 0 ? 'aumentaram' : 'diminuíram'} ${Math.abs(varReceitas).toFixed(1)}% em relação ao período anterior.`,
+                        tipo: varReceitas > 0 ? 'positivo' : 'negativo'
+                    });
+                }
+                
+                // Análise de despesas
+                const varDespesas = calcularVariacao(dados.periodo1.despesas, dados.periodo2.despesas);
+                if (Math.abs(varDespesas) > 5) {
+                    insights.push({
+                        icon: varDespesas > 0 ? 'fa-arrow-up text-red-500' : 'fa-arrow-down text-green-500',
+                        titulo: varDespesas > 0 ? 'Aumento nos Gastos' : 'Redução nos Gastos',
+                        descricao: `Seus gastos ${varDespesas > 0 ? 'aumentaram' : 'diminuíram'} ${Math.abs(varDespesas).toFixed(1)}% em relação ao período anterior.`,
+                        tipo: varDespesas > 0 ? 'negativo' : 'positivo'
+                    });
+                }
+                
+                // Análise de saldo
+                const varSaldo = calcularVariacao(dados.periodo1.saldo, dados.periodo2.saldo);
+                if (Math.abs(varSaldo) > 10) {
+                    insights.push({
+                        icon: varSaldo > 0 ? 'fa-arrow-up text-green-500' : 'fa-arrow-down text-red-500',
+                        titulo: varSaldo > 0 ? 'Melhora no Saldo' : 'Piora no Saldo',
+                        descricao: `Seu saldo ${varSaldo > 0 ? 'melhorou' : 'piorou'} significativamente (${Math.abs(varSaldo).toFixed(1)}%).`,
+                        tipo: varSaldo > 0 ? 'positivo' : 'negativo'
+                    });
+                }
+                
+                // Recomendações gerais
+                if (dados.periodo1.despesas > dados.periodo1.receitas) {
+                    insights.push({
+                        icon: 'fa-exclamation-triangle text-yellow-500',
+                        titulo: 'Atenção ao Orçamento',
+                        descricao: 'Suas despesas estão superiores às receitas. Considere revisar seus gastos.',
+                        tipo: 'alerta'
+                    });
+                }
+                
+                if (insights.length === 0) {
+                    insights.push({
+                        icon: 'fa-info-circle text-blue-500',
+                        titulo: 'Estabilidade Financeira',
+                        descricao: 'Seus gastos e receitas estão relativamente estáveis entre os períodos comparados.',
+                        tipo: 'neutro'
+                    });
+                }
+                
+                container.innerHTML = insights.map(insight => `
+                    <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <i class="fas ${insight.icon} mt-1"></i>
+                        <div>
+                            <div class="font-medium text-gray-800">${insight.titulo}</div>
+                            <div class="text-sm text-gray-600 mt-1">${insight.descricao}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Erro ao renderizar insights comparativos:', error);
+            }
+        }
+
+        // ==================== FUNCIONALIDADES DE FLUXO DE CAIXA ====================
+
+        /**
+         * Atualizar fluxo de caixa
+         */
+        function atualizarFluxoCaixa() {
+            try {
+                const periodo = parseInt(document.getElementById('fluxoPeriodo').value);
+                const tipo = document.getElementById('fluxoTipo').value;
+                
+                const dadosFluxo = calcularDadosFluxoCaixa(periodo, tipo);
+                
+                atualizarResumoFluxo(dadosFluxo);
+                renderizarGraficoFluxoCaixa(dadosFluxo);
+                renderizarCategoriasFluxo(dadosFluxo);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar fluxo de caixa:', error);
+            }
+        }
+
+        /**
+         * Calcular dados do fluxo de caixa
+         */
+        function calcularDadosFluxoCaixa(meses, tipo) {
+            try {
+                const hoje = new Date();
+                const dataInicio = new Date();
+                dataInicio.setMonth(hoje.getMonth() - meses);
+                
+                const transacoesPeriodo = transacoes.filter(t => {
+                    const dataTransacao = new Date(t.data + 'T00:00:00');
+                    return dataTransacao >= dataInicio && dataTransacao <= hoje;
+                });
+                
+                let dadosAgrupados = {};
+                let totalEntradas = 0;
+                let totalSaidas = 0;
+                
+                // Agrupar transações por período
+                transacoesPeriodo.forEach(transacao => {
+                    const data = new Date(transacao.data + 'T00:00:00');
+                    let chave;
+                    
+                    switch (tipo) {
+                        case 'diario':
+                            chave = data.toISOString().split('T')[0];
+                            break;
+                        case 'semanal':
+                            const inicioSemana = new Date(data);
+                            inicioSemana.setDate(data.getDate() - data.getDay());
+                            chave = inicioSemana.toISOString().split('T')[0];
+                            break;
+                        case 'mensal':
+                        default:
+                            chave = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+                            break;
+                    }
+                    
+                    if (!dadosAgrupados[chave]) {
+                        dadosAgrupados[chave] = {
+                            entradas: 0,
+                            saidas: 0,
+                            categorias: { entradas: {}, saidas: {} }
+                        };
+                    }
+                    
+                    if (transacao.tipo === 'receita') {
+                        dadosAgrupados[chave].entradas += transacao.valor;
+                        totalEntradas += transacao.valor;
+                        
+                        if (!dadosAgrupados[chave].categorias.entradas[transacao.categoria]) {
+                            dadosAgrupados[chave].categorias.entradas[transacao.categoria] = 0;
+                        }
+                        dadosAgrupados[chave].categorias.entradas[transacao.categoria] += transacao.valor;
+                    } else {
+                        dadosAgrupados[chave].saidas += transacao.valor;
+                        totalSaidas += transacao.valor;
+                        
+                        if (!dadosAgrupados[chave].categorias.saidas[transacao.categoria]) {
+                            dadosAgrupados[chave].categorias.saidas[transacao.categoria] = 0;
+                        }
+                        dadosAgrupados[chave].categorias.saidas[transacao.categoria] += transacao.valor;
+                    }
+                });
+                
+                // Ordenar por data
+                const periodosOrdenados = Object.keys(dadosAgrupados).sort();
+                
+                return {
+                    periodos: periodosOrdenados,
+                    dados: dadosAgrupados,
+                    totalEntradas,
+                    totalSaidas,
+                    fluxoLiquido: totalEntradas - totalSaidas,
+                    mediaMensal: (totalEntradas - totalSaidas) / meses,
+                    tipo
+                };
+                
+            } catch (error) {
+                console.error('Erro ao calcular dados do fluxo de caixa:', error);
+                return {
+                    periodos: [],
+                    dados: {},
+                    totalEntradas: 0,
+                    totalSaidas: 0,
+                    fluxoLiquido: 0,
+                    mediaMensal: 0,
+                    tipo: 'mensal'
+                };
+            }
+        }
+
+        /**
+         * Atualizar resumo do fluxo
+         */
+        function atualizarResumoFluxo(dadosFluxo) {
+            try {
+                document.getElementById('fluxoTotalEntradas').textContent = formatBRL(dadosFluxo.totalEntradas);
+                document.getElementById('fluxoTotalSaidas').textContent = formatBRL(dadosFluxo.totalSaidas);
+                
+                const fluxoLiquidoEl = document.getElementById('fluxoLiquido');
+                fluxoLiquidoEl.textContent = formatBRL(dadosFluxo.fluxoLiquido);
+                fluxoLiquidoEl.className = `text-2xl font-bold ${dadosFluxo.fluxoLiquido >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                
+                document.getElementById('fluxoMediaMensal').textContent = formatBRL(dadosFluxo.mediaMensal);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar resumo do fluxo:', error);
+            }
+        }
+
+        /**
+         * Renderizar gráfico de fluxo de caixa
+         */
+        function renderizarGraficoFluxoCaixa(dadosFluxo) {
+            try {
+                const ctx = document.getElementById('fluxoCaixaChart');
+                if (!ctx) return;
+                
+                if (fluxoCaixaChart) {
+                    fluxoCaixaChart.destroy();
+                }
+                
+                const labels = dadosFluxo.periodos.map(periodo => {
+                    switch (dadosFluxo.tipo) {
+                        case 'diario':
+                            return new Date(periodo + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                        case 'semanal':
+                            return `Sem ${new Date(periodo + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}`;
+                        case 'mensal':
+                        default:
+                            const [ano, mes] = periodo.split('-');
+                            return new Date(ano, mes - 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+                    }
+                });
+                
+                const entradas = dadosFluxo.periodos.map(periodo => dadosFluxo.dados[periodo]?.entradas || 0);
+                const saidas = dadosFluxo.periodos.map(periodo => dadosFluxo.dados[periodo]?.saidas || 0);
+                const saldoAcumulado = [];
+                let acumulado = 0;
+                
+                dadosFluxo.periodos.forEach(periodo => {
+                    const entrada = dadosFluxo.dados[periodo]?.entradas || 0;
+                    const saida = dadosFluxo.dados[periodo]?.saidas || 0;
+                    acumulado += entrada - saida;
+                    saldoAcumulado.push(acumulado);
+                });
+                
+                fluxoCaixaChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Entradas',
+                                data: entradas,
+                                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                borderColor: 'rgb(34, 197, 94)',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Saídas',
+                                data: saidas,
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                borderColor: 'rgb(239, 68, 68)',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Saldo Acumulado',
+                                data: saldoAcumulado,
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                borderColor: 'rgb(59, 130, 246)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + formatBRL(context.parsed.y);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Período'
+                                }
+                            },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Valor (R$)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatBRL(value);
+                                    }
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Saldo Acumulado (R$)'
+                                },
+                                grid: {
+                                    drawOnChartArea: false,
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatBRL(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Erro ao renderizar gráfico de fluxo de caixa:', error);
+            }
+        }
+
+        /**
+         * Renderizar categorias do fluxo
+         */
+        function renderizarCategoriasFluxo(dadosFluxo) {
+            try {
+                // Agregar categorias de todo o período
+                const categoriasEntradas = {};
+                const categoriasSaidas = {};
+                
+                dadosFluxo.periodos.forEach(periodo => {
+                    const dados = dadosFluxo.dados[periodo];
+                    if (dados) {
+                        Object.entries(dados.categorias.entradas).forEach(([categoria, valor]) => {
+                            categoriasEntradas[categoria] = (categoriasEntradas[categoria] || 0) + valor;
+                        });
+                        
+                        Object.entries(dados.categorias.saidas).forEach(([categoria, valor]) => {
+                            categoriasSaidas[categoria] = (categoriasSaidas[categoria] || 0) + valor;
+                        });
+                    }
+                });
+                
+                // Renderizar entradas
+                const containerEntradas = document.getElementById('fluxoEntradasCategoria');
+                const entradasOrdenadas = Object.entries(categoriasEntradas)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 10);
+                
+                if (entradasOrdenadas.length === 0) {
+                    containerEntradas.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma entrada no período</p>';
+                } else {
+                    containerEntradas.innerHTML = entradasOrdenadas.map(([categoria, valor]) => {
+                        const percentual = dadosFluxo.totalEntradas > 0 ? (valor / dadosFluxo.totalEntradas) * 100 : 0;
+                        return `
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-800">${categoria}</div>
+                                    <div class="w-full bg-green-200 rounded-full h-2 mt-1">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: ${percentual}%"></div>
+                                    </div>
+                                </div>
+                                <div class="ml-4 text-right">
+                                    <div class="font-semibold text-green-600">${formatBRL(valor)}</div>
+                                    <div class="text-sm text-gray-600">${percentual.toFixed(1)}%</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+                
+                // Renderizar saídas
+                const containerSaidas = document.getElementById('fluxoSaidasCategoria');
+                const saidasOrdenadas = Object.entries(categoriasSaidas)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 10);
+                
+                if (saidasOrdenadas.length === 0) {
+                    containerSaidas.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma saída no período</p>';
+                } else {
+                    containerSaidas.innerHTML = saidasOrdenadas.map(([categoria, valor]) => {
+                        const percentual = dadosFluxo.totalSaidas > 0 ? (valor / dadosFluxo.totalSaidas) * 100 : 0;
+                        return `
+                            <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-800">${categoria}</div>
+                                    <div class="w-full bg-red-200 rounded-full h-2 mt-1">
+                                        <div class="bg-red-500 h-2 rounded-full" style="width: ${percentual}%"></div>
+                                    </div>
+                                </div>
+                                <div class="ml-4 text-right">
+                                    <div class="font-semibold text-red-600">${formatBRL(valor)}</div>
+                                    <div class="text-sm text-gray-600">${percentual.toFixed(1)}%</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao renderizar categorias do fluxo:', error);
+            }
+        }
+
+        // ==================== FUNCIONALIDADES DE TRANSAÇÕES RECORRENTES ====================
+
+        /**
+         * Abrir modal de transação recorrente
+         */
+        function abrirModalRecorrente(recorrente = null) {
+            try {
+                const modal = document.getElementById('recorrenteModal');
+                const title = document.getElementById('recorrenteTitle');
+                const submitText = document.getElementById('recorrenteSubmitText');
+                const form = document.getElementById('recorrenteForm');
+                
+                // Carregar categorias
+                carregarCategoriasRecorrente();
+                
+                // Definir data de início padrão
+                const hoje = new Date();
+                document.getElementById('recorrenteDataInicio').value = hoje.toISOString().split('T')[0];
+                document.getElementById('recorrenteDia').value = hoje.getDate();
+                
+                if (recorrente) {
+                    // Modo edição
+                    recorrenteEditando = recorrente;
+                    title.textContent = 'Editar Transação Recorrente';
+                    submitText.textContent = 'Salvar Alterações';
+                    
+                    document.getElementById('recorrenteTipo').value = recorrente.tipo;
+                    document.getElementById('recorrenteDescricao').value = recorrente.descricao;
+                    document.getElementById('recorrenteValor').value = formatBRL(recorrente.valor);
+                    document.getElementById('recorrenteCategoria').value = recorrente.categoria;
+                    document.getElementById('recorrenteFrequencia').value = recorrente.frequencia;
+                    document.getElementById('recorrenteDia').value = recorrente.diaExecucao;
+                    document.getElementById('recorrenteDataInicio').value = recorrente.dataInicio;
+                    document.getElementById('recorrenteDataFim').value = recorrente.dataFim || '';
+                    document.getElementById('recorrenteAtiva').checked = recorrente.ativa;
+                } else {
+                    // Modo criação
+                    recorrenteEditando = null;
+                    title.textContent = 'Nova Transação Recorrente';
+                    submitText.textContent = 'Criar Recorrente';
+                    form.reset();
+                    
+                    // Redefinir valores padrão após reset
+                    document.getElementById('recorrenteDataInicio').value = hoje.toISOString().split('T')[0];
+                    document.getElementById('recorrenteDia').value = hoje.getDate();
+                    document.getElementById('recorrenteAtiva').checked = true;
+                }
+                
+                modal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erro ao abrir modal de recorrente:', error);
+                showToast('Erro ao abrir formulário', 'error');
+            }
+        }
+
+        /**
+         * Fechar modal de transação recorrente
+         */
+        function fecharModalRecorrente() {
+            const modal = document.getElementById('recorrenteModal');
+            modal.classList.add('hidden');
+            recorrenteEditando = null;
+        }
+
+        /**
+         * Carregar categorias no select de recorrente
+         */
+        function carregarCategoriasRecorrente() {
+            try {
+                const select = document.getElementById('recorrenteCategoria');
+                const categorias = new Set();
+                
+                // Obter categorias das transações
+                transacoes
+                    .filter(t => t.categoria)
+                    .forEach(t => categorias.add(t.categoria));
+                
+                // Limpar e repovoar select
+                select.innerHTML = '<option value="">Selecione uma categoria</option>';
+                
+                Array.from(categorias).sort().forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria;
+                    option.textContent = categoria;
+                    select.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        }
+
+        /**
+         * Manipular formulário de transação recorrente
+         */
+        async function handleRecorrenteForm(event) {
+            event.preventDefault();
+            
+            try {
+                const tipo = document.getElementById('recorrenteTipo').value;
+                const descricao = document.getElementById('recorrenteDescricao').value.trim();
+                const valorStr = document.getElementById('recorrenteValor').value;
+                const categoria = document.getElementById('recorrenteCategoria').value;
+                const frequencia = document.getElementById('recorrenteFrequencia').value;
+                const diaExecucao = parseInt(document.getElementById('recorrenteDia').value);
+                const dataInicio = document.getElementById('recorrenteDataInicio').value;
+                const dataFim = document.getElementById('recorrenteDataFim').value;
+                const ativa = document.getElementById('recorrenteAtiva').checked;
+                
+                if (!tipo || !descricao || !valorStr || !categoria || !frequencia || !diaExecucao || !dataInicio) {
+                    showToast('Preencha todos os campos obrigatórios', 'error');
+                    return;
+                }
+                
+                const valor = parseFloat(valorStr.replace(/[^\d,]/g, '').replace(',', '.'));
+                
+                if (isNaN(valor) || valor <= 0) {
+                    showToast('Valor inválido', 'error');
+                    return;
+                }
+                
+                if (diaExecucao < 1 || diaExecucao > 31) {
+                    showToast('Dia de execução deve estar entre 1 e 31', 'error');
+                    return;
+                }
+                
+                const recorrenteData = {
+                    tipo,
+                    descricao,
+                    valor,
+                    categoria,
+                    frequencia,
+                    diaExecucao,
+                    dataInicio,
+                    dataFim: dataFim || null,
+                    ativa,
+                    proximaExecucao: calcularProximaExecucao(dataInicio, frequencia, diaExecucao),
+                    criadoEm: new Date().toISOString(),
+                    userId: currentUser.uid
+                };
+                
+                if (recorrenteEditando) {
+                    // Atualizar recorrente existente
+                    await updateDoc(doc(db, 'recorrentes', recorrenteEditando.id), recorrenteData);
+                    showToast('Transação recorrente atualizada com sucesso!', 'success');
+                } else {
+                    // Criar nova recorrente
+                    await addDoc(collection(db, 'recorrentes'), recorrenteData);
+                    showToast('Transação recorrente criada com sucesso!', 'success');
+                }
+                
+                fecharModalRecorrente();
+                
+            } catch (error) {
+                console.error('Erro ao salvar transação recorrente:', error);
+                showToast('Erro ao salvar transação recorrente', 'error');
+            }
+        }
+
+        /**
+         * Calcular próxima execução
+         */
+        function calcularProximaExecucao(dataInicio, frequencia, diaExecucao) {
+            try {
+                const inicio = new Date(dataInicio + 'T00:00:00');
+                const hoje = new Date();
+                let proximaData = new Date(inicio);
+                
+                // Ajustar para o dia de execução
+                proximaData.setDate(diaExecucao);
+                
+                // Se a data já passou, calcular a próxima
+                while (proximaData <= hoje) {
+                    switch (frequencia) {
+                        case 'semanal':
+                            proximaData.setDate(proximaData.getDate() + 7);
+                            break;
+                        case 'mensal':
+                            proximaData.setMonth(proximaData.getMonth() + 1);
+                            break;
+                        case 'bimestral':
+                            proximaData.setMonth(proximaData.getMonth() + 2);
+                            break;
+                        case 'trimestral':
+                            proximaData.setMonth(proximaData.getMonth() + 3);
+                            break;
+                        case 'semestral':
+                            proximaData.setMonth(proximaData.getMonth() + 6);
+                            break;
+                        case 'anual':
+                            proximaData.setFullYear(proximaData.getFullYear() + 1);
+                            break;
+                    }
+                }
+                
+                return proximaData.toISOString().split('T')[0];
+                
+            } catch (error) {
+                console.error('Erro ao calcular próxima execução:', error);
+                return dataInicio;
+            }
+        }
+
+        /**
+         * Renderizar transações recorrentes
+         */
+        function renderRecorrentes() {
+            try {
+                const container = document.getElementById('recorrentsContainer');
+                
+                if (recorrentes.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-sync-alt text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhuma transação recorrente</h3>
+                            <p class="text-gray-500 mb-4">Crie transações recorrentes para automatizar seu controle financeiro</p>
+                            <button onclick="abrirModalRecorrente()" 
+                                    class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Nova Recorrente
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = recorrentes.map(recorrente => {
+                    const proximaExecucao = new Date(recorrente.proximaExecucao + 'T00:00:00');
+                    const hoje = new Date();
+                    const diasRestantes = Math.ceil((proximaExecucao - hoje) / (1000 * 60 * 60 * 24));
+                    
+                    let statusClass = 'bg-green-500';
+                    let statusText = 'Ativa';
+                    
+                    if (!recorrente.ativa) {
+                        statusClass = 'bg-gray-500';
+                        statusText = 'Inativa';
+                    } else if (diasRestantes <= 3) {
+                        statusClass = 'bg-yellow-500';
+                        statusText = 'Próxima';
+                    } else if (diasRestantes < 0) {
+                        statusClass = 'bg-red-500';
+                        statusText = 'Atrasada';
+                    }
+                    
+                    return `
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-800">${recorrente.descricao}</h4>
+                                    <p class="text-sm text-gray-500">${recorrente.categoria} • ${recorrente.frequencia}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="abrirModalRecorrente(${JSON.stringify(recorrente).replace(/"/g, '&quot;')})" 
+                                            class="text-blue-500 hover:text-blue-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="excluirRecorrente('${recorrente.id}')" 
+                                            class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="text-2xl font-bold ${recorrente.tipo === 'receita' ? 'text-green-600' : 'text-red-600'}">
+                                    ${recorrente.tipo === 'receita' ? '+' : '-'} ${formatBRL(recorrente.valor)}
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    Próxima execução: ${proximaExecucao.toLocaleDateString('pt-BR')}
+                                    ${diasRestantes >= 0 ? `(${diasRestantes} dias)` : '(atrasada)'}
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 ${statusClass} rounded-full"></div>
+                                    <span class="text-sm font-medium">${statusText}</span>
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    Dia ${recorrente.diaExecucao}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                renderProximasExecucoes();
+                
+            } catch (error) {
+                console.error('Erro ao renderizar recorrentes:', error);
+            }
+        }
+
+        /**
+         * Renderizar próximas execuções
+         */
+        function renderProximasExecucoes() {
+            try {
+                const container = document.getElementById('proximasExecucoes');
+                const hoje = new Date();
+                const em30Dias = new Date();
+                em30Dias.setDate(hoje.getDate() + 30);
+                
+                const proximasExecucoes = recorrentes
+                    .filter(r => r.ativa)
+                    .map(r => ({
+                        ...r,
+                        dataExecucao: new Date(r.proximaExecucao + 'T00:00:00')
+                    }))
+                    .filter(r => r.dataExecucao <= em30Dias)
+                    .sort((a, b) => a.dataExecucao - b.dataExecucao);
+                
+                if (proximasExecucoes.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-calendar-check text-4xl mb-2"></i>
+                            <p>Nenhuma execução programada para os próximos 30 dias</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = proximasExecucoes.map(exec => {
+                    const diasRestantes = Math.ceil((exec.dataExecucao - hoje) / (1000 * 60 * 60 * 24));
+                    let urgenciaClass = 'border-l-green-500';
+                    
+                    if (diasRestantes <= 0) {
+                        urgenciaClass = 'border-l-red-500';
+                    } else if (diasRestantes <= 3) {
+                        urgenciaClass = 'border-l-yellow-500';
+                    }
+                    
+                    return `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-l-4 ${urgenciaClass}">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas ${exec.tipo === 'receita' ? 'fa-arrow-up text-green-500' : 'fa-arrow-down text-red-500'}"></i>
+                                <div>
+                                    <div class="font-medium">${exec.descricao}</div>
+                                    <div class="text-sm text-gray-600">${exec.categoria}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold ${exec.tipo === 'receita' ? 'text-green-600' : 'text-red-600'}">
+                                    ${formatBRL(exec.valor)}
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    ${exec.dataExecucao.toLocaleDateString('pt-BR')}
+                                    ${diasRestantes === 0 ? '(hoje)' : diasRestantes === 1 ? '(amanhã)' : `(${diasRestantes} dias)`}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Erro ao renderizar próximas execuções:', error);
+            }
+        }
+
+        /**
+         * Excluir transação recorrente
+         */
+        async function excluirRecorrente(recorrenteId) {
+            try {
+                const recorrente = recorrentes.find(r => r.id === recorrenteId);
+                if (!recorrente) return;
+                
+                const confirmacao = confirm(`Deseja realmente excluir a transação recorrente "${recorrente.descricao}"?`);
+                if (!confirmacao) return;
+                
+                await deleteDoc(doc(db, 'recorrentes', recorrenteId));
+                showToast('Transação recorrente excluída com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao excluir recorrente:', error);
+                showToast('Erro ao excluir transação recorrente', 'error');
+            }
+        }
+
+        /**
+         * Configurar listener de transações recorrentes
+         */
+        function setupRecorrentesListener() {
+            if (!currentUser) return;
+            
+            try {
+                const q = query(
+                    collection(db, 'recorrentes'),
+                    orderBy('criadoEm', 'desc')
+                );
+                
+                unsubscribeRecorrentes = onSnapshot(q, (snapshot) => {
+                    recorrentes = snapshot.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() }))
+                        .filter(recorrente => recorrente.userId === currentUser.uid);
+                    
+                    renderRecorrentes();
+                });
+                
+            } catch (error) {
+                console.error('Erro ao configurar listener de recorrentes:', error);
+            }
+        }
+
+        // ==================== FUNCIONALIDADES DE ORÇAMENTO ====================
+
+        /**
+         * Abrir modal de orçamento
+         */
+        function abrirModalOrcamento(orcamento = null) {
+            try {
+                const modal = document.getElementById('orcamentoModal');
+                const title = document.getElementById('orcamentoTitle');
+                const submitText = document.getElementById('orcamentoSubmitText');
+                const form = document.getElementById('orcamentoForm');
+                
+                // Carregar categorias
+                carregarCategoriasOrcamento();
+                
+                if (orcamento) {
+                    // Modo edição
+                    orcamentoEditando = orcamento;
+                    title.textContent = 'Editar Orçamento';
+                    submitText.textContent = 'Salvar Alterações';
+                    
+                    document.getElementById('orcamentoCategoria').value = orcamento.categoria;
+                    document.getElementById('orcamentoValor').value = formatBRL(orcamento.valor);
+                    document.getElementById('orcamentoPeriodo').value = orcamento.periodo;
+                    document.getElementById('orcamentoDescricao').value = orcamento.descricao || '';
+                } else {
+                    // Modo criação
+                    orcamentoEditando = null;
+                    title.textContent = 'Novo Orçamento';
+                    submitText.textContent = 'Criar Orçamento';
+                    form.reset();
+                }
+                
+                modal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erro ao abrir modal de orçamento:', error);
+                showToast('Erro ao abrir formulário', 'error');
+            }
+        }
+
+        /**
+         * Fechar modal de orçamento
+         */
+        function fecharModalOrcamento() {
+            const modal = document.getElementById('orcamentoModal');
+            modal.classList.add('hidden');
+            orcamentoEditando = null;
+        }
+
+        /**
+         * Carregar categorias no select de orçamento
+         */
+        function carregarCategoriasOrcamento() {
+            try {
+                const select = document.getElementById('orcamentoCategoria');
+                const categorias = new Set();
+                
+                // Obter categorias das despesas
+                transacoes
+                    .filter(t => t.tipo === 'despesa' && t.categoria)
+                    .forEach(t => categorias.add(t.categoria));
+                
+                // Limpar e repovoar select
+                select.innerHTML = '<option value="">Selecione uma categoria</option>';
+                
+                Array.from(categorias).sort().forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria;
+                    option.textContent = categoria;
+                    select.appendChild(option);
+                });
+                
+                // Adicionar opção para nova categoria
+                const novaOption = document.createElement('option');
+                novaOption.value = 'nova';
+                novaOption.textContent = '+ Nova Categoria';
+                select.appendChild(novaOption);
+                
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        }
+
+        /**
+         * Manipular formulário de orçamento
+         */
+        async function handleOrcamentoForm(event) {
+            event.preventDefault();
+            
+            try {
+                const categoria = document.getElementById('orcamentoCategoria').value;
+                const valorStr = document.getElementById('orcamentoValor').value;
+                const periodo = document.getElementById('orcamentoPeriodo').value;
+                const descricao = document.getElementById('orcamentoDescricao').value;
+                
+                if (!categoria || !valorStr || !periodo) {
+                    showToast('Preencha todos os campos obrigatórios', 'error');
+                    return;
+                }
+                
+                const valor = parseFloat(valorStr.replace(/[^\d,]/g, '').replace(',', '.'));
+                
+                if (isNaN(valor) || valor <= 0) {
+                    showToast('Valor inválido', 'error');
+                    return;
+                }
+                
+                const orcamentoData = {
+                    categoria,
+                    valor,
+                    periodo,
+                    descricao: descricao.trim(),
+                    criadoEm: new Date().toISOString(),
+                    userId: currentUser.uid
+                };
+                
+                if (orcamentoEditando) {
+                    // Atualizar orçamento existente
+                    await updateDoc(doc(db, 'orcamentos', orcamentoEditando.id), orcamentoData);
+                    showToast('Orçamento atualizado com sucesso!', 'success');
+                } else {
+                    // Criar novo orçamento
+                    await addDoc(collection(db, 'orcamentos'), orcamentoData);
+                    showToast('Orçamento criado com sucesso!', 'success');
+                }
+                
+                fecharModalOrcamento();
+                
+            } catch (error) {
+                console.error('Erro ao salvar orçamento:', error);
+                showToast('Erro ao salvar orçamento', 'error');
+            }
+        }
+
+        /**
+         * Renderizar orçamentos
+         */
+        function renderOrcamentos() {
+            try {
+                const container = document.getElementById('orcamentosContainer');
+                
+                if (orcamentos.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-bullseye text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhum orçamento criado</h3>
+                            <p class="text-gray-500 mb-4">Crie seu primeiro orçamento para controlar seus gastos</p>
+                            <button onclick="abrirModalOrcamento()" 
+                                    class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Criar Orçamento
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = orcamentos.map(orcamento => {
+                    const gastoAtual = calcularGastoCategoria(orcamento.categoria, orcamento.periodo);
+                    const percentual = orcamento.valor > 0 ? (gastoAtual / orcamento.valor) * 100 : 0;
+                    const disponivel = orcamento.valor - gastoAtual;
+                    
+                    let statusClass = 'bg-green-500';
+                    let statusIcon = 'fa-check-circle';
+                    let statusText = 'No limite';
+                    
+                    if (percentual >= 100) {
+                        statusClass = 'bg-red-500';
+                        statusIcon = 'fa-exclamation-triangle';
+                        statusText = 'Excedido';
+                    } else if (percentual >= 80) {
+                        statusClass = 'bg-yellow-500';
+                        statusIcon = 'fa-exclamation-circle';
+                        statusText = 'Atenção';
+                    }
+                    
+                    return `
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-800">${orcamento.categoria}</h4>
+                                    <p class="text-sm text-gray-500">${orcamento.periodo === 'mensal' ? 'Mensal' : 'Anual'}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="abrirModalOrcamento(${JSON.stringify(orcamento).replace(/"/g, '&quot;')})" 
+                                            class="text-blue-500 hover:text-blue-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="excluirOrcamento('${orcamento.id}')" 
+                                            class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span>Gasto: ${formatBRL(gastoAtual)}</span>
+                                    <span>Orçado: ${formatBRL(orcamento.valor)}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="${statusClass} h-3 rounded-full transition-all duration-300" 
+                                         style="width: ${Math.min(percentual, 100)}%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs mt-1 text-gray-600">
+                                    <span>${percentual.toFixed(1)}% usado</span>
+                                    <span class="${disponivel >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                        ${disponivel >= 0 ? 'Disponível' : 'Excedido'}: ${formatBRL(Math.abs(disponivel))}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas ${statusIcon} ${statusClass.replace('bg-', 'text-')}"></i>
+                                    <span class="text-sm font-medium ${statusClass.replace('bg-', 'text-')}">${statusText}</span>
+                                </div>
+                                ${orcamento.descricao ? `<i class="fas fa-info-circle text-gray-400" title="${orcamento.descricao}"></i>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                atualizarResumoOrcamentos();
+                
+            } catch (error) {
+                console.error('Erro ao renderizar orçamentos:', error);
+            }
+        }
+
+        /**
+         * Calcular gasto atual de uma categoria
+         */
+        function calcularGastoCategoria(categoria, periodo) {
+            try {
+                const agora = new Date();
+                let dataInicio;
+                
+                if (periodo === 'mensal') {
+                    dataInicio = new Date(agora.getFullYear(), agora.getMonth(), 1);
+                } else {
+                    dataInicio = new Date(agora.getFullYear(), 0, 1);
+                }
+                
+                return transacoes
+                    .filter(t => 
+                        t.tipo === 'despesa' && 
+                        t.categoria === categoria && 
+                        t.data && 
+                        new Date(t.data + 'T00:00:00') >= dataInicio &&
+                        new Date(t.data + 'T00:00:00') <= agora
+                    )
+                    .reduce((sum, t) => sum + (t.valor || 0), 0);
+                    
+            } catch (error) {
+                console.error('Erro ao calcular gasto da categoria:', error);
+                return 0;
+            }
+        }
+
+        /**
+         * Atualizar resumo dos orçamentos
+         */
+        function atualizarResumoOrcamentos() {
+            try {
+                const totalOrcado = orcamentos.reduce((sum, o) => sum + (o.valor || 0), 0);
+                let totalGasto = 0;
+                
+                orcamentos.forEach(orcamento => {
+                    totalGasto += calcularGastoCategoria(orcamento.categoria, orcamento.periodo);
+                });
+                
+                const totalDisponivel = totalOrcado - totalGasto;
+                const percentualGasto = totalOrcado > 0 ? (totalGasto / totalOrcado) * 100 : 0;
+                
+                document.getElementById('totalOrcamentos').textContent = formatBRL(totalOrcado);
+                document.getElementById('totalGasto').textContent = formatBRL(totalGasto);
+                document.getElementById('totalDisponivel').textContent = formatBRL(totalDisponivel);
+                document.getElementById('percentualGasto').textContent = `${percentualGasto.toFixed(1)}%`;
+                
+            } catch (error) {
+                console.error('Erro ao atualizar resumo dos orçamentos:', error);
+            }
+        }
+
+        /**
+         * Excluir orçamento
+         */
+        async function excluirOrcamento(orcamentoId) {
+            try {
+                const orcamento = orcamentos.find(o => o.id === orcamentoId);
+                if (!orcamento) return;
+                
+                const confirmacao = confirm(`Deseja realmente excluir o orçamento da categoria "${orcamento.categoria}"?`);
+                if (!confirmacao) return;
+                
+                await deleteDoc(doc(db, 'orcamentos', orcamentoId));
+                showToast('Orçamento excluído com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao excluir orçamento:', error);
+                showToast('Erro ao excluir orçamento', 'error');
+            }
+        }
+
+        /**
+         * Configurar listener de orçamentos
+         */
+        function setupOrcamentosListener() {
+            if (!currentUser) return;
+            
+            try {
+                const q = query(
+                    collection(db, 'orcamentos'),
+                    orderBy('criadoEm', 'desc')
+                );
+                
+                unsubscribeOrcamentos = onSnapshot(q, (snapshot) => {
+                    orcamentos = snapshot.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() }))
+                        .filter(orcamento => orcamento.userId === currentUser.uid);
+                    
+                    renderOrcamentos();
+                });
+                
+            } catch (error) {
+                console.error('Erro ao configurar listener de orçamentos:', error);
+            }
+        }
+
         // ==================== EXPORT TO WINDOW ====================
 
         // Exporta funções necessárias para o escopo global
@@ -4130,6 +6211,24 @@
         window.exportarCSV = exportarCSV;
         window.alterarOrdenacao = alterarOrdenacao;
 
+        // Funções de orçamento
+        window.abrirModalOrcamento = abrirModalOrcamento;
+        window.fecharModalOrcamento = fecharModalOrcamento;
+        window.handleOrcamentoForm = handleOrcamentoForm;
+        window.excluirOrcamento = excluirOrcamento;
+
+        // Funções de transações recorrentes
+        window.abrirModalRecorrente = abrirModalRecorrente;
+        window.fecharModalRecorrente = fecharModalRecorrente;
+        window.handleRecorrenteForm = handleRecorrenteForm;
+        window.excluirRecorrente = excluirRecorrente;
+
+        // Funções de fluxo de caixa
+        window.atualizarFluxoCaixa = atualizarFluxoCaixa;
+
+        // Funções de análise comparativa
+        window.atualizarComparativo = atualizarComparativo;
+
         // ==================== INICIALIZAÇÃO ====================
 
         // Inicializa quando a página carrega
@@ -4138,6 +6237,17 @@
 
             // Define datas nos campos
             setToday();
+            
+            // Adiciona event listeners para os formulários
+            const orcamentoForm = document.getElementById('orcamentoForm');
+            if (orcamentoForm) {
+                orcamentoForm.addEventListener('submit', handleOrcamentoForm);
+            }
+            
+            const recorrenteForm = document.getElementById('recorrenteForm');
+            if (recorrenteForm) {
+                recorrenteForm.addEventListener('submit', handleRecorrenteForm);
+            }
         });
 
     </script>
