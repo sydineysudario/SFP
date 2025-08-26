@@ -3305,7 +3305,7 @@
 
                 transacoes.forEach(transacao => {
                     if (transacao.data && transacao.valor) {
-                        const data = new Date(transacao.data);
+                        const data = new Date(transacao.data + 'T00:00:00');
                         const mes = data.getMonth();
 
                         if (mes >= 0 && mes < 12) {
@@ -4290,7 +4290,7 @@
 
                 transacoes.forEach(transacao => {
                     if (transacao.data) {
-                        const data = new Date(transacao.data);
+                        const data = new Date(transacao.data + 'T00:00:00');
                         const mesAno = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
                         atividadePorMes[mesAno] = (atividadePorMes[mesAno] || 0) + Math.abs(transacao.valor || 0);
                     }
@@ -5450,6 +5450,206 @@
             } catch (error) {
                 console.error('Erro ao renderizar categorias do fluxo:', error);
             }
+        }
+
+        // ==================== FUNCIONALIDADES DE ORÇAMENTO ====================
+
+        let orcamentos = [];
+        let unsubscribeOrcamentos = null;
+
+        /**
+         * Configura o listener para orçamentos
+         */
+        function setupOrcamentosListener() {
+            if (unsubscribeOrcamentos) unsubscribeOrcamentos();
+            unsubscribeOrcamentos = onSnapshot(collection(db, `users/${currentUser.uid}/orcamentos`), (snapshot) => {
+                orcamentos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderOrcamentos();
+            }, (error) => {
+                console.error("Erro ao sincronizar orçamentos:", error);
+                showToast("Erro", "Erro ao carregar orçamentos", "error");
+            });
+        }
+
+        /**
+         * Renderiza os orçamentos na tela
+         */
+        function renderOrcamentos() {
+            const container = document.getElementById("orcamentosList");
+            if (!container) return;
+
+            if (orcamentos.length === 0) {
+                container.innerHTML = 
+                    `<div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-4"></i>
+                        <p>Nenhum orçamento cadastrado. Comece a planejar suas finanças!</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = orcamentos.map(orc => {
+                const gasto = calcularGastoOrcamento(orc.categoria);
+                const percentual = orc.valor > 0 ? (gasto / orc.valor) * 100 : 0;
+                let progressBarColor = "bg-green-500";
+                if (percentual > 100) {
+                    progressBarColor = "bg-red-500";
+                } else if (percentual > 80) {
+                    progressBarColor = "bg-yellow-500";
+                }
+                const excedidoText = percentual > 100 ? " - Excedido!" : "";
+
+                return `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex-1">
+                            <div class="font-medium">${sanitizeString(orc.categoria)}</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="${progressBarColor} h-2 rounded-full" style="width: ${Math.min(100, percentual)}%"></div>
+                            </div>
+                        </div>
+                        <div class="ml-4 text-right">
+                            <div class="font-semibold">${formatBRL(gasto)} / ${formatBRL(orc.valor)}</div>
+                            <div class="text-sm text-gray-600">${percentual.toFixed(1)}% utilizado${excedidoText}</div>
+                        </div>
+                        <div class="ml-4 flex space-x-2">
+                            <button onclick="abrirModalOrcamento(\'${orc.id}\')" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="excluirOrcamento(\'${orc.id}\')" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            atualizarResumoOrcamentos();
+        }
+
+        /**
+         * Calcula o gasto total para uma categoria de orçamento
+         * @param {string} categoria - Categoria do orçamento
+         * @returns {number} Gasto total
+         */
+        function calcularGastoOrcamento(categoria) {
+            const mesAtual = new Date().toISOString().slice(0, 7);
+            return transacoes
+                .filter(t => t.tipo === "despesa" && t.categoria === categoria && t.data.startsWith(mesAtual))
+                .reduce((sum, t) => sum + t.valor, 0);
+        }
+
+        /**
+         * Atualiza o resumo geral dos orçamentos
+         */
+        function atualizarResumoOrcamentos() {
+            let totalOrcado = 0;
+            let totalGasto = 0;
+
+            orcamentos.forEach(orc => {
+                totalOrcado += orc.valor;
+                totalGasto += calcularGastoOrcamento(orc.categoria);
+            });
+
+            const disponivel = totalOrcado - totalGasto;
+
+            document.getElementById("orcamentoTotalOrcado").textContent = formatBRL(totalOrcado);
+            document.getElementById("orcamentoTotalGasto").textContent = formatBRL(totalGasto);
+            document.getElementById("orcamentoDisponivel").textContent = formatBRL(disponivel);
+
+            const disponivelEl = document.getElementById("orcamentoDisponivel");
+            disponivelEl.className = `text-2xl font-bold ${disponivel >= 0 ? "text-green-600" : "text-red-600"}`;
+        }
+
+        /**
+         * Abre o modal de orçamento para adicionar ou editar
+         * @param {string} [id] - ID do orçamento para edição
+         */
+        function abrirModalOrcamento(id) {
+            const modal = document.getElementById("orcamentoModal");
+            const form = document.getElementById("orcamentoForm");
+            const titulo = document.getElementById("orcamentoModalTitle");
+            const btnSubmit = document.getElementById("orcamentoSubmitBtn");
+
+            orcamentoEditando = null;
+            form.reset();
+
+            if (id) {
+                orcamentoEditando = orcamentos.find(orc => orc.id === id);
+                if (orcamentoEditando) {
+                    titulo.textContent = "Editar Orçamento";
+                    btnSubmit.textContent = "Salvar Alterações";
+                    form.querySelector("#orcamentoCategoria").value = orcamentoEditando.categoria;
+                    form.querySelector("#orcamentoValor").value = orcamentoEditando.valor;
+                }
+            } else {
+                titulo.textContent = "Novo Orçamento";
+                btnSubmit.textContent = "Adicionar Orçamento";
+            }
+
+            modal.classList.remove("hidden");
+        }
+
+        /**
+         * Fecha o modal de orçamento
+         */
+        function fecharModalOrcamento() {
+            document.getElementById("orcamentoModal").classList.add("hidden");
+            orcamentoEditando = null;
+        }
+
+        /**
+         * Lida com o envio do formulário de orçamento
+         * @param {Event} event - Evento de envio
+         */
+        async function handleOrcamentoForm(event) {
+            event.preventDefault();
+            const form = event.target;
+            const categoria = form.querySelector("#orcamentoCategoria").value;
+            const valor = parseFloat(form.querySelector("#orcamentoValor").value);
+
+            if (!categoria || isNaN(valor) || valor <= 0) {
+                showToast("Erro", "Preencha todos os campos corretamente", "error");
+                return;
+            }
+
+            const dadosOrcamento = {
+                categoria: categoria,
+                valor: valor
+            };
+
+            try {
+                if (orcamentoEditando) {
+                    await updateDoc(doc(db, `users/${currentUser.uid}/orcamentos`, orcamentoEditando.id), dadosOrcamento);
+                    showToast("Sucesso", "Orçamento atualizado!", "success");
+                } else {
+                    await addDoc(collection(db, `users/${currentUser.uid}/orcamentos`), dadosOrcamento);
+                    showToast("Sucesso", "Orçamento adicionado!", "success");
+                }
+                fecharModalOrcamento();
+            } catch (error) {
+                console.error("Erro ao salvar orçamento:", error);
+                showToast("Erro", "Erro ao salvar orçamento", "error");
+            }
+        }
+
+        /**
+         * Exclui um orçamento
+         * @param {string} id - ID do orçamento a ser excluído
+         */
+        function excluirOrcamento(id) {
+            openConfirmModal(
+                "Confirmar Exclusão",
+                "Deseja realmente excluir este orçamento?",
+                async () => {
+                    try {
+                        await deleteDoc(doc(db, `users/${currentUser.uid}/orcamentos`, id));
+                        showToast("Sucesso", "Orçamento excluído!", "success");
+                    } catch (error) {
+                        console.error("Erro ao excluir orçamento:", error);
+                        showToast("Erro", "Erro ao excluir orçamento", "error");
+                    }
+                },
+                "danger"
+            );
         }
 
         // ==================== FUNCIONALIDADES DE TRANSAÇÕES RECORRENTES ====================
